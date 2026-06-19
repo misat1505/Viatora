@@ -24,7 +24,7 @@ The core domain service. Serves exam sessions — randomly selects questions fro
 
 Redis is used here to store active in-progress exam sessions (TTL-based, no DB writes mid-session).
 
-**Key flows**: `POST /exam/start` → gRPC call to Content → Redis session → `POST /exam/submit` → Kafka publish
+**Key flows**: `POST /exams/start` → gRPC call to Content → Redis session → `POST /exams/submit` → Kafka publish
 
 See [details](./services/exam-engine.md).
 
@@ -44,7 +44,7 @@ See [details](./services/content-service.md).
 
 Handles subscription purchases via Stripe. Spring Boot is a natural fit here — robust transaction management, mature Stripe Java SDK, and easy Webhook handling. On successful payment, publishes `payment.confirmed` to Kafka, which unlocks access for the user. The Exam Engine and API Gateway consume this event to update subscription status. Stores payment records and subscription validity in its own PostgreSQL database.
 
-**Key flows**: `POST /payment/checkout` → Stripe session → Stripe Webhook → Kafka → unlock access
+**Key flows**: `POST /payments/checkout` → Stripe session → Stripe Webhook → Kafka → unlock access
 
 See [details](./services/payment-service.md).
 
