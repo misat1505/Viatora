@@ -1,0 +1,169 @@
+syntax = "proto3";
+
+package ExamPro.exam;
+
+option java_package = "pl.ExamPro.grpc.exam";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────────
+// Exam Engine — gRPC server
+// Port: 50052
+// Consumers: API Gateway
+// ─────────────────────────────────────────────────────────────────
+
+service ExamService {
+  // Verifies subscription (→ PaymentService), fetches questions (→ ContentService),
+  // creates session in Redis. Returns first question.
+  rpc StartSession (StartSessionRequest) returns (StartSessionResponse);
+
+  // Returns current session state (remaining time, answered count).
+  // Does NOT return correct answers — those are only revealed on FinishSession.
+  rpc GetSession (GetSessionRequest) returns (GetSessionResponse);
+
+  // Records a single answer in the Redis session store.
+  rpc SubmitAnswer (SubmitAnswerRequest) returns (SubmitAnswerResponse);
+
+  // Scores the session, persists to PostgreSQL, deletes Redis key,
+  // publishes exam.completed to Kafka.
+  rpc FinishSession (FinishSessionRequest) returns (FinishSessionResponse);
+
+  // Paginated list of the user's past completed sessions.
+  rpc ListResults (ListResultsRequest) returns (ListResultsResponse);
+
+  // Full result detail: score + per-question breakdown with explanations.
+  rpc GetResult (GetResultRequest) returns (GetResultResponse);
+}
+
+// ── StartSession ─────────────────────────────────────────────────
+
+message StartSessionRequest {
+  string user_id  = 1;
+  string category = 2; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
+}
+
+message StartSessionResponse {
+  string     session_id        = 1;
+  int32      time_limit_seconds = 2; // Always 1500
+  int32      total_questions   = 3; // Always 32
+  string     started_at        = 4; // ISO 8601
+  repeated ExamQuestion questions = 5; // All 32 questions (no correct answers)
+}
+
+// ── GetSession ───────────────────────────────────────────────────
+
+message GetSessionRequest {
+  string session_id = 1;
+  string user_id    = 2; // Ownership check
+}
+
+message GetSessionResponse {
+  string session_id         = 1;
+  string status             = 2; // "in_progress" | "completed" | "timed_out"
+  int32  seconds_remaining  = 3;
+  int32  answered_count     = 4;
+  int32  total_questions    = 5;
+  repeated string answered_question_ids = 6;
+}
+
+// ── SubmitAnswer ─────────────────────────────────────────────────
+
+message SubmitAnswerRequest {
+  string session_id   = 1;
+  string user_id      = 2;
+  string question_id  = 3;
+  string selected_option = 4; // "A" | "B" | "C"
+}
+
+message SubmitAnswerResponse {
+  bool   accepted          = 1; // false if session ended or already answered
+  int32  answered_count    = 2;
+  int32  total_questions   = 3;
+  int32  seconds_remaining = 4;
+}
+
+// ── FinishSession ─────────────────────────────────────────────────
+
+message FinishSessionRequest {
+  string session_id = 1;
+  string user_id    = 2;
+}
+
+message FinishSessionResponse {
+  string  session_id     = 1;
+  int32   earned_points  = 2;
+  int32   max_points     = 3; // Always 74
+  float   score_percent  = 4;
+  bool    passed         = 5; // threshold: 68 pts
+  int32   correct_answers = 6;
+  int32   total_questions = 7;
+  int32   duration_seconds = 8;
+  string  completed_at   = 9;
+  repeated AnswerResult answers = 10; // Full per-question result with correct option
+}
+
+// ── ListResults ───────────────────────────────────────────────────
+
+message ListResultsRequest {
+  string user_id  = 1;
+  string category = 2; // Optional filter
+  int32  page     = 3;
+  int32  limit    = 4; // Max 50
+}
+
+message ListResultsResponse {
+  repeated SessionSummary sessions = 1;
+  int32 total_items = 2;
+  int32 total_pages = 3;
+}
+
+// ── GetResult ─────────────────────────────────────────────────────
+
+message GetResultRequest {
+  string session_id = 1;
+  string user_id    = 2;
+}
+
+message GetResultResponse {
+  SessionSummary          summary = 1;
+  repeated AnswerResult   answers = 2; // Includes explanation per question
+}
+
+// ── Shared types ──────────────────────────────────────────────────
+
+// Question as served during an active exam — NO correct_option, NO explanation
+message ExamQuestion {
+  string id         = 1;
+  string text       = 2;
+  string option_a   = 3;
+  string option_b   = 4;
+  string option_c   = 5;
+  string media_url  = 6;
+  string media_type = 7; // "image" | "video" | "none"
+  int32  points     = 8; // 1 | 2 | 3
+  string difficulty = 9; // "basic" | "medium" | "specialist"
+}
+
+// Per-question result revealed after session finish
+message AnswerResult {
+  string question_id      = 1;
+  string question_text    = 2;
+  string selected_option  = 3;
+  string correct_option   = 4;
+  bool   is_correct       = 5;
+  int32  points_earned    = 6;
+  int32  points_available = 7;
+  string explanation      = 8; // From Content Service
+}
+
+message SessionSummary {
+  string session_id      = 1;
+  string category        = 2;
+  int32  earned_points   = 3;
+  int32  max_points      = 4;
+  float  score_percent   = 5;
+  bool   passed          = 6;
+  int32  correct_answers = 7;
+  int32  total_questions = 8;
+  int32  duration_seconds = 9;
+  string completed_at    = 10;
+}

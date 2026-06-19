@@ -1,2 +1,1 @@
-# npx lint-staged
-echo "skip lint-staged for first commit"
+pnpx lint-staged

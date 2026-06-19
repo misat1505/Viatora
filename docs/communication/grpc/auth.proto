@@ -1,0 +1,122 @@
+syntax = "proto3";
+
+package ExamPro.auth;
+
+option java_package = "pl.ExamPro.grpc.auth";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────────
+// Auth Service — gRPC server
+// Port: 50051
+// Consumers: API Gateway
+// ─────────────────────────────────────────────────────────────────
+
+service AuthService {
+  // Called on every authenticated request.
+  // API Gateway caches the result in Redis for 5 min (key: token:cache:{jti}).
+  rpc ValidateToken (ValidateTokenRequest) returns (ValidateTokenResponse);
+
+  // Returns the URL to redirect the client to Google OAuth consent screen.
+  rpc InitiateOAuth (InitiateOAuthRequest) returns (InitiateOAuthResponse);
+
+  // Handles the OAuth callback after Google redirects back.
+  // Creates a new user if first login. Returns access + refresh tokens.
+  rpc HandleOAuthCallback (OAuthCallbackRequest) returns (OAuthCallbackResponse);
+
+  // Rotates the refresh token and issues a new access token.
+  rpc RefreshToken (RefreshTokenRequest) returns (RefreshTokenResponse);
+
+  // Revokes the current refresh token.
+  rpc Logout (LogoutRequest) returns (LogoutResponse);
+
+  // Returns the authenticated user's profile.
+  rpc GetMe (GetMeRequest) returns (GetMeResponse);
+}
+
+// ── ValidateToken ────────────────────────────────────────────────
+
+message ValidateTokenRequest {
+  string token = 1; // Raw JWT access token from Authorization header
+}
+
+message ValidateTokenResponse {
+  bool   valid               = 1;
+  string user_id             = 2; // UUID — empty if invalid
+  string email               = 3;
+  string display_name        = 4;
+  string avatar_url          = 5;
+  bool   is_active           = 6;
+  string jti                 = 7; // JWT ID — used as Redis cache key
+}
+
+// ── InitiateOAuth ────────────────────────────────────────────────
+
+message InitiateOAuthRequest {
+  // Optional: state param to pass through the OAuth flow (CSRF token)
+  string state = 1;
+}
+
+message InitiateOAuthResponse {
+  string redirect_url = 1; // https://accounts.google.com/o/oauth2/auth?...
+  string state        = 2; // Echo back for client to verify
+}
+
+// ── HandleOAuthCallback ──────────────────────────────────────────
+
+message OAuthCallbackRequest {
+  string code  = 1; // Authorization code from Google
+  string state = 2; // CSRF state to verify
+}
+
+message OAuthCallbackResponse {
+  string access_token  = 1; // JWT, 15 min TTL
+  string refresh_token = 2; // Opaque, 30 day TTL
+  int64  expires_in    = 3; // Access token TTL in seconds (900)
+  UserProfile user     = 4;
+  bool is_new_user     = 5; // true if this was a first-time registration
+}
+
+// ── RefreshToken ─────────────────────────────────────────────────
+
+message RefreshTokenRequest {
+  string refresh_token = 1;
+}
+
+message RefreshTokenResponse {
+  string access_token  = 1;
+  string refresh_token = 2; // Rotated — old token is invalidated
+  int64  expires_in    = 3;
+}
+
+// ── Logout ───────────────────────────────────────────────────────
+
+message LogoutRequest {
+  string user_id       = 1;
+  string refresh_token = 2; // Token to revoke
+}
+
+message LogoutResponse {
+  bool success = 1;
+}
+
+// ── GetMe ─────────────────────────────────────────────────────────
+
+message GetMeRequest {
+  string user_id = 1;
+}
+
+message GetMeResponse {
+  UserProfile user = 1;
+}
+
+// ── Shared types ─────────────────────────────────────────────────
+
+message UserProfile {
+  string user_id      = 1;
+  string email        = 2;
+  string display_name = 3;
+  string avatar_url   = 4;
+  bool   is_active    = 5;
+  string created_at   = 6; // ISO 8601
+  string last_login_at = 7;
+}

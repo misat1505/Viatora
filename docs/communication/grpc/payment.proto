@@ -1,0 +1,82 @@
+syntax = "proto3";
+
+package ExamPro.payment;
+
+option java_package = "pl.ExamPro.grpc.payment";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────────
+// Payment Service — gRPC server
+// Port: 50053
+// Consumers: API Gateway, Exam Engine
+// ─────────────────────────────────────────────────────────────────
+
+service PaymentService {
+  // Hot path — called by API Gateway guard before every /exam/* request
+  // and by Exam Engine on StartSession. Must be fast (<10ms).
+  rpc CheckSubscription (CheckSubscriptionRequest) returns (CheckSubscriptionResponse);
+
+  // Called by API Gateway to create a Stripe Checkout session.
+  // Returns a Stripe-hosted checkout URL to redirect the client to.
+  rpc CreateCheckout (CreateCheckoutRequest) returns (CreateCheckoutResponse);
+
+  // Returns the user's current subscription record.
+  rpc GetSubscription (GetSubscriptionRequest) returns (GetSubscriptionResponse);
+
+  // Cancels the subscription at the end of the current billing period.
+  // Access remains active until current_period_end.
+  rpc CancelSubscription (CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
+}
+
+// ── CheckSubscription ────────────────────────────────────────────
+
+message CheckSubscriptionRequest {
+  string user_id = 1;
+}
+
+message CheckSubscriptionResponse {
+  bool   active     = 1;  // true only if status == ACTIVE and current_period_end is in the future
+  string status     = 2;  // "active" | "expired" | "cancelled" | "pending" | "none"
+  string plan       = 3;  // "monthly" | "quarterly" | "annual" | ""
+  string expires_at = 4;  // ISO 8601 — empty if no subscription
+}
+
+// ── CreateCheckout ───────────────────────────────────────────────
+
+message CreateCheckoutRequest {
+  string user_id = 1;
+  string plan    = 2; // "monthly" | "quarterly" | "annual"
+}
+
+message CreateCheckoutResponse {
+  string checkout_url = 1; // https://checkout.stripe.com/c/pay/cs_...
+  string session_id   = 2; // Stripe Checkout session ID (cs_...)
+}
+
+// ── GetSubscription ──────────────────────────────────────────────
+
+message GetSubscriptionRequest {
+  string user_id = 1;
+}
+
+message GetSubscriptionResponse {
+  bool   has_subscription      = 1;
+  string status                = 2;
+  string plan                  = 3;
+  string current_period_start  = 4; // ISO 8601
+  string current_period_end    = 5; // ISO 8601
+  string cancelled_at          = 6; // ISO 8601 — empty if not cancelled
+  string stripe_customer_id    = 7;
+}
+
+// ── CancelSubscription ───────────────────────────────────────────
+
+message CancelSubscriptionRequest {
+  string user_id = 1;
+}
+
+message CancelSubscriptionResponse {
+  bool   success             = 1;
+  string cancels_at          = 2; // ISO 8601 — when access will end (= current_period_end)
+  string message             = 3; // Human-readable confirmation
+}

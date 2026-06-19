@@ -1,0 +1,140 @@
+syntax = "proto3";
+
+package ExamPro.stats;
+
+option java_package = "pl.ExamPro.grpc.stats";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────────
+// Statistics Service — gRPC server
+// Port: 50055
+// Consumers: API Gateway
+// ─────────────────────────────────────────────────────────────────
+
+service StatsService {
+  // Lightweight stats card: totals, pass rate, streaks.
+  // Result is cached in Redis (10 min TTL).
+  rpc GetSummary (GetSummaryRequest) returns (GetSummaryResponse);
+
+  // Full analytics dashboard: trends, category breakdown, weak spots.
+  rpc GetAnalytics (GetAnalyticsRequest) returns (GetAnalyticsResponse);
+
+  // Per-category accuracy breakdown.
+  rpc GetCategoryBreakdown (GetCategoryBreakdownRequest) returns (GetCategoryBreakdownResponse);
+
+  // Score trend over time — data points for a chart.
+  rpc GetScoreTrend (GetScoreTrendRequest) returns (GetScoreTrendResponse);
+
+  // Paginated exam history list.
+  rpc GetHistory (GetHistoryRequest) returns (GetHistoryResponse);
+
+  // Single session detail (score + per-tag accuracy, no per-question breakdown — that's Exam Engine).
+  rpc GetHistoryDetail (GetHistoryDetailRequest) returns (GetHistoryDetailResponse);
+}
+
+// ── GetSummary ────────────────────────────────────────────────────
+
+message GetSummaryRequest {
+  string user_id = 1;
+}
+
+message GetSummaryResponse {
+  int32 total_exams        = 1;
+  float pass_rate          = 2; // 0.0–100.0
+  float average_score      = 3;
+  float best_score         = 4;
+  int32 current_streak     = 5; // Consecutive days with a passed exam
+  int32 longest_streak     = 6;
+  int32 total_time_minutes = 7;
+}
+
+// ── GetAnalytics ──────────────────────────────────────────────────
+
+message GetAnalyticsRequest {
+  string user_id  = 1;
+  string category = 2; // Optional — omit for all categories
+}
+
+message GetAnalyticsResponse {
+  GetSummaryResponse             summary          = 1;
+  repeated CategoryStat          by_category      = 2;
+  repeated ScoreDataPoint        recent_trend     = 3; // Last 10 sessions
+  repeated string                weak_spots       = 4; // Tag names below 70% accuracy
+}
+
+// ── GetCategoryBreakdown ──────────────────────────────────────────
+
+message GetCategoryBreakdownRequest {
+  string user_id = 1;
+}
+
+message GetCategoryBreakdownResponse {
+  repeated CategoryStat categories = 1;
+}
+
+// ── GetScoreTrend ─────────────────────────────────────────────────
+
+message GetScoreTrendRequest {
+  string user_id    = 1;
+  string category   = 2; // Optional
+  string range      = 3; // "7d" | "30d" | "90d" | "all" — default "30d"
+}
+
+message GetScoreTrendResponse {
+  repeated ScoreDataPoint data_points = 1;
+}
+
+// ── GetHistory ────────────────────────────────────────────────────
+
+message GetHistoryRequest {
+  string user_id  = 1;
+  string category = 2; // Optional filter
+  int32  page     = 3; // 0-indexed
+  int32  limit    = 4; // Max 50
+}
+
+message GetHistoryResponse {
+  repeated HistoryItem items       = 1;
+  int32                total_items = 2;
+  int32                total_pages = 3;
+}
+
+// ── GetHistoryDetail ──────────────────────────────────────────────
+
+message GetHistoryDetailRequest {
+  string session_id = 1;
+  string user_id    = 2;
+}
+
+message GetHistoryDetailResponse {
+  HistoryItem            session          = 1;
+  map<string, float>     tag_accuracy     = 2; // e.g. {"traffic_signs": 0.9, "first_aid": 0.5}
+}
+
+// ── Shared types ──────────────────────────────────────────────────
+
+message CategoryStat {
+  string category    = 1;
+  int32  taken       = 2;
+  float  pass_rate   = 3;
+  float  avg_score   = 4;
+}
+
+message ScoreDataPoint {
+  string date          = 1; // ISO 8601 date
+  float  score_percent = 2;
+  bool   passed        = 3;
+}
+
+message HistoryItem {
+  string session_id       = 1;
+  string category         = 2;
+  int32  earned_points    = 3;
+  int32  max_points       = 4;
+  float  score_percent    = 5;
+  bool   passed           = 6;
+  int32  correct_answers  = 7;
+  int32  total_questions  = 8;
+  int32  duration_seconds = 9;
+  string completed_at     = 10; // ISO 8601
+}

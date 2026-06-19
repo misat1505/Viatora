@@ -1,0 +1,77 @@
+syntax = "proto3";
+
+package ExamPro.content;
+
+option java_package = "pl.ExamPro.grpc.content";
+option java_multiple_files = true;
+
+// ─────────────────────────────────────────────────────────────────
+// Content Service — gRPC server
+// Port: 50054
+// Consumers: Exam Engine
+// ─────────────────────────────────────────────────────────────────
+
+service ContentService {
+  // Primary method. Returns a randomised, regulation-compliant set of questions.
+  // Composition: 20 basic (1pt) + 6 medium (2pt) + 6 specialist (3pt) = 32 questions, max 74pts.
+  // correct_option and explanation are EXCLUDED — exam integrity.
+  rpc GetQuestions (GetQuestionsRequest) returns (GetQuestionsResponse);
+
+  // Fetches a single question with correct_option and explanation.
+  // Called by Exam Engine after session completion to build the result breakdown.
+  rpc GetQuestionById (GetQuestionByIdRequest) returns (QuestionDetail);
+}
+
+// ── GetQuestions ─────────────────────────────────────────────────
+
+message GetQuestionsRequest {
+  string category = 1; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
+  // count is fixed at 32 by regulation — field reserved for future flexibility
+  int32  count    = 2;
+}
+
+message GetQuestionsResponse {
+  repeated ExamQuestion questions  = 1;
+  string                cache_hit  = 2; // "hit" | "miss" — for observability
+}
+
+// ── GetQuestionById ──────────────────────────────────────────────
+
+message GetQuestionByIdRequest {
+  string id = 1; // Sanity document _id
+}
+
+// ── Shared types ─────────────────────────────────────────────────
+
+// Question served during an active exam — no correct answer, no explanation
+message ExamQuestion {
+  string          id           = 1;
+  string          external_id  = 2; // Official ID e.g. "1-001"
+  string          text         = 3;
+  string          option_a     = 4;
+  string          option_b     = 5;
+  string          option_c     = 6;
+  string          media_url    = 7; // Sanity CDN URL — empty if no media
+  string          media_type   = 8; // "image" | "video" | "none"
+  int32           points       = 9; // 1 | 2 | 3
+  string          difficulty   = 10; // "basic" | "medium" | "specialist"
+  repeated string tags         = 11; // e.g. ["traffic_signs", "priority_rules"]
+}
+
+// Full question detail — only returned post-exam via GetQuestionById
+message QuestionDetail {
+  string          id             = 1;
+  string          external_id    = 2;
+  string          text           = 3;
+  string          option_a       = 4;
+  string          option_b       = 5;
+  string          option_c       = 6;
+  string          correct_option = 7; // "A" | "B" | "C"
+  string          explanation    = 8; // Why the correct answer is correct
+  string          media_url      = 9;
+  string          media_type     = 10;
+  int32           points         = 11;
+  string          difficulty     = 12;
+  repeated string tags           = 13;
+  string          category       = 14;
+}
