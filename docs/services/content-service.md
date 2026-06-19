@@ -125,7 +125,7 @@ service ContentService {
 }
 ```
 
-Full message definitions: see [`proto/content.proto`](./proto/content.proto)
+Full message definitions: see [`content.proto`](../communication/grpc/content.proto)
 
 ---
 

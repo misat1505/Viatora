@@ -60,30 +60,30 @@ src/
 
 ### Outbound — all internal communication is gRPC only
 
-| Target               | gRPC Method                             | Trigger                            |
-| -------------------- | --------------------------------------- | ---------------------------------- |
-| Auth Service         | `AuthService.ValidateToken`             | Every authenticated request        |
-| Auth Service         | `AuthService.InitiateOAuth`             | `GET /auth/google`                 |
-| Auth Service         | `AuthService.HandleOAuthCallback`       | `GET /auth/google/callback`        |
-| Auth Service         | `AuthService.RefreshToken`              | `POST /auth/refresh`               |
-| Auth Service         | `AuthService.Logout`                    | `POST /auth/logout`                |
-| Auth Service         | `AuthService.GetMe`                     | `GET /auth/me`                     |
-| Exam Engine          | `ExamService.StartSession`              | `POST /exam/start`                 |
-| Exam Engine          | `ExamService.GetSession`                | `GET /exam/session/:id`            |
-| Exam Engine          | `ExamService.SubmitAnswer`              | `POST /exam/session/:id/answer`    |
-| Exam Engine          | `ExamService.FinishSession`             | `POST /exam/session/:id/submit`    |
-| Exam Engine          | `ExamService.ListResults`               | `GET /exam/results`                |
-| Exam Engine          | `ExamService.GetResult`                 | `GET /exam/results/:id`            |
-| Payment Service      | `PaymentService.CreateCheckout`         | `POST /payment/checkout`           |
-| Payment Service      | `PaymentService.GetSubscription`        | `GET /payment/subscription`        |
-| Payment Service      | `PaymentService.CancelSubscription`     | `DELETE /payment/subscription`     |
-| Payment Service      | `PaymentService.CheckSubscription`      | Guard: before every `/exam/*` call |
-| Statistics Service   | `StatsService.GetSummary`               | `GET /stats/summary`               |
-| Statistics Service   | `StatsService.GetAnalytics`             | `GET /stats/analytics`             |
-| Statistics Service   | `StatsService.GetHistory`               | `GET /stats/history`               |
-| Notification Service | `NotificationService.GetPreferences`    | `GET /notifications/preferences`   |
-| Notification Service | `NotificationService.UpdatePreferences` | `PUT /notifications/preferences`   |
-| Notification Service | `NotificationService.RegisterFcmToken`  | `POST /notifications/fcm-token`    |
+| Target               | gRPC Method                             | Trigger                             |
+| -------------------- | --------------------------------------- | ----------------------------------- |
+| Auth Service         | `AuthService.ValidateToken`             | Every authenticated request         |
+| Auth Service         | `AuthService.InitiateOAuth`             | `GET /auth/google`                  |
+| Auth Service         | `AuthService.HandleOAuthCallback`       | `GET /auth/google/callback`         |
+| Auth Service         | `AuthService.RefreshToken`              | `POST /auth/refresh`                |
+| Auth Service         | `AuthService.Logout`                    | `POST /auth/logout`                 |
+| Auth Service         | `AuthService.GetMe`                     | `GET /auth/me`                      |
+| Exam Engine          | `ExamService.StartSession`              | `POST /exams/start`                 |
+| Exam Engine          | `ExamService.GetSession`                | `GET /exams/sessions/:id`           |
+| Exam Engine          | `ExamService.SubmitAnswer`              | `POST /exams/sessions/:id/answer`   |
+| Exam Engine          | `ExamService.FinishSession`             | `POST /exams/sessions/:id/submit`   |
+| Exam Engine          | `ExamService.ListResults`               | `GET /exams/results`                |
+| Exam Engine          | `ExamService.GetResult`                 | `GET /exams/results/:id`            |
+| Payment Service      | `PaymentService.CreateCheckout`         | `POST /payments/checkout`           |
+| Payment Service      | `PaymentService.GetSubscription`        | `GET /payments/subscription`        |
+| Payment Service      | `PaymentService.CancelSubscription`     | `DELETE /payments/subscription`     |
+| Payment Service      | `PaymentService.CheckSubscription`      | Guard: before every `/exams/*` call |
+| Statistics Service   | `StatsService.GetSummary`               | `GET /stats/summary`                |
+| Statistics Service   | `StatsService.GetAnalytics`             | `GET /stats/analytics`              |
+| Statistics Service   | `StatsService.GetHistory`               | `GET /stats/history`                |
+| Notification Service | `NotificationService.GetPreferences`    | `GET /notifications/preferences`    |
+| Notification Service | `NotificationService.UpdatePreferences` | `PUT /notifications/preferences`    |
+| Notification Service | `NotificationService.RegisterFcmToken`  | `POST /notifications/fcm-token`     |
 
 ---
 

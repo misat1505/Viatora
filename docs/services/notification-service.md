@@ -101,7 +101,7 @@ service NotificationService {
 }
 ```
 
-Full message definitions: see [`proto/notification.proto`](./proto/notification.proto)
+Full message definitions: see [`notification.proto`](../communication/grpc/notification.proto)
 
 ---
 

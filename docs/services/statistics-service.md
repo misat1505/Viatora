@@ -107,7 +107,7 @@ service StatsService {
 }
 ```
 
-Full message definitions: see [`proto/stats.proto`](./proto/stats.proto)
+Full message definitions: see [`stats.proto`](../communication/grpc/stats.proto)
 
 ### Example: `GetAnalytics` response shape
 

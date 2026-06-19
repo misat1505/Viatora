@@ -126,7 +126,7 @@ service ExamService {
 }
 ```
 
-Full message definitions: see [`proto/exam.proto`](./proto/exam.proto)
+Full message definitions: see [`exam.proto`](../communication/grpc/exam.proto)
 
 ---
 
@@ -153,7 +153,7 @@ service PaymentService {
 
 Called on `StartSession` to verify active subscription before creating the session.
 
-Full definitions: see [`proto/content.proto`](./proto/content.proto) and [`proto/payment.proto`](./proto/payment.proto)
+Full definitions: see [`content.proto`](../communication/grpc/content.proto) and [`payment.proto`](../communication/grpc/payment.proto)
 
 ---
 

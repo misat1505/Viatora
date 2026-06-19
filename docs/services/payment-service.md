@@ -107,7 +107,7 @@ service PaymentService {
 }
 ```
 
-Full message definitions: see [`proto/payment.proto`](./proto/payment.proto)
+Full message definitions: see [`payment.proto`](../communication/grpc/payment.proto)
 
 ---
 

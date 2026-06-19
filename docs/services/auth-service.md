@@ -99,7 +99,7 @@ service AuthService {
 }
 ```
 
-Full message definitions: see [`proto/auth.proto`](./proto/auth.proto)
+Full message definitions: see [`auth.proto`](../communication/grpc/auth.proto)
 
 ---
 
