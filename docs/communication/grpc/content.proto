@@ -14,11 +14,11 @@ option java_multiple_files = true;
 service ContentService {
   // Primary method. Returns a randomised, regulation-compliant set of questions.
   // Composition: 20 basic (1pt) + 6 medium (2pt) + 6 specialist (3pt) = 32 questions, max 74pts.
-  // correct_option and explanation are EXCLUDED — exam integrity.
+  // NOTE: correct_option and basicAnswer are NOT exposed — exam integrity.
   rpc GetQuestions (GetQuestionsRequest) returns (GetQuestionsResponse);
 
   // Fetches a single question with correct_option and explanation.
-  // Called by Exam Engine after session completion to build the result breakdown.
+  // Used after exam completion for result breakdown.
   rpc GetQuestionById (GetQuestionByIdRequest) returns (QuestionDetail);
 }
 
@@ -26,13 +26,12 @@ service ContentService {
 
 message GetQuestionsRequest {
   string category = 1; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
-  // count is fixed at 32 by regulation — field reserved for future flexibility
-  int32  count    = 2;
+  int32  count    = 2; // fixed at 32 by regulation (reserved for future use)
 }
 
 message GetQuestionsResponse {
-  repeated ExamQuestion questions  = 1;
-  string                cache_hit  = 2; // "hit" | "miss" — for observability
+  repeated ExamQuestion questions = 1;
+  string cache_hit = 2; // "hit" | "miss" — observability
 }
 
 // ── GetQuestionById ──────────────────────────────────────────────
@@ -43,35 +42,57 @@ message GetQuestionByIdRequest {
 
 // ── Shared types ─────────────────────────────────────────────────
 
-// Question served during an active exam — no correct answer, no explanation
+// Question served during active exam — normalized output (no answers, no correctness info)
 message ExamQuestion {
-  string          id           = 1;
-  string          external_id  = 2; // Official ID e.g. "1-001"
-  string          text         = 3;
-  string          option_a     = 4;
-  string          option_b     = 5;
-  string          option_c     = 6;
-  string          media_url    = 7; // Sanity CDN URL — empty if no media
-  string          media_type   = 8; // "image" | "video" | "none"
-  int32           points       = 9; // 1 | 2 | 3
-  string          difficulty   = 10; // "basic" | "medium" | "specialist"
-  repeated string tags         = 11; // e.g. ["traffic_signs", "priority_rules"]
+  string id          = 1;
+  string external_id = 2; // Official ID e.g. "1-001"
+  string text        = 3;
+
+  // Unified answer format for UI:
+  // BASIC:
+  //  option_a = "TAK"
+  //  option_b = "NIE"
+  //  option_c = ""
+  // SPECIALIST:
+  //  option_a = "A"
+  //  option_b = "B"
+  //  option_c = "C"
+  string option_a = 4;
+  string option_b = 5;
+  string option_c = 6;
+
+  string media_url  = 7;
+  string media_type = 8; // "image" | "video" | "none"
+
+  int32  points     = 9;  // 1 | 2 | 3
+
+  string question_type = 10; // "basic" | "specialist"
+
+  repeated string tags = 11;
 }
 
-// Full question detail — only returned post-exam via GetQuestionById
+// Full question detail — post-exam only (includes correctness + explanation)
 message QuestionDetail {
-  string          id             = 1;
-  string          external_id    = 2;
-  string          text           = 3;
-  string          option_a       = 4;
-  string          option_b       = 5;
-  string          option_c       = 6;
-  string          correct_option = 7; // "A" | "B" | "C"
-  string          explanation    = 8; // Why the correct answer is correct
-  string          media_url      = 9;
-  string          media_type     = 10;
-  int32           points         = 11;
-  string          difficulty     = 12;
-  repeated string tags           = 13;
-  string          category       = 14;
+  string id          = 1;
+  string external_id = 2;
+  string text        = 3;
+
+  string option_a = 4;
+  string option_b = 5;
+  string option_c = 6;
+
+  string correct_option = 7;
+
+  string explanation = 8;
+
+  string media_url  = 9;
+  string media_type = 10;
+
+  int32  points     = 11;
+
+  string question_type = 12; // "basic" | "specialist"
+
+  repeated string tags = 13;
+
+  string category = 14;
 }

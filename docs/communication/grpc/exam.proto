@@ -71,7 +71,16 @@ message SubmitAnswerRequest {
   string session_id   = 1;
   string user_id      = 2;
   string question_id  = 3;
-  string selected_option = 4; // "A" | "B" | "C"
+  // Unified answer format for UI:
+  // BASIC:
+  //  option_a = "TAK"
+  //  option_b = "NIE"
+  //  option_c = ""
+  // SPECIALIST:
+  //  option_a = "A"
+  //  option_b = "B"
+  //  option_c = "C"
+  string selected_option = 4;
 }
 
 message SubmitAnswerResponse {

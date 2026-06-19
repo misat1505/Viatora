@@ -55,13 +55,51 @@ src/
   fields: [
     { name: 'externalId',    type: 'string'  },  // Official ID e.g. "1-001"
     { name: 'category',      type: 'string'  },  // "A" | "B" | "C" | "D" | "AM"
-    { name: 'difficulty',    type: 'string'  },  // "basic" | "medium" | "specialist"
+
+    // Question Type
+    {
+      name: 'type',
+      type: 'string',
+      options: {
+        list: [
+          { title: 'basic', value: 'basic' },
+          { title: 'specialist', value: 'specialist' }
+        ]
+      }
+    },
+
     { name: 'points',        type: 'number'  },  // 1 | 2 | 3
     { name: 'text',          type: 'text'    },
-    { name: 'optionA',       type: 'string'  },
-    { name: 'optionB',       type: 'string'  },
-    { name: 'optionC',       type: 'string'  },
-    { name: 'correctOption', type: 'string'  },  // "A" | "B" | "C"
+
+    // SPECIALIST (A/B/C)
+    {
+      name: 'optionA',
+      type: 'string',
+      hidden: ({ parent }) => parent?.type === 'basic'
+    },
+    {
+      name: 'optionB',
+      type: 'string',
+      hidden: ({ parent }) => parent?.type === 'basic'
+    },
+    {
+      name: 'optionC',
+      type: 'string',
+      hidden: ({ parent }) => parent?.type === 'basic'
+    },
+    {
+      name: 'correctOption',
+      type: 'string',
+      hidden: ({ parent }) => parent?.type === 'basic'
+    },  // "A" | "B" | "C"
+
+    // BASIC (TAK / NIE)
+    {
+      name: 'basicAnswer',
+      type: 'boolean',
+      hidden: ({ parent }) => parent?.type === 'specialist'
+    },
+
     { name: 'media',         type: 'file'    },  // image or video asset
     { name: 'mediaType',     type: 'string'  },  // "image" | "video" | "none"
     { name: 'explanation',   type: 'text'    },  // Shown post-exam only
@@ -74,11 +112,32 @@ src/
 ### GROQ query
 
 ```groq
-*[_type == "question" && category == $category && isActive == true] {
-  _id, externalId, category, difficulty, points,
-  text, optionA, optionB, optionC, correctOption,
-  "mediaUrl": media.asset->url, mediaType,
-  explanation, tags
+*[
+  _type == "question" &&
+  category == $category &&
+  isActive == true
+] {
+  _id,
+  externalId,
+  category,
+  difficulty,
+  points,
+  type,
+  text,
+
+  // SPECIALIST ONLY
+  optionA,
+  optionB,
+  optionC,
+  correctOption,
+
+  // BASIC ONLY
+  basicAnswer,
+
+  "mediaUrl": media.asset->url,
+  mediaType,
+  explanation,
+  tags
 }
 ```
 

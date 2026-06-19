@@ -102,8 +102,25 @@ In-progress session state lives entirely in Redis — no DB writes until submiss
   "sessionId": "uuid",
   "userId": "uuid",
   "category": "B",
-  "questions": [{ "questionId": "uuid", "correctOption": "A", "points": 1 }],
-  "answers": { "questionId": "A" },
+
+  "questions": [
+    {
+      "questionId": "uuid",
+      "points": 1,
+      "type": "basic"
+    },
+    {
+      "questionId": "uuid",
+      "points": 2,
+      "type": "specialist"
+    }
+  ],
+
+  "answers": {
+    "uuid": "A",
+    "uuid2": "true"
+  },
+
   "startedAt": "2024-01-15T10:00:00Z",
   "timeLimitSeconds": 1500
 }
