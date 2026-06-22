@@ -96,7 +96,7 @@ ClientsModule.register([
     name: 'AUTH_PACKAGE',
     transport: Transport.GRPC,
     options: {
-      package: 'ExamPro.auth',
+      package: 'Viatora.auth',
       protoPath: join(__dirname, 'proto/auth.proto'),
       url: process.env.AUTH_SERVICE_GRPC_URL,
     },
@@ -105,7 +105,7 @@ ClientsModule.register([
     name: 'EXAM_PACKAGE',
     transport: Transport.GRPC,
     options: {
-      package: 'ExamPro.exam',
+      package: 'Viatora.exam',
       protoPath: join(__dirname, 'proto/exam.proto'),
       url: process.env.EXAM_SERVICE_GRPC_URL,
     },

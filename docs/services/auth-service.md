@@ -176,7 +176,7 @@ KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 
 GOOGLE_CLIENT_ID=...
 GOOGLE_CLIENT_SECRET=...
-GOOGLE_REDIRECT_URI=https://ExamPro.pl/auth/google/callback
+GOOGLE_REDIRECT_URI=https://Viatora.pl/auth/google/callback
 
 JWT_PRIVATE_KEY_PATH=/secrets/jwt_private.pem
 JWT_PUBLIC_KEY_PATH=/secrets/jwt_public.pem

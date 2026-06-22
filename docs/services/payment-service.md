@@ -18,7 +18,7 @@
 ## Internal Architecture
 
 ```
-src/main/java/pl/ExamPro/payment/
+src/main/java/pl/Viatora/payment/
 ├── PaymentApplication.java
 ├── config/
 │   ├── StripeConfig.java
@@ -191,8 +191,8 @@ STRIPE_WEBHOOK_SECRET=whsec_...
 STRIPE_PRICE_ID_MONTHLY=price_...
 STRIPE_PRICE_ID_QUARTERLY=price_...
 STRIPE_PRICE_ID_ANNUAL=price_...
-STRIPE_SUCCESS_URL=https://ExamPro.pl/payment/success
-STRIPE_CANCEL_URL=https://ExamPro.pl/payment/cancel
+STRIPE_SUCCESS_URL=https://Viatora.pl/payment/success
+STRIPE_CANCEL_URL=https://Viatora.pl/payment/cancel
 ```
 
 ---
