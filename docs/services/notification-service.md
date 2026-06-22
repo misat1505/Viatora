@@ -19,7 +19,7 @@
 ## Internal Architecture
 
 ```
-src/main/java/pl/ExamPro/notification/
+src/main/java/pl/Viatora/notification/
 ├── NotificationApplication.java
 ├── config/
 │   ├── KafkaConsumerConfig.java
@@ -157,7 +157,7 @@ Failed events after retries go to Dead Letter Topic: `notification.DLT`.
 
 | Template               | Trigger             | Subject                            |
 | ---------------------- | ------------------- | ---------------------------------- |
-| `welcome.html`         | `user.registered`   | Witaj w ExamPro!                   |
+| `welcome.html`         | `user.registered`   | Witaj w Viatora!                   |
 | `exam-result.html`     | `exam.completed`    | Twój wynik: {score}%               |
 | `payment-receipt.html` | `payment.confirmed` | Potwierdzenie zakupu — plan {plan} |
 
@@ -201,11 +201,11 @@ KAFKA_BOOTSTRAP_SERVERS=kafka:9092
 KAFKA_GROUP_ID=notification-service
 
 SENDGRID_API_KEY=SG....
-SENDGRID_FROM_EMAIL=noreply@examPro.pl
-SENDGRID_FROM_NAME=ExamPro
+SENDGRID_FROM_EMAIL=noreply@viatora.pl
+SENDGRID_FROM_NAME=Viatora
 
 FIREBASE_CREDENTIALS_PATH=/secrets/firebase-service-account.json
-FIREBASE_PROJECT_ID=examPro
+FIREBASE_PROJECT_ID=viatora
 ```
 
 ---

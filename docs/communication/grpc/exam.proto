@@ -1,8 +1,8 @@
 syntax = "proto3";
 
-package ExamPro.exam;
+package Viatora.exam;
 
-option java_package = "pl.ExamPro.grpc.exam";
+option java_package = "pl.Viatora.grpc.exam";
 option java_multiple_files = true;
 
 // ─────────────────────────────────────────────────────────────────
