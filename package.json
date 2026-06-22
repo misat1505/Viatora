@@ -4,6 +4,7 @@
   "description": "",
   "main": "index.js",
   "scripts": {
+    "auth-service:gen:grpc": "python -m grpc_tools.protoc -I=./docs/communication/grpc --python_out=./services/auth-service/generated --grpc_python_out=./services/auth-service/generated ./docs/communication/grpc/auth.proto",
     "prepare": "husky"
   },
   "keywords": [],
@@ -16,6 +17,7 @@
     "@commitlint/config-conventional": "^21.0.2",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",
-    "lint-staged": "^17.0.7"
+    "lint-staged": "^17.0.7",
+    "protoc": "^25.9.0"
   }
 }

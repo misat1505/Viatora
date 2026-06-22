@@ -35,7 +35,7 @@ export interface InitiateOAuthRequest {
 }
 
 export interface InitiateOAuthResponse {
-  redirect_url: string;
+  redirectUrl: string;
   state: string;
 }
 

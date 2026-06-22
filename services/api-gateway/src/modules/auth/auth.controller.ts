@@ -26,10 +26,10 @@ export class AuthController implements OnModuleInit {
   /** GET /auth/google — kicks off OAuth flow */
   @Get('google')
   async initiateGoogle(@Res() res: Response) {
-    const { redirect_url } = await firstValueFrom(
+    const { redirectUrl } = await firstValueFrom(
       this.authService.initiateOAuth({}),
     );
-    res.redirect(redirect_url);
+    res.redirect(redirectUrl);
   }
 
   /** GET /auth/google/callback — Google redirects here with ?code=&state= */
