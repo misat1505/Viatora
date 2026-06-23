@@ -13,9 +13,10 @@ class Settings(BaseSettings):
     google_client_secret: str
     google_redirect_uri: str
 
-    jwt_private_key_path: str = "/secrets/jwt_private.pem"
-    jwt_public_key_path: str = "/secrets/jwt_public.pem"
+    jwt_private_key_path: str = "./secrets/jwt_private.pem"
+    jwt_public_key_path: str = "./secrets/jwt_public.pem"
     jwt_access_token_expire_minutes: int = 15
+    jwt_access_token_algorithm: str = "RS256"
     jwt_refresh_token_expire_days: int = 30
 
 

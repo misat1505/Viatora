@@ -56,7 +56,6 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     async def InitiateOAuth(self, request, context):
         state = request.state or secrets.token_urlsafe(16)
         redirect_url = google_oauth.build_authorization_url(state)
-        print(auth_pb2.InitiateOAuthResponse(redirect_url=redirect_url, state=state))
         return auth_pb2.InitiateOAuthResponse(redirect_url=redirect_url, state=state)
 
     async def HandleOAuthCallback(self, request, context):

@@ -30,13 +30,17 @@ def create_access_token(user_id: str, email: str) -> tuple[str, str, int]:
         "iat": datetime.now(UTC),
         "exp": expire,
     }
-    token = jwt.encode(payload, _load_private_key(), algorithm="RS256")
+    token = jwt.encode(
+        payload, _load_private_key(), algorithm=settings.jwt_access_token_algorithm
+    )
     return token, jti, settings.jwt_access_token_expire_minutes * 60
 
 
 def decode_access_token(token: str) -> dict:
     """Raises JWTError on invalid/expired token."""
-    return jwt.decode(token, _load_public_key(), algorithms=["RS256"])
+    return jwt.decode(
+        token, _load_public_key(), algorithms=[settings.jwt_access_token_algorithm]
+    )
 
 
 def generate_refresh_token() -> str:
