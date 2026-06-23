@@ -20,7 +20,7 @@ export interface ValidateTokenRequest {
 
 export interface ValidateTokenResponse {
   valid: boolean;
-  user_id: string;
+  userId: string;
   email: string;
   display_name: string;
   avatar_url: string;
@@ -80,7 +80,7 @@ export interface LogoutResponse {
 // ── GetMe ─────────────────────────────────────────────────────────
 
 export interface GetMeRequest {
-  user_id: string;
+  userId: string;
 }
 
 export interface GetMeResponse {

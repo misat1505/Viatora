@@ -4,13 +4,16 @@ import {
   Inject,
   OnModuleInit,
   Query,
+  Req,
   Res,
+  UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import type { Response } from 'express';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { AuthGrpcService } from './auth.types';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController implements OnModuleInit {
@@ -64,9 +67,10 @@ export class AuthController implements OnModuleInit {
   // }
 
   /** GET /auth/me */
-  // @Get('me')
-  // @UseGuards(JwtAuthGuard)
-  // async getMe(@Req() req: any) {
-  //   return firstValueFrom(this.authService.getMe({ user_id: req.user.userId }));
-  // }
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  // TODO: fix this any
+  async getMe(@Req() req: any) {
+    return firstValueFrom(this.authService.getMe({ userId: req.user.userId }));
+  }
 }

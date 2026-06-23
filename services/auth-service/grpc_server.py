@@ -1,9 +1,11 @@
 import logging
 import secrets
+import uuid
 
 import grpc
 from database import AsyncSessionFactory
 from generated import auth_pb2, auth_pb2_grpc
+from jose import JWTError
 
 from services import google_oauth, token_service, user_service
 
@@ -24,34 +26,33 @@ def _user_profile_proto(user) -> auth_pb2.UserProfile:
 
 class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     async def ValidateToken(self, request, context):
-        pass
-        # try:
-        #     payload = token_service.decode_access_token(request.token)
-        # except JWTError:
-        #     return auth_pb2.ValidateTokenResponse(valid=False)
+        try:
+            payload = token_service.decode_access_token(request.token)
+        except JWTError:
+            return auth_pb2.ValidateTokenResponse(valid=False)
 
-        # # Check revocation list in Redis
+        # Check revocation list in Redis
         # from app.redis_client import redis_client
 
-        # jti = payload.get("jti", "")
+        jti = payload.get("jti", "")
         # if await redis_client.exists(f"token:revoked:{jti}"):
         #     return auth_pb2.ValidateTokenResponse(valid=False)
 
-        # async with AsyncSessionFactory() as db:
-        #     user = await user_service.get_user_by_id(db, uuid.UUID(payload["sub"]))
+        async with AsyncSessionFactory() as db:
+            user = await user_service.get_user_by_id(db, uuid.UUID(payload["sub"]))
 
-        # if not user or not user.is_active:
-        #     return auth_pb2.ValidateTokenResponse(valid=False)
+        if not user or not user.is_active:
+            return auth_pb2.ValidateTokenResponse(valid=False)
 
-        # return auth_pb2.ValidateTokenResponse(
-        #     valid=True,
-        #     user_id=str(user.id),
-        #     email=user.email,
-        #     display_name=user.display_name,
-        #     avatar_url=user.avatar_url or "",
-        #     is_active=user.is_active,
-        #     jti=jti,
-        # )
+        return auth_pb2.ValidateTokenResponse(
+            valid=True,
+            user_id=str(user.id),
+            email=user.email,
+            display_name=user.display_name,
+            avatar_url=user.avatar_url or "",
+            is_active=user.is_active,
+            jti=jti,
+        )
 
     async def InitiateOAuth(self, request, context):
         state = request.state or secrets.token_urlsafe(16)
@@ -166,12 +167,11 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         # return auth_pb2.LogoutResponse(success=True)
 
     async def GetMe(self, request, context):
-        pass
-        # async with AsyncSessionFactory() as db:
-        #     user = await user_service.get_user_by_id(db, uuid.UUID(request.user_id))
+        async with AsyncSessionFactory() as db:
+            user = await user_service.get_user_by_id(db, uuid.UUID(request.user_id))
 
-        # if not user:
-        #     await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
-        #     return
+        if not user:
+            await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
+            return
 
-        # return auth_pb2.GetMeResponse(user=_user_profile_proto(user))
+        return auth_pb2.GetMeResponse(user=_user_profile_proto(user))
