@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   OnModuleInit,
+  Post,
   Query,
   Req,
   Res,
@@ -52,20 +54,24 @@ export class AuthController implements OnModuleInit {
   }
 
   /** POST /auth/refresh */
-  // @Post('refresh')
-  // async refresh(@Req() req: Request) {
-  //   const { refresh_token } = req.body;
-  //   return firstValueFrom(this.authService.refreshToken({ refresh_token }));
-  // }
+  @Post('refresh')
+  async refresh(@Body() body: any) {
+    return firstValueFrom(
+      this.authService.refreshToken({ refreshToken: body.refresh_token }),
+    );
+  }
 
   /** POST /auth/logout */
-  // @Post('logout')
-  // @UseGuards(JwtAuthGuard)
-  // async logout(@Req() req: any) {
-  //   return firstValueFrom(
-  //     this.authService.logout({ user_id: req.user.userId }),
-  //   );
-  // }
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@Req() req: any, @Body() body: any) {
+    return firstValueFrom(
+      this.authService.logout({
+        userId: req.user.userId,
+        refreshToken: body.refresh_token,
+      }),
+    );
+  }
 
   /** GET /auth/me */
   @Get('me')

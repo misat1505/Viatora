@@ -1,3 +1,4 @@
+import datetime
 import logging
 import secrets
 import uuid
@@ -97,63 +98,60 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         )
 
     async def RefreshToken(self, request, context):
-        pass
-        # # Decode old token to get user_id (unverified — we verify via DB hash)
-        # try:
-        #     payload = token_service.decode_access_token.__func__ if False else None
-        #     # We don't need to decode the access token here —
-        #     # user_id must be looked up from the refresh token record itself.
-        #     # For simplicity we accept user_id embedded in a signed JWT refresh token,
-        #     # but per spec refresh tokens are opaque: we find user by hash match.
-        #     from models.user import RefreshToken as RTModel
-        #     from services.token_service import hash_token
-        #     from sqlalchemy import select
+        # Decode old token to get user_id (unverified — we verify via DB hash)
+        try:
+            # We don't need to decode the access token here —
+            # user_id must be looked up from the refresh token record itself.
+            # For simplicity we accept user_id embedded in a signed JWT refresh token,
+            # but per spec refresh tokens are opaque: we find user by hash match.
+            from models.user import RefreshToken as RTModel
+            from services.token_service import hash_token
+            from sqlalchemy import select
 
-        #     async with AsyncSessionFactory() as db:
-        #         token_hash = hash_token(request.refresh_token)
-        #         result = await db.execute(
-        #             select(RTModel).where(
-        #                 RTModel.token_hash == token_hash,
-        #                 RTModel.revoked.is_(False),
-        #             )
-        #         )
-        #         rt = result.scalar_one_or_none()
-        #         if not rt or rt.expires_at < datetime.now(UTC):
-        #             await context.abort(
-        #                 grpc.StatusCode.UNAUTHENTICATED, "Invalid refresh token"
-        #             )
-        #             return
+            async with AsyncSessionFactory() as db:
+                token_hash = hash_token(request.refresh_token)
+                result = await db.execute(
+                    select(RTModel).where(
+                        RTModel.token_hash == token_hash,
+                        RTModel.revoked.is_(False),
+                    )
+                )
+                rt = result.scalar_one_or_none()
+                if not rt or rt.expires_at < datetime.datetime.now(datetime.UTC):
+                    await context.abort(
+                        grpc.StatusCode.UNAUTHENTICATED, "Invalid refresh token"
+                    )
+                    return
 
-        #         user, new_raw = await user_service.rotate_refresh_token(
-        #             db, request.refresh_token, rt.user_id
-        #         )
+                user, new_raw = await user_service.rotate_refresh_token(
+                    db, request.refresh_token, rt.user_id
+                )
 
-        # except Exception as e:
-        #     logger.exception("RefreshToken error")
-        #     await context.abort(grpc.StatusCode.INTERNAL, str(e))
-        #     return
+        except Exception as e:
+            logger.exception("RefreshToken error")
+            await context.abort(grpc.StatusCode.INTERNAL, str(e))
+            return
 
-        # access_token, _jti, expires_in = token_service.create_access_token(
-        #     str(user.id), user.email
-        # )
-        # return auth_pb2.RefreshTokenResponse(
-        #     access_token=access_token,
-        #     refresh_token=new_raw,
-        #     expires_in=expires_in,
-        # )
+        access_token, _jti, expires_in = token_service.create_access_token(
+            str(user.id), user.email
+        )
+        return auth_pb2.RefreshTokenResponse(
+            access_token=access_token,
+            refresh_token=new_raw,
+            expires_in=expires_in,
+        )
 
     async def Logout(self, request, context):
-        pass
-        # async with AsyncSessionFactory() as db:
-        #     await user_service.revoke_refresh_token(
-        #         db,
-        #         uuid.UUID(request.user_id),
-        #         request.refresh_token,
-        #     )
+        async with AsyncSessionFactory() as db:
+            await user_service.revoke_refresh_token(
+                db,
+                uuid.UUID(request.user_id),
+                request.refresh_token,
+            )
 
-        # # Add jti to revocation list in Redis so Gateway cache is invalidated
-        # # Gateway will see 401 on next validation attempt after 5-min cache expires.
-        # # For immediate revocation, we'd need to push jti — done here best-effort.
+        # Add jti to revocation list in Redis so Gateway cache is invalidated
+        # Gateway will see 401 on next validation attempt after 5-min cache expires.
+        # For immediate revocation, we'd need to push jti — done here best-effort.
         # try:
         #     from app.redis_client import redis_client
 
@@ -164,7 +162,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
         # except Exception:
         #     pass  # access token already expired or not passed — that's fine
 
-        # return auth_pb2.LogoutResponse(success=True)
+        return auth_pb2.LogoutResponse(success=True)
 
     async def GetMe(self, request, context):
         async with AsyncSessionFactory() as db:
