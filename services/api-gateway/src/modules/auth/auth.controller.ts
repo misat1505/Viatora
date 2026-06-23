@@ -16,7 +16,19 @@ import type { Response } from 'express';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { AuthServiceClient } from 'src/generated/auth';
+import { type AuthenticatedRequest } from 'src/common/types/authenticated-request';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthTokensDto } from './dto/auth-tokens.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutDto } from './dto/logout.dto';
+import { MeDto } from './dto/me.dto';
 
+@ApiTags('Auth')
 @Controller('auth')
 export class AuthController implements OnModuleInit {
   private authService!: AuthServiceClient;
@@ -43,41 +55,45 @@ export class AuthController implements OnModuleInit {
   async googleCallback(
     @Query('code') code: string,
     @Query('state') state: string,
-    @Res() res: Response,
   ) {
-    const tokens = await firstValueFrom(
+    return firstValueFrom(
       this.authService.handleOAuthCallback({ code, state }),
     );
-
-    // Return tokens — in production you may set an httpOnly cookie instead
-    res.json(tokens);
   }
 
   /** POST /auth/refresh */
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOkResponse({ type: AuthTokensDto })
   @Post('refresh')
-  async refresh(@Body() body: any) {
+  async refresh(@Body() body: RefreshTokenDto) {
     return firstValueFrom(
-      this.authService.refreshToken({ refreshToken: body.refresh_token }),
+      this.authService.refreshToken({
+        refreshToken: body.refreshToken,
+      }),
     );
   }
 
   /** POST /auth/logout */
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout user' })
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@Req() req: any, @Body() body: any) {
+  async logout(@Req() req: AuthenticatedRequest, @Body() body: LogoutDto) {
     return firstValueFrom(
       this.authService.logout({
         userId: req.user.userId,
-        refreshToken: body.refresh_token,
+        refreshToken: body.refreshToken,
       }),
     );
   }
 
   /** GET /auth/me */
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Current user' })
+  @ApiOkResponse({ type: MeDto })
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  // TODO: fix this any
-  async getMe(@Req() req: any) {
+  async getMe(@Req() req: AuthenticatedRequest) {
     return firstValueFrom(this.authService.getMe({ userId: req.user.userId }));
   }
 }
