@@ -5,6 +5,7 @@
   "main": "index.js",
   "scripts": {
     "auth-service:gen:grpc": "python -m grpc_tools.protoc -I=./docs/communication/grpc --python_out=./services/auth-service/generated --grpc_python_out=./services/auth-service/generated ./docs/communication/grpc/auth.proto",
+    "api-gateway:gen:grpc": "pnpm buf generate",
     "prepare": "husky"
   },
   "keywords": [],
@@ -13,11 +14,14 @@
   "packageManager": "pnpm@11.1.2",
   "type": "module",
   "devDependencies": {
+    "@bufbuild/buf": "^1.71.0",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
+    "cross-env": "^10.1.0",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",
     "lint-staged": "^17.0.7",
-    "protoc": "^25.9.0"
+    "protoc": "^25.9.0",
+    "ts-proto": "^2.11.8"
   }
 }

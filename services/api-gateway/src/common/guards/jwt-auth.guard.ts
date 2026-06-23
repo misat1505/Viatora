@@ -9,12 +9,12 @@ import {
 import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
-import { AuthGrpcService } from 'src/modules/auth/auth.types';
+import { AuthServiceClient } from 'src/generated/auth';
 // import { REDIS_CLIENT } from '../../redis/redis.module';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate, OnModuleInit {
-  private authService!: AuthGrpcService;
+  private authService!: AuthServiceClient;
 
   constructor(
     @Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc,
@@ -23,7 +23,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
 
   onModuleInit() {
     this.authService =
-      this.grpcClient.getService<AuthGrpcService>('AuthService');
+      this.grpcClient.getService<AuthServiceClient>('AuthService');
   }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {

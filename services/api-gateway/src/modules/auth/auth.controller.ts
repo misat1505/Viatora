@@ -12,24 +12,25 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import type { Response } from 'express';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
-import { AuthGrpcService } from './auth.types';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthServiceClient } from 'src/generated/auth';
 
 @Controller('auth')
 export class AuthController implements OnModuleInit {
-  private authService!: AuthGrpcService;
+  private authService!: AuthServiceClient;
 
   constructor(@Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc) {}
 
   onModuleInit() {
     this.authService =
-      this.grpcClient.getService<AuthGrpcService>('AuthService');
+      this.grpcClient.getService<AuthServiceClient>('AuthService');
   }
 
   /** GET /auth/google — kicks off OAuth flow */
   @Get('google')
   async initiateGoogle(@Res() res: Response) {
     const { redirectUrl } = await firstValueFrom(
+      // @ts-expect-error we will not support CSRF for now
       this.authService.initiateOAuth({}),
     );
     res.redirect(redirectUrl);
