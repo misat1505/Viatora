@@ -39,13 +39,37 @@ class RefreshTokenRepository:
     async def rotate_token(
         self,
         user_id: str,
-        old_token: RefreshToken,
+        old_token_hash: str,
         new_token_hash: str,
         expires_at: datetime,
     ):
-        old_token.revoked = True
+        async with self.session_factory() as session:
+            result = await session.execute(
+                select(RefreshToken).where(
+                    RefreshToken.token_hash == old_token_hash,
+                    RefreshToken.user_id == user_id,
+                    RefreshToken.revoked.is_(False),
+                )
+            )
 
-        await self.create_refresh_token(user_id, new_token_hash, expires_at)
+            old_token = result.scalar_one_or_none()
+
+            if old_token is None:
+                return None
+
+            old_token.revoked = True
+
+            new_token = RefreshToken(
+                user_id=user_id,
+                token_hash=new_token_hash,
+                expires_at=expires_at,
+            )
+
+            session.add(new_token)
+
+            await session.commit()
+
+            return new_token
 
     async def revoke_token(self, user_id: str, token_hash: str):
         async with self.session_factory() as session:

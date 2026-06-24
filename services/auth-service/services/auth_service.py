@@ -8,7 +8,6 @@ from domain.initiate_oauth_dto import InitiateOAuthDTO
 from domain.logout_dto import LogoutDTO
 from domain.refresh_token_dto import RefreshTokenDTO
 from domain.validate_token_dto import ValidateTokenDTO
-from exceptions.internal_exception import InternalException
 from exceptions.not_found_exception import NotFoundException
 from exceptions.unuathenticated_exception import UnuathenticatedException
 from services.google_oauth_service import GoogleOAuthService
@@ -89,25 +88,20 @@ class AuthService:
 
     async def refresh_token(self, dto: RefreshTokenDTO):
         # Decode old token to get user_id (unverified — we verify via DB hash)
-        try:
-            # We don't need to decode the access token here —
-            # user_id must be looked up from the refresh token record itself.
-            # For simplicity we accept user_id embedded in a signed JWT refresh token,
-            # but per spec refresh tokens are opaque: we find user by hash match.
-            token_hash = self.token_service.hash_token(dto.refresh_token)
-            rt = await self.token_service.get_active_token_by_hash(token_hash)
-            if not rt or rt.expires_at < datetime.now(UTC):
-                raise UnuathenticatedException("Invalid refresh token")
+        # We don't need to decode the access token here —
+        # user_id must be looked up from the refresh token record itself.
+        # For simplicity we accept user_id embedded in a signed JWT refresh token,
+        # but per spec refresh tokens are opaque: we find user by hash match.
+        token_hash = self.token_service.hash_token(dto.refresh_token)
+        rt = await self.token_service.get_active_token_by_hash(token_hash)
+        if not rt or rt.expires_at < datetime.now(UTC):
+            raise UnuathenticatedException("Invalid refresh token")
 
-            new_raw = await self.token_service.rotate_refresh_token(
-                dto.refresh_token, rt.user_id
-            )
+        new_raw = await self.token_service.rotate_refresh_token(
+            dto.refresh_token, str(rt.user_id)
+        )
 
-            user = await self.user_service.get_user_by_id(str(rt.user_id))
-
-        except Exception as e:
-            self.logger.exception("RefreshToken error")
-            raise InternalException("RefreshToken error", str(e))
+        user = await self.user_service.get_user_by_id(str(rt.user_id))
 
         access_token, _, expires_in = self.token_service.create_access_token(
             str(user.id), user.email

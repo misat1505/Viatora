@@ -93,7 +93,7 @@ class TokenService:
         new_token_hash = self.hash_token(new_raw)
         new_expires_at = self.refresh_token_expires_at()
         await self.refresh_token_repository.rotate_token(
-            user_id, old_token, new_token_hash, new_expires_at
+            user_id, old_token.token_hash, new_token_hash, new_expires_at
         )
 
         return new_raw
