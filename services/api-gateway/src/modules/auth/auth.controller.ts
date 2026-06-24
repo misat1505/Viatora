@@ -6,7 +6,6 @@ import {
   OnModuleInit,
   Post,
   Query,
-  Req,
   Res,
   UseGuards,
 } from '@nestjs/common';
@@ -15,8 +14,7 @@ import { firstValueFrom } from 'rxjs';
 import type { Response } from 'express';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthServiceClient } from 'src/generated/auth';
-import { type AuthenticatedRequest } from 'src/common/types/authenticated-request';
+import { AuthServiceClient, UserProfile } from 'src/generated/auth';
 import {
   ApiBearerAuth,
   ApiOkResponse,
@@ -27,6 +25,7 @@ import { AuthTokensDto } from './dto/auth-tokens.dto';
 import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutDto } from './dto/logout.dto';
 import { MeDto } from './dto/me.dto';
+import { CurrentUser } from 'src/common/decorators/get-current-user';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -78,10 +77,10 @@ export class AuthController implements OnModuleInit {
   @ApiOperation({ summary: 'Logout user' })
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@Req() req: AuthenticatedRequest, @Body() body: LogoutDto) {
+  async logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDto) {
     return firstValueFrom(
       this.authService.logout({
-        userId: req.user.userId,
+        userId: user.userId,
         refreshToken: body.refreshToken,
       }),
     );
@@ -93,7 +92,7 @@ export class AuthController implements OnModuleInit {
   @ApiOkResponse({ type: MeDto })
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getMe(@Req() req: AuthenticatedRequest) {
-    return firstValueFrom(this.authService.getMe({ userId: req.user.userId }));
+  async getMe(@CurrentUser() user: UserProfile) {
+    return firstValueFrom(this.authService.getMe({ userId: user.userId }));
   }
 }
