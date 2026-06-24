@@ -10,6 +10,11 @@ from services.token_service import TokenService
 from services.user_service import UserService
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 
+logging.basicConfig(
+    level=logging.INFO,
+    format="%(levelname)s: %(message)s",
+)
+
 
 class Container(containers.DeclarativeContainer):
     settings = providers.Configuration()
