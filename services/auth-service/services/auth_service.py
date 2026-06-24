@@ -3,6 +3,8 @@ from datetime import UTC, datetime
 from logging import Logger
 
 import grpc
+from domain.handle_oauth_callback_dto import HandleOAuthCallbackDTO
+from exceptions.unuathenticated_exception import UnuathenticatedException
 from generated import auth_pb2
 from jose import JWTError
 from services.google_oauth_service import GoogleOAuthService
@@ -65,21 +67,18 @@ class AuthService:
 
     async def initiate_oauth(self, state):
         state = state or secrets.token_urlsafe(16)
-        redirect_url = self.google_oauth_service.build_authorization_url(state)
-        return auth_pb2.InitiateOAuthResponse(redirect_url=redirect_url, state=state)
+        return self.google_oauth_service.build_authorization_url(state)
 
-    async def handle_oauth_callback(self, request, context):
+    async def handle_oauth_callback(self, dto: HandleOAuthCallbackDTO):
         try:
             google_access_token = await self.google_oauth_service.exchange_code(
-                request.code
+                dto.code
             )
             user_info = await self.google_oauth_service.get_user_info(
                 google_access_token
             )
         except Exception as e:
-            self.logger.exception("Google OAuth error")
-            await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
-            return
+            raise UnuathenticatedException("Google OAuth error", str(e))
 
         user, is_new = await self.user_service.get_or_create_user(
             google_id=user_info.google_id,
@@ -99,12 +98,12 @@ class AuthService:
             # await publish_user_registered(str(user.id), user.email, user.display_name)
             pass
 
-        return auth_pb2.OAuthCallbackResponse(
-            access_token=access_token,
-            refresh_token=raw_refresh,
-            expires_in=expires_in,
-            user=_user_profile_proto(user),
-            is_new_user=is_new,
+        return (
+            access_token,
+            raw_refresh,
+            expires_in,
+            user,
+            is_new,
         )
 
     async def refresh_token(self, request, context):
