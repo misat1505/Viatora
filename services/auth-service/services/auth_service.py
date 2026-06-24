@@ -3,10 +3,14 @@ from datetime import UTC, datetime
 from logging import Logger
 
 from domain.get_me_dto import GetMeDTO
-from domain.handle_oauth_callback_dto import HandleOAuthCallbackDTO
-from domain.initiate_oauth_dto import InitiateOAuthDTO
+from domain.handle_oauth_callback_dto import (
+    HandleOAuthCallbackDTO,
+    HandleOAuthCallbackResponseDTO,
+)
+from domain.initiate_oauth_dto import InitiateOAuthDTO, InitiateOAuthResponseDTO
 from domain.logout_dto import LogoutDTO
 from domain.refresh_token_dto import RefreshTokenDTO
+from domain.user_dto import UserDTO
 from domain.validate_token_dto import ValidateTokenDTO
 from exceptions.not_found_exception import NotFoundException
 from exceptions.unuathenticated_exception import UnuathenticatedException
@@ -45,11 +49,14 @@ class AuthService:
 
         return user, jti
 
-    async def initiate_oauth(self, dto: InitiateOAuthDTO):
+    async def initiate_oauth(self, dto: InitiateOAuthDTO) -> InitiateOAuthResponseDTO:
         state = dto.state or secrets.token_urlsafe(16)
-        return self.google_oauth_service.build_authorization_url(state)
+        url = self.google_oauth_service.build_authorization_url(state)
+        return InitiateOAuthResponseDTO(redirect_url=url)
 
-    async def handle_oauth_callback(self, dto: HandleOAuthCallbackDTO):
+    async def handle_oauth_callback(
+        self, dto: HandleOAuthCallbackDTO
+    ) -> HandleOAuthCallbackResponseDTO:
         try:
             google_access_token = await self.google_oauth_service.exchange_code(
                 dto.code
@@ -78,12 +85,22 @@ class AuthService:
             # await publish_user_registered(str(user.id), user.email, user.display_name)
             pass
 
-        return (
-            access_token,
-            raw_refresh,
-            expires_in,
-            user,
-            is_new,
+        user_dto = UserDTO(
+            user_id=str(user.id),
+            avatar_url=user.avatar_url,
+            created_at=user.created_at,
+            display_name=user.display_name,
+            email=user.email,
+            is_active=user.is_active,
+            last_login_at=user.last_login_at,
+        )
+
+        return HandleOAuthCallbackResponseDTO(
+            access_token=access_token,
+            refresh_token=raw_refresh,
+            expires_in=expires_in,
+            user=user_dto,
+            is_new_user=is_new,
         )
 
     async def refresh_token(self, dto: RefreshTokenDTO):

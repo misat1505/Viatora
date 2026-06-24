@@ -1,10 +1,10 @@
+from domain.user_dto import UserDTO
 from generated import auth_pb2
-from models.user import User
 
 
-def user_to_proto(user: User) -> auth_pb2.UserProfile:
+def user_to_proto(user: UserDTO) -> auth_pb2.UserProfile:
     return auth_pb2.UserProfile(
-        user_id=str(user.id),
+        user_id=str(user.user_id),
         email=user.email,
         display_name=user.display_name,
         avatar_url=user.avatar_url or "",

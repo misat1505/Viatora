@@ -11,6 +11,7 @@ from exceptions.unuathenticated_exception import UnuathenticatedException
 from generated import auth_pb2, auth_pb2_grpc
 from jose import JWTError
 from services.auth_service import AuthService
+from utils.convert_datetimes_to_ints import convert_datetimes_to_ints
 from utils.user_to_proto import user_to_proto
 from utils.validate_request import ValidateRequest
 
@@ -42,10 +43,8 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     # InitiateOAuth
     @ValidateRequest(InitiateOAuthDTO)
     async def InitiateOAuth(self, request: InitiateOAuthDTO, _):
-        redirect_url = await self.auth_service.initiate_oauth(request)
-        return auth_pb2.InitiateOAuthResponse(
-            redirect_url=redirect_url, state=request.state
-        )
+        data = await self.auth_service.initiate_oauth(request)
+        return auth_pb2.InitiateOAuthResponse(**data.model_dump(), state=request.state)
 
     # HandleOAuthCallback
     @ValidateRequest(HandleOAuthCallbackDTO)
@@ -54,20 +53,11 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     ):
         try:
             data = await self.auth_service.handle_oauth_callback(request)
-            (
-                access_token,
-                raw_refresh,
-                expires_in,
-                user,
-                is_new,
-            ) = data
-            return auth_pb2.OAuthCallbackResponse(
-                access_token=access_token,
-                refresh_token=raw_refresh,
-                expires_in=expires_in,
-                user=user_to_proto(user),
-                is_new_user=is_new,
-            )
+            user_proto = user_to_proto(data.user)
+            dumped = data.model_dump(exclude={"user"})
+            converted = convert_datetimes_to_ints(dumped)
+
+            return auth_pb2.OAuthCallbackResponse(**converted, user=user_proto)
         except UnuathenticatedException as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
 
