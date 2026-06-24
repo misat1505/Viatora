@@ -1,0 +1,98 @@
+import {
+  Body,
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  Post,
+  Query,
+  Res,
+  UseGuards,
+} from '@nestjs/common';
+import { type ClientGrpc } from '@nestjs/microservices';
+import { firstValueFrom } from 'rxjs';
+import type { Response } from 'express';
+import { AUTH_PACKAGE } from '../../grpc/clients.module';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { AuthServiceClient, UserProfile } from 'src/generated/auth';
+import {
+  ApiBearerAuth,
+  ApiOkResponse,
+  ApiOperation,
+  ApiTags,
+} from '@nestjs/swagger';
+import { AuthTokensDto } from './dto/auth-tokens.dto';
+import { RefreshTokenDto } from './dto/refresh-token.dto';
+import { LogoutDto } from './dto/logout.dto';
+import { MeDto } from './dto/me.dto';
+import { CurrentUser } from 'src/common/decorators/get-current-user';
+
+@ApiTags('Auth')
+@Controller('auth')
+export class AuthController implements OnModuleInit {
+  private authService!: AuthServiceClient;
+
+  constructor(@Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc) {}
+
+  onModuleInit() {
+    this.authService =
+      this.grpcClient.getService<AuthServiceClient>('AuthService');
+  }
+
+  /** GET /auth/google — kicks off OAuth flow */
+  @Get('google')
+  async initiateGoogle(@Res() res: Response) {
+    const { redirectUrl } = await firstValueFrom(
+      // @ts-expect-error we will not support CSRF for now
+      this.authService.initiateOAuth({}),
+    );
+    res.redirect(redirectUrl);
+  }
+
+  /** GET /auth/google/callback — Google redirects here with ?code=&state= */
+  @Get('google/callback')
+  async googleCallback(
+    @Query('code') code: string,
+    @Query('state') state: string,
+  ) {
+    return firstValueFrom(
+      this.authService.handleOAuthCallback({ code, state }),
+    );
+  }
+
+  /** POST /auth/refresh */
+  @ApiOperation({ summary: 'Refresh access token' })
+  @ApiOkResponse({ type: AuthTokensDto })
+  @Post('refresh')
+  async refresh(@Body() body: RefreshTokenDto) {
+    return firstValueFrom(
+      this.authService.refreshToken({
+        refreshToken: body.refreshToken,
+      }),
+    );
+  }
+
+  /** POST /auth/logout */
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Logout user' })
+  @Post('logout')
+  @UseGuards(JwtAuthGuard)
+  async logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDto) {
+    return firstValueFrom(
+      this.authService.logout({
+        userId: user.userId,
+        refreshToken: body.refreshToken,
+      }),
+    );
+  }
+
+  /** GET /auth/me */
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'Current user' })
+  @ApiOkResponse({ type: MeDto })
+  @Get('me')
+  @UseGuards(JwtAuthGuard)
+  async getMe(@CurrentUser() user: UserProfile) {
+    return firstValueFrom(this.authService.getMe({ userId: user.userId }));
+  }
+}

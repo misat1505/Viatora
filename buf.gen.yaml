@@ -1,0 +1,13 @@
+version: v2
+
+inputs:
+  - directory: docs/communication/grpc
+
+plugins:
+  - remote: buf.build/community/stephenh-ts-proto
+    out: services/api-gateway/src/generated
+    opt:
+      - nestJs=true
+      - outputServices=grpc-js
+      - useOptionals=none
+      - outputClientImpl=grpc-js

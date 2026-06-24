@@ -1,2 +1,4 @@
 allowBuilds:
+  '@scarf/scarf': false
+  protobufjs: false
   unrs-resolver: true
