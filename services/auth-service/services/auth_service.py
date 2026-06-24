@@ -2,26 +2,18 @@ import secrets
 from datetime import UTC, datetime
 from logging import Logger
 
-import grpc
+from domain.get_me_dto import GetMeDTO
 from domain.handle_oauth_callback_dto import HandleOAuthCallbackDTO
+from domain.initiate_oauth_dto import InitiateOAuthDTO
+from domain.logout_dto import LogoutDTO
+from domain.refresh_token_dto import RefreshTokenDTO
+from domain.validate_token_dto import ValidateTokenDTO
+from exceptions.internal_exception import InternalException
+from exceptions.not_found_exception import NotFoundException
 from exceptions.unuathenticated_exception import UnuathenticatedException
-from generated import auth_pb2
-from jose import JWTError
 from services.google_oauth_service import GoogleOAuthService
 from services.token_service import TokenService
 from services.user_service import UserService
-
-
-def _user_profile_proto(user) -> auth_pb2.UserProfile:
-    return auth_pb2.UserProfile(
-        user_id=str(user.id),
-        email=user.email,
-        display_name=user.display_name,
-        avatar_url=user.avatar_url or "",
-        is_active=user.is_active,
-        created_at=user.created_at.isoformat(),
-        last_login_at=user.last_login_at.isoformat() if user.last_login_at else "",
-    )
 
 
 class AuthService:
@@ -37,11 +29,8 @@ class AuthService:
         self.google_oauth_service = google_oauth_service
         self.logger = logger
 
-    async def validate_token(self, token):
-        try:
-            payload = self.token_service.decode_access_token(token)
-        except JWTError:
-            return auth_pb2.ValidateTokenResponse(valid=False)
+    async def validate_token(self, dto: ValidateTokenDTO):
+        payload = self.token_service.decode_access_token(dto.token)
 
         # Check revocation list in Redis
         # from app.redis_client import redis_client
@@ -50,23 +39,15 @@ class AuthService:
         # if await redis_client.exists(f"token:revoked:{jti}"):
         #     return auth_pb2.ValidateTokenResponse(valid=False)
 
-        user = await self.user_repository.get_user_by_id(payload["sub"])
+        user = await self.user_service.get_user_by_id(payload["sub"])
 
         if not user or not user.is_active:
-            return auth_pb2.ValidateTokenResponse(valid=False)
+            raise UnuathenticatedException()
 
-        return auth_pb2.ValidateTokenResponse(
-            valid=True,
-            user_id=str(user.id),
-            email=user.email,
-            display_name=user.display_name,
-            avatar_url=user.avatar_url or "",
-            is_active=user.is_active,
-            jti=jti,
-        )
+        return user, jti
 
-    async def initiate_oauth(self, state):
-        state = state or secrets.token_urlsafe(16)
+    async def initiate_oauth(self, dto: InitiateOAuthDTO):
+        state = dto.state or secrets.token_urlsafe(16)
         return self.google_oauth_service.build_authorization_url(state)
 
     async def handle_oauth_callback(self, dto: HandleOAuthCallbackDTO):
@@ -106,43 +87,36 @@ class AuthService:
             is_new,
         )
 
-    async def refresh_token(self, request, context):
+    async def refresh_token(self, dto: RefreshTokenDTO):
         # Decode old token to get user_id (unverified — we verify via DB hash)
         try:
             # We don't need to decode the access token here —
             # user_id must be looked up from the refresh token record itself.
             # For simplicity we accept user_id embedded in a signed JWT refresh token,
             # but per spec refresh tokens are opaque: we find user by hash match.
-            token_hash = self.token_service.hash_token(request.refresh_token)
+            token_hash = self.token_service.hash_token(dto.refresh_token)
             rt = await self.token_service.get_active_token_by_hash(token_hash)
             if not rt or rt.expires_at < datetime.now(UTC):
-                await context.abort(
-                    grpc.StatusCode.UNAUTHENTICATED, "Invalid refresh token"
-                )
-                return
+                raise UnuathenticatedException("Invalid refresh token")
 
             new_raw = await self.token_service.rotate_refresh_token(
-                request.refresh_token, rt.user_id
+                dto.refresh_token, rt.user_id
             )
 
-            user = await self.user_service.get_user_by_id(rt.user_id)
+            user = await self.user_service.get_user_by_id(str(rt.user_id))
 
         except Exception as e:
             self.logger.exception("RefreshToken error")
-            await context.abort(grpc.StatusCode.INTERNAL, str(e))
-            return
+            raise InternalException("RefreshToken error", str(e))
 
         access_token, _, expires_in = self.token_service.create_access_token(
             str(user.id), user.email
         )
-        return auth_pb2.RefreshTokenResponse(
-            access_token=access_token,
-            refresh_token=new_raw,
-            expires_in=expires_in,
-        )
 
-    async def logout(self, user_id, refresh_token):
-        await self.token_service.revoke_refresh_token(user_id, refresh_token)
+        return access_token, new_raw, expires_in
+
+    async def logout(self, dto: LogoutDTO):
+        await self.token_service.revoke_refresh_token(dto.user_id, dto.refresh_token)
 
         # Add jti to revocation list in Redis so Gateway cache is invalidated
         # Gateway will see 401 on next validation attempt after 5-min cache expires.
@@ -157,13 +131,12 @@ class AuthService:
         # except Exception:
         #     pass  # access token already expired or not passed — that's fine
 
-        return auth_pb2.LogoutResponse(success=True)
+        return
 
-    async def get_me(self, request, context):
-        user = await self.user_service.get_user_by_id(request.user_id)
+    async def get_me(self, dto: GetMeDTO):
+        user = await self.user_service.get_user_by_id(dto.user_id)
 
         if not user:
-            await context.abort(grpc.StatusCode.NOT_FOUND, "User not found")
-            return
+            raise NotFoundException("User not found")
 
-        return auth_pb2.GetMeResponse(user=_user_profile_proto(user))
+        return user
