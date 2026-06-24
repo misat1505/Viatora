@@ -83,7 +83,7 @@ class RefreshTokenRepository:
 
             if token:
                 token.revoked = True
-                session.commit()
+                await session.commit()
 
     async def get_active_token_by_hash(self, token_hash: str):
         async with self.session_factory() as session:

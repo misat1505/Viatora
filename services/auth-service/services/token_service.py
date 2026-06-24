@@ -98,7 +98,8 @@ class TokenService:
 
         return new_raw
 
-    async def revoke_refresh_token(self, user_id: str, token_hash: str):
+    async def revoke_refresh_token(self, user_id: str, raw_token: str):
+        token_hash = self.hash_token(raw_token)
         return await self.refresh_token_repository.revoke_token(user_id, token_hash)
 
     async def save_refresh_token(self, user_id: str, raw_token: str) -> RefreshToken:
