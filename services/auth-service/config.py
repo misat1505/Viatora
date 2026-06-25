@@ -19,5 +19,7 @@ class Settings(BaseSettings):
     jwt_access_token_algorithm: str = "RS256"
     jwt_refresh_token_expire_days: int = 30
 
+    service_key: str
+
 
 settings = Settings()
