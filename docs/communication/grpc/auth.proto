@@ -52,8 +52,9 @@ message ValidateTokenResponse {
 // ── InitiateOAuth ────────────────────────────────────────────────
 
 message InitiateOAuthRequest {
+  string redirect_url = 1;
   // Optional: state param to pass through the OAuth flow (CSRF token)
-  string state = 1;
+  string state = 2;
 }
 
 message InitiateOAuthResponse {
@@ -74,6 +75,7 @@ message OAuthCallbackResponse {
   int64  expires_in    = 3; // Access token TTL in seconds (900)
   UserProfile user     = 4;
   bool is_new_user     = 5; // true if this was a first-time registration
+  string redirect_url  = 6;
 }
 
 // ── RefreshToken ─────────────────────────────────────────────────
