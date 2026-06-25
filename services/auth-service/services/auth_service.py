@@ -9,9 +9,9 @@ from domain.handle_oauth_callback_dto import (
 )
 from domain.initiate_oauth_dto import InitiateOAuthDTO, InitiateOAuthResponseDTO
 from domain.logout_dto import LogoutDTO
-from domain.refresh_token_dto import RefreshTokenDTO
+from domain.refresh_token_dto import RefreshTokenDTO, RefreshTokenResponseDTO
 from domain.user_dto import UserDTO
-from domain.validate_token_dto import ValidateTokenDTO
+from domain.validate_token_dto import ValidateTokenDTO, ValidateTokenResponseDTO
 from exceptions.not_found_exception import NotFoundException
 from exceptions.unuathenticated_exception import UnuathenticatedException
 from services.google_oauth_service import GoogleOAuthService
@@ -32,7 +32,7 @@ class AuthService:
         self.google_oauth_service = google_oauth_service
         self.logger = logger
 
-    async def validate_token(self, dto: ValidateTokenDTO):
+    async def validate_token(self, dto: ValidateTokenDTO) -> ValidateTokenResponseDTO:
         payload = self.token_service.decode_access_token(dto.token)
 
         # Check revocation list in Redis
@@ -46,6 +46,16 @@ class AuthService:
 
         if not user or not user.is_active:
             raise UnuathenticatedException()
+
+        return ValidateTokenResponseDTO(
+            valid=True,
+            user_id=str(user.id),
+            email=user.email,
+            display_name=user.display_name,
+            avatar_url=user.avatar_url or "",
+            is_active=user.is_active,
+            jti=jti,
+        )
 
         return user, jti
 
@@ -103,7 +113,7 @@ class AuthService:
             is_new_user=is_new,
         )
 
-    async def refresh_token(self, dto: RefreshTokenDTO):
+    async def refresh_token(self, dto: RefreshTokenDTO) -> RefreshTokenResponseDTO:
         # Decode old token to get user_id (unverified — we verify via DB hash)
         # We don't need to decode the access token here —
         # user_id must be looked up from the refresh token record itself.
@@ -124,7 +134,9 @@ class AuthService:
             str(user.id), user.email
         )
 
-        return access_token, new_raw, expires_in
+        return RefreshTokenResponseDTO(
+            access_token=access_token, refresh_token=new_raw, expires_in=expires_in
+        )
 
     async def logout(self, dto: LogoutDTO):
         await self.token_service.revoke_refresh_token(dto.user_id, dto.refresh_token)
@@ -144,10 +156,18 @@ class AuthService:
 
         return
 
-    async def get_me(self, dto: GetMeDTO):
+    async def get_me(self, dto: GetMeDTO) -> UserDTO:
         user = await self.user_service.get_user_by_id(dto.user_id)
 
         if not user:
             raise NotFoundException("User not found")
 
-        return user
+        return UserDTO(
+            user_id=str(user.id),
+            avatar_url=user.avatar_url,
+            created_at=user.created_at,
+            display_name=user.display_name,
+            email=user.email,
+            is_active=user.is_active,
+            last_login_at=user.last_login_at,
+        )

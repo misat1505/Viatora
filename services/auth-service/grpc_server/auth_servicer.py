@@ -27,16 +27,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     ):
         try:
             data = await self.auth_service.validate_token(request)
-            user, jti = data
-            return auth_pb2.ValidateTokenResponse(
-                valid=True,
-                user_id=str(user.id),
-                email=user.email,
-                display_name=user.display_name,
-                avatar_url=user.avatar_url or "",
-                is_active=user.is_active,
-                jti=jti,
-            )
+            return auth_pb2.ValidateTokenResponse(**data.model_dump())
         except (JWTError, UnuathenticatedException) as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
 
@@ -68,12 +59,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     ):
         try:
             data = await self.auth_service.refresh_token(request)
-            access_token, refresh_token, expires_in = data
-            return auth_pb2.RefreshTokenResponse(
-                access_token=access_token,
-                refresh_token=refresh_token,
-                expires_in=expires_in,
-            )
+            return auth_pb2.RefreshTokenResponse(**data.model_dump())
         except UnuathenticatedException as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
         except InternalException as e:
