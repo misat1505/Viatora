@@ -6,12 +6,17 @@ import { of, throwError } from 'rxjs';
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { AuthServiceClient } from 'src/generated/auth';
+import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 
 describe('JwtAuthGuard', () => {
   let guard: JwtAuthGuard;
 
   const authServiceMock: jest.Mocked<AuthServiceClient> = {
     validateToken: jest.fn(),
+  } as any;
+
+  const grpcMetadataServiceMock: jest.Mocked<GrpcMetadataService> = {
+    authMeta: 'service-key',
   } as any;
 
   const grpcClientMock = {
@@ -27,6 +32,10 @@ describe('JwtAuthGuard', () => {
         {
           provide: AUTH_PACKAGE,
           useValue: grpcClientMock,
+        },
+        {
+          provide: GrpcMetadataService,
+          useValue: grpcMetadataServiceMock,
         },
       ],
     }).compile();
@@ -91,9 +100,10 @@ describe('JwtAuthGuard', () => {
       );
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.validateToken).toHaveBeenCalledWith({
-        token: 'token',
-      });
+      expect(authServiceMock.validateToken).toHaveBeenCalledWith(
+        { token: 'token' },
+        'service-key',
+      );
     });
 
     it('should throw when auth service fails', async () => {
@@ -141,9 +151,10 @@ describe('JwtAuthGuard', () => {
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.validateToken).toHaveBeenCalledWith({
-        token: 'valid-token',
-      });
+      expect(authServiceMock.validateToken).toHaveBeenCalledWith(
+        { token: 'valid-token' },
+        'service-key',
+      );
     });
   });
 });

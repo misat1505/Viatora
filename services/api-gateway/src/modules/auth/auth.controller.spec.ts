@@ -4,6 +4,7 @@ import { ClientGrpc } from '@nestjs/microservices';
 import { AuthServiceClient } from 'src/generated/auth';
 import { AuthController } from './auth.controller';
 import { AUTH_PACKAGE } from 'src/grpc/clients.module';
+import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -14,6 +15,10 @@ describe('AuthController', () => {
     refreshToken: jest.fn(),
     logout: jest.fn(),
     getMe: jest.fn(),
+  } as any;
+
+  const grpcMetadataServiceMock: jest.Mocked<GrpcMetadataService> = {
+    authMeta: 'service-key',
   } as any;
 
   const grpcClientMock = {
@@ -30,6 +35,10 @@ describe('AuthController', () => {
           provide: AUTH_PACKAGE,
           useValue: grpcClientMock,
         },
+        {
+          provide: GrpcMetadataService,
+          useValue: grpcMetadataServiceMock,
+        },
       ],
     }).compile();
 
@@ -44,47 +53,49 @@ describe('AuthController', () => {
   });
 
   describe('initiateGoogle', () => {
-    it('should redirect to oauth url', async () => {
+    it('should return oauth url', async () => {
       const redirectUrl = 'https://accounts.google.com/oauth';
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authServiceMock.initiateOAuth.mockReturnValue(of({ redirectUrl }) as any);
 
-      const response = {
-        redirect: jest.fn(),
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      await controller.initiateGoogle(response as any);
+      const response = await controller.initiateGoogle(
+        'http://localhost:3000/auth/callback',
+      );
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.initiateOAuth).toHaveBeenCalledWith({});
-      expect(response.redirect).toHaveBeenCalledWith(redirectUrl);
+      expect(authServiceMock.initiateOAuth).toHaveBeenCalledWith(
+        { redirectUrl: 'http://localhost:3000/auth/callback' },
+        'service-key',
+      );
+      expect(response).toEqual({ url: redirectUrl });
     });
   });
 
   describe('googleCallback', () => {
-    it('should call handleOAuthCallback', async () => {
+    it('should redirect with tokens', async () => {
       const result = {
         accessToken: 'access-token',
         refreshToken: 'refresh-token',
+        redirectUrl: 'http://localhost:3000',
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authServiceMock.handleOAuthCallback.mockReturnValue(of(result) as any);
 
-      const response = await controller.googleCallback(
-        'auth-code',
-        'state-value',
-      );
+      const res = { redirect: jest.fn() };
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      await controller.googleCallback('auth-code', 'state-value', res as any);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.handleOAuthCallback).toHaveBeenCalledWith({
-        code: 'auth-code',
-        state: 'state-value',
-      });
-
-      expect(response).toEqual(result);
+      expect(authServiceMock.handleOAuthCallback).toHaveBeenCalledWith(
+        { code: 'auth-code', state: 'state-value' },
+        'service-key',
+      );
+      expect(res.redirect).toHaveBeenCalledWith(
+        'http://localhost:3000?token=access-token&refreshToken=refresh-token',
+      );
     });
   });
 
@@ -103,23 +114,18 @@ describe('AuthController', () => {
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.refreshToken).toHaveBeenCalledWith({
-        refreshToken: 'old-refresh-token',
-      });
-
+      expect(authServiceMock.refreshToken).toHaveBeenCalledWith(
+        { refreshToken: 'old-refresh-token' },
+        'service-key',
+      );
       expect(response).toEqual(result);
     });
   });
 
   describe('logout', () => {
     it('should logout user', async () => {
-      const user = {
-        userId: 'user-123',
-      };
-
-      const result = {
-        success: true,
-      };
+      const user = { userId: 'user-123' };
+      const result = { success: true };
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authServiceMock.logout.mockReturnValue(of(result) as any);
@@ -130,26 +136,18 @@ describe('AuthController', () => {
       });
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.logout).toHaveBeenCalledWith({
-        userId: 'user-123',
-        refreshToken: 'refresh-token',
-      });
-
+      expect(authServiceMock.logout).toHaveBeenCalledWith(
+        { userId: 'user-123', refreshToken: 'refresh-token' },
+        'service-key',
+      );
       expect(response).toEqual(result);
     });
   });
 
   describe('getMe', () => {
     it('should return current user', async () => {
-      const user = {
-        userId: 'user-123',
-      };
-
-      const profile = {
-        userId: 'user-123',
-        email: 'john@example.com',
-        username: 'john',
-      };
+      const user = { userId: 'user-123' };
+      const profile = { userId: 'user-123', email: 'john@example.com' };
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       authServiceMock.getMe.mockReturnValue(of(profile) as any);
@@ -158,10 +156,10 @@ describe('AuthController', () => {
       const response = await controller.getMe(user as any);
 
       // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.getMe).toHaveBeenCalledWith({
-        userId: 'user-123',
-      });
-
+      expect(authServiceMock.getMe).toHaveBeenCalledWith(
+        { userId: 'user-123' },
+        'service-key',
+      );
       expect(response).toEqual(profile);
     });
   });

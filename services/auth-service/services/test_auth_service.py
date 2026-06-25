@@ -1,3 +1,5 @@
+import base64
+import json
 from datetime import UTC, datetime, timedelta
 from types import SimpleNamespace
 from unittest.mock import AsyncMock, Mock
@@ -126,7 +128,9 @@ async def test_initiate_oauth_with_state(
     auth_service,
     google_oauth_service,
 ):
-    dto = InitiateOAuthDTO(state="abc")
+    dto = InitiateOAuthDTO(
+        state=None, redirect_url="http://localhost:3000/auth/callback"
+    )
 
     google_oauth_service.build_authorization_url.return_value = "https://google.com"
 
@@ -134,23 +138,10 @@ async def test_initiate_oauth_with_state(
 
     assert result.redirect_url == "https://google.com"
 
-    google_oauth_service.build_authorization_url.assert_called_once_with("abc")
-
-
-@pytest.mark.asyncio
-async def test_initiate_oauth_without_state(
-    auth_service,
-    google_oauth_service,
-):
-    dto = InitiateOAuthDTO(state=None)
-
-    google_oauth_service.build_authorization_url.return_value = "https://google.com"
-
-    result = await auth_service.initiate_oauth(dto)
-
-    assert result.redirect_url == "https://google.com"
-
-    google_oauth_service.build_authorization_url.assert_called_once()
+    call_args = google_oauth_service.build_authorization_url.call_args[0][0]
+    decoded = json.loads(base64.urlsafe_b64decode(call_args).decode())
+    assert decoded["redirectUrl"] == "http://localhost:3000/auth/callback"
+    assert "csrf" in decoded
 
 
 @pytest.mark.asyncio
@@ -160,7 +151,11 @@ async def test_handle_oauth_callback_success(
     user_service,
     token_service,
 ):
-    dto = HandleOAuthCallbackDTO(code="code")
+    state_data = base64.urlsafe_b64encode(
+        json.dumps({"csrf": "abc", "redirectUrl": "http://localhost:3000"}).encode()
+    ).decode()
+
+    dto = HandleOAuthCallbackDTO(code="code", state=state_data)
 
     google_oauth_service.exchange_code = AsyncMock(return_value="google-token")
 
@@ -206,7 +201,11 @@ async def test_handle_oauth_callback_google_error(
     auth_service,
     google_oauth_service,
 ):
-    dto = HandleOAuthCallbackDTO(code="code")
+    state_data = base64.urlsafe_b64encode(
+        json.dumps({"csrf": "abc", "redirectUrl": ""}).encode()
+    ).decode()
+
+    dto = HandleOAuthCallbackDTO(code="code", state=state_data)
 
     google_oauth_service.exchange_code = AsyncMock(side_effect=Exception("boom"))
 
