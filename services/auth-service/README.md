@@ -3,5 +3,11 @@
 ## Run the app
 
 ```
-uv run uvicorn main:app --reload
+uv run main.py
+```
+
+## Run the tests
+
+```
+uv run pytest .
 ```

@@ -13,6 +13,7 @@ describe('getCurrentUser', () => {
   });
 
   it('should throw if user is missing', () => {
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     expect(() => getCurrentUser({} as AuthenticatedRequest)).toThrow(
       InternalServerErrorException,
     );

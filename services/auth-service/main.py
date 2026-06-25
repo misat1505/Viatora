@@ -1,14 +1,10 @@
 import asyncio
-import logging
 
 from config import settings
 from database import Base, engine
+from di import Container
 from generated import auth_pb2_grpc
 from grpc import aio
-from grpc_server import AuthServicer
-
-logging.basicConfig(level=logging.INFO)
-logger = logging.getLogger(__name__)
 
 
 async def create_tables() -> None:
@@ -17,20 +13,26 @@ async def create_tables() -> None:
 
 
 async def serve() -> None:
+    container = Container()
+    container.settings.from_pydantic(settings)
+
     await create_tables()
 
     server = aio.server()
-    auth_pb2_grpc.add_AuthServiceServicer_to_server(AuthServicer(), server)
+
+    auth_pb2_grpc.add_AuthServiceServicer_to_server(
+        container.auth_servicer(),
+        server,
+    )
+
     server.add_insecure_port(f"[::]:{settings.grpc_port}")
 
     await server.start()
+
+    logger = container.logger()
     logger.info("Auth gRPC server started on port %s", settings.grpc_port)
 
-    try:
-        await server.wait_for_termination()
-    finally:
-        pass
-        # await stop_producer()
+    await server.wait_for_termination()
 
 
 if __name__ == "__main__":
