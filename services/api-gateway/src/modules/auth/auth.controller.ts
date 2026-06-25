@@ -26,13 +26,17 @@ import { RefreshTokenDto } from './dto/refresh-token.dto';
 import { LogoutDto } from './dto/logout.dto';
 import { MeDto } from './dto/me.dto';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
+import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController implements OnModuleInit {
   private authService!: AuthServiceClient;
 
-  constructor(@Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc) {}
+  constructor(
+    @Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc,
+    private readonly grpcMetadataService: GrpcMetadataService,
+  ) {}
 
   onModuleInit() {
     this.authService =
@@ -43,8 +47,8 @@ export class AuthController implements OnModuleInit {
   @Get('google')
   async initiateGoogle(@Res() res: Response) {
     const { redirectUrl } = await firstValueFrom(
-      // @ts-expect-error we will not support CSRF for now
-      this.authService.initiateOAuth({}),
+      // @ts-expect-error we will not support CSRF for now, metadata not in generated types
+      this.authService.initiateOAuth({}, this.grpcMetadataService.authMeta),
     );
     res.redirect(redirectUrl);
   }
@@ -56,7 +60,11 @@ export class AuthController implements OnModuleInit {
     @Query('state') state: string,
   ) {
     return firstValueFrom(
-      this.authService.handleOAuthCallback({ code, state }),
+      this.authService.handleOAuthCallback(
+        { code, state },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
     );
   }
 
@@ -66,9 +74,13 @@ export class AuthController implements OnModuleInit {
   @Post('refresh')
   async refresh(@Body() body: RefreshTokenDto) {
     return firstValueFrom(
-      this.authService.refreshToken({
-        refreshToken: body.refreshToken,
-      }),
+      this.authService.refreshToken(
+        {
+          refreshToken: body.refreshToken,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
     );
   }
 
@@ -79,10 +91,14 @@ export class AuthController implements OnModuleInit {
   @UseGuards(JwtAuthGuard)
   async logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDto) {
     return firstValueFrom(
-      this.authService.logout({
-        userId: user.userId,
-        refreshToken: body.refreshToken,
-      }),
+      this.authService.logout(
+        {
+          userId: user.userId,
+          refreshToken: body.refreshToken,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
     );
   }
 
@@ -93,6 +109,12 @@ export class AuthController implements OnModuleInit {
   @Get('me')
   @UseGuards(JwtAuthGuard)
   async getMe(@CurrentUser() user: UserProfile) {
-    return firstValueFrom(this.authService.getMe({ userId: user.userId }));
+    return firstValueFrom(
+      this.authService.getMe(
+        { userId: user.userId },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
   }
 }

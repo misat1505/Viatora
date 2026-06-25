@@ -2,6 +2,7 @@ import { Module } from '@nestjs/common';
 import { ClientsModule, Transport } from '@nestjs/microservices';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { PROTO_PATHS } from './proto-paths';
+import { GrpcMetadataService } from './grpc-metadata.service';
 
 export const AUTH_PACKAGE = 'AUTH_PACKAGE';
 
@@ -24,6 +25,7 @@ export const AUTH_PACKAGE = 'AUTH_PACKAGE';
       // EXAM_PACKAGE, PAYMENT_PACKAGE, etc. — same pattern
     ]),
   ],
-  exports: [ClientsModule],
+  providers: [GrpcMetadataService],
+  exports: [ClientsModule, GrpcMetadataService],
 })
 export class GrpcClientsModule {}
