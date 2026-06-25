@@ -45,12 +45,15 @@ export class AuthController implements OnModuleInit {
 
   /** GET /auth/google — kicks off OAuth flow */
   @Get('google')
-  async initiateGoogle(@Res() res: Response) {
-    const { redirectUrl } = await firstValueFrom(
-      // @ts-expect-error we will not support CSRF for now, metadata not in generated types
-      this.authService.initiateOAuth({}, this.grpcMetadataService.authMeta),
+  async initiateGoogle(@Query('redirectUrl') redirectUrl: string) {
+    const { redirectUrl: googleUrl } = await firstValueFrom(
+      this.authService.initiateOAuth(
+        // @ts-expect-error we will not support CSRF for now, metadata not in generated types
+        { redirectUrl },
+        this.grpcMetadataService.authMeta,
+      ),
     );
-    res.redirect(redirectUrl);
+    return { url: googleUrl };
   }
 
   /** GET /auth/google/callback — Google redirects here with ?code=&state= */
@@ -58,13 +61,18 @@ export class AuthController implements OnModuleInit {
   async googleCallback(
     @Query('code') code: string,
     @Query('state') state: string,
+    @Res() res: Response,
   ) {
-    return firstValueFrom(
+    const result = await firstValueFrom(
       this.authService.handleOAuthCallback(
         { code, state },
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),
+    );
+
+    return res.redirect(
+      `${result.redirectUrl}?token=${result.accessToken}&refreshToken=${result.refreshToken}`,
     );
   }
 

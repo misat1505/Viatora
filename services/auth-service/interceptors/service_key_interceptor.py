@@ -7,7 +7,6 @@ class ServiceKeyInterceptor(grpc.aio.ServerInterceptor):
 
     async def intercept_service(self, continuation, handler_call_details):
         metadata = dict(handler_call_details.invocation_metadata or [])
-        print(metadata)
 
         service_key_metadata = metadata.get("x-service-key")
 

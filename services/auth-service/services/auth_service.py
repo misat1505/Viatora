@@ -1,3 +1,5 @@
+import base64
+import json
 import secrets
 from datetime import UTC, datetime
 from logging import Logger
@@ -57,16 +59,24 @@ class AuthService:
             jti=jti,
         )
 
-        return user, jti
-
     async def initiate_oauth(self, dto: InitiateOAuthDTO) -> InitiateOAuthResponseDTO:
-        state = dto.state or secrets.token_urlsafe(16)
+        state_data = {
+            "csrf": secrets.token_urlsafe(16),
+            "redirectUrl": dto.redirect_url or "",
+        }
+        state = base64.urlsafe_b64encode(json.dumps(state_data).encode()).decode()
         url = self.google_oauth_service.build_authorization_url(state)
         return InitiateOAuthResponseDTO(redirect_url=url)
 
     async def handle_oauth_callback(
         self, dto: HandleOAuthCallbackDTO
     ) -> HandleOAuthCallbackResponseDTO:
+        try:
+            state_data = json.loads(base64.urlsafe_b64decode(dto.state).decode())
+            redirect_url = state_data.get("redirectUrl", "")
+        except Exception:
+            redirect_url = ""
+
         try:
             google_access_token = await self.google_oauth_service.exchange_code(
                 dto.code
@@ -111,6 +121,7 @@ class AuthService:
             expires_in=expires_in,
             user=user_dto,
             is_new_user=is_new,
+            redirect_url=redirect_url,
         )
 
     async def refresh_token(self, dto: RefreshTokenDTO) -> RefreshTokenResponseDTO:
