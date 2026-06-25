@@ -10,6 +10,7 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { AuthServiceClient } from 'src/generated/auth';
+import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 // import { REDIS_CLIENT } from '../../redis/redis.module';
 
 @Injectable()
@@ -18,6 +19,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
 
   constructor(
     @Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc,
+    private readonly grpcMetadataService: GrpcMetadataService,
     // @Inject(REDIS_CLIENT) private readonly redis: Redis,
   ) {}
 
@@ -41,7 +43,11 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
     // }
 
     const result = await firstValueFrom(
-      this.authService.validateToken({ token }),
+      this.authService.validateToken(
+        { token },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
     ).catch(() => null);
 
     if (!result?.valid) throw new UnauthorizedException('Invalid token');

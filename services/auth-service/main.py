@@ -5,6 +5,7 @@ from database import Base, engine
 from di import Container
 from generated import auth_pb2_grpc
 from grpc import aio
+from interceptors.service_key_interceptor import ServiceKeyInterceptor
 
 
 async def create_tables() -> None:
@@ -18,7 +19,7 @@ async def serve() -> None:
 
     await create_tables()
 
-    server = aio.server()
+    server = aio.server(interceptors=[ServiceKeyInterceptor(settings.service_key)])
 
     auth_pb2_grpc.add_AuthServiceServicer_to_server(
         container.auth_servicer(),
