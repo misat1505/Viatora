@@ -13,6 +13,7 @@
     "test": "concurrently -n \"api-gateway,auth-service\" -c \"green,cyan\" \"cd services/api-gateway && pnpm test\" \"cd services/auth-service && uv run pytest .\"",
     "grpc:gen": "concurrently -n \"api-gateway,auth-service\" -c \"green,cyan\" \"pnpm api-gateway:grpc:gen\" \"pnpm auth-service:grpc:gen\"",
     "lint:format": "prettier --write \"**/*.{json,md,yml,yaml,css}\" && concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm lint\" \"cd services/auth-service && uv run ruff check . && uv run ruff format .\" \"cd services/web && pnpm lint\"",
+    "env:copy": "node -e \"const fs=require('fs'); [{dir:'services/api-gateway',dest:'.env'},{dir:'services/auth-service',dest:'.env'},{dir:'services/web',dest:'.env.local'}].forEach(({dir,dest})=>{if(!fs.existsSync(dir+'/'+dest))fs.copyFileSync(dir+'/.env.example',dir+'/'+dest)})\"",
     "prepare": "husky"
   },
   "keywords": [],

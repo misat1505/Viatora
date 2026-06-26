@@ -32,6 +32,9 @@ jobs:
       - name: Install dependencies
         run: pnpm install:all
 
+      - name: Copy env files
+        run: pnpm env:copy
+
       - name: Generate gRPC
         run: pnpm grpc:gen
 
