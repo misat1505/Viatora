@@ -1,9 +1,12 @@
 'use server';
 
+import { safeServerAction } from '@/utils/safe-server-action';
 import axios from 'axios';
 import { cookies } from 'next/headers';
 
-export async function getCurrentUser() {
+type User = { displayName: string };
+
+export const getCurrentUser = safeServerAction(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
@@ -13,5 +16,7 @@ export async function getCurrentUser() {
     },
   });
 
-  return response.data.user;
-}
+  const user = response.data.user as User;
+
+  return user;
+});
