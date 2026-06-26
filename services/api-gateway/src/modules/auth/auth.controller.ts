@@ -71,9 +71,12 @@ export class AuthController implements OnModuleInit {
       ),
     );
 
-    return res.redirect(
-      `${result.redirectUrl}?token=${result.accessToken}&refreshToken=${result.refreshToken}`,
-    );
+    const redirectUrl = new URL(result.redirectUrl);
+
+    redirectUrl.searchParams.set('token', result.accessToken);
+    redirectUrl.searchParams.set('refreshToken', result.refreshToken);
+
+    return res.redirect(redirectUrl.toString());
   }
 
   /** POST /auth/refresh */
