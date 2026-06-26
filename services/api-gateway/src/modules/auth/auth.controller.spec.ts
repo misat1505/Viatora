@@ -94,7 +94,7 @@ describe('AuthController', () => {
         'service-key',
       );
       expect(res.redirect).toHaveBeenCalledWith(
-        'http://localhost:3000?token=access-token&refreshToken=refresh-token',
+        'http://localhost:3000/?token=access-token&refreshToken=refresh-token',
       );
     });
   });
