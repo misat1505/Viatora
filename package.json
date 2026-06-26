@@ -4,9 +4,9 @@
   "description": "",
   "main": "index.js",
   "scripts": {
-    "auth-service:grpc:gen": "node -e \"require('fs').mkdirSync('./services/auth-service/generated', {recursive:true})\" && python -m grpc_tools.protoc -I=./docs/communication/grpc --python_out=./services/auth-service/generated --grpc_python_out=./services/auth-service/generated ./docs/communication/grpc/auth.proto && cd services/auth-service && uv run ./fix_grpc_imports.py",
+    "auth-service:grpc:gen": "node -e \"require('fs').mkdirSync('./services/auth-service/generated', {recursive:true})\" && cd services/auth-service && uv run -m grpc_tools.protoc -I ../../docs/communication/grpc --python_out ./generated --grpc_python_out ./generated ../../docs/communication/grpc/auth.proto && uv run ./fix_grpc_imports.py",
     "api-gateway:grpc:gen": "pnpm buf generate",
-    "install:all": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm install\" \"cd services/auth-service && uv sync\" \"cd services/web && pnpm install\"",
+    "install:all": "pnpm install && concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm install\" \"cd services/auth-service && uv sync\" \"cd services/web && pnpm install\"",
     "dev": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:dev\" \"cd services/auth-service && uv run ./dev.py\" \"cd services/web && pnpm dev\"",
     "build": "concurrently -n \"api-gateway,web\" -c \"green,magenta\" \"cd services/api-gateway && pnpm build\" \"cd services/web && pnpm build\"",
     "start": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:prod\" \"cd services/auth-service && uv run ./main.py\" \"cd services/web && pnpm start\"",
