@@ -3,8 +3,13 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const token = request.nextUrl.searchParams.get('token');
   const refreshToken = request.nextUrl.searchParams.get('refreshToken');
+  const redirect = request.nextUrl.searchParams.get('redirect');
 
-  const response = NextResponse.redirect(new URL('/dashboard', request.nextUrl.origin));
+  console.log('audgasdgygfsaydgsafdasyugdasgf', token, refreshToken);
+
+  const response = NextResponse.redirect(
+    new URL(redirect ? decodeURIComponent(redirect) : '/dashboard', request.nextUrl.origin),
+  );
 
   response.cookies.set('token', token!, {
     httpOnly: true,

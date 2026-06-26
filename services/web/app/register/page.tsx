@@ -5,7 +5,10 @@ import Link from 'next/link';
 
 const RegisterPage = () => {
   async function handleRegister() {
-    const url = await registerUser();
+    const url = await registerUser(
+      window.origin,
+      window.location.pathname + window.location.search,
+    );
     window.location.href = url;
   }
 
