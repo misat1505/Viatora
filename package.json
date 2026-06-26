@@ -9,6 +9,7 @@
     "dev": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:dev\" \"cd services/auth-service && uv run ./dev.py\" \"cd services/web && pnpm dev\"",
     "build": "concurrently -n \"api-gateway,web\" -c \"green,magenta\" \"cd services/api-gateway && pnpm build\" \"cd services/web && pnpm build\"",
     "start": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:prod\" \"cd services/auth-service && uv run ./main.py\" \"cd services/web && pnpm start\"",
+    "test": "concurrently -n \"api-gateway,auth-service\" -c \"green,cyan\" \"cd services/api-gateway && pnpm test\" \"cd services/auth-service && uv run pytest .\"",
     "prepare": "husky"
   },
   "keywords": [],
