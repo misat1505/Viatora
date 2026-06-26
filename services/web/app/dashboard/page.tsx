@@ -2,6 +2,8 @@ import { getCurrentUser } from '@/actions/get-current-user';
 import GoogleOAuthLink from '@/components/google-oauth-link';
 import { UnauthorizedError } from '@/utils/error';
 
+export const dynamic = 'force-dynamic';
+
 const DashboardPage = async () => {
   const [error, user] = await getCurrentUser();
 

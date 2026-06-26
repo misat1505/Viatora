@@ -5,8 +5,6 @@ export async function GET(request: NextRequest) {
   const refreshToken = request.nextUrl.searchParams.get('refreshToken');
   const redirect = request.nextUrl.searchParams.get('redirect');
 
-  console.log('audgasdgygfsaydgsafdasyugdasgf', token, refreshToken);
-
   const response = NextResponse.redirect(
     new URL(redirect ? decodeURIComponent(redirect) : '/dashboard', request.nextUrl.origin),
   );
