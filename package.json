@@ -6,6 +6,9 @@
   "scripts": {
     "auth-service:gen:grpc": "python -m grpc_tools.protoc -I=./docs/communication/grpc --python_out=./services/auth-service/generated --grpc_python_out=./services/auth-service/generated ./docs/communication/grpc/auth.proto",
     "api-gateway:gen:grpc": "pnpm buf generate",
+    "dev": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:dev\" \"cd services/auth-service && uv run ./dev.py\" \"cd services/web && pnpm dev\"",
+    "build": "concurrently -n \"api-gateway,web\" -c \"green,magenta\" \"cd services/api-gateway && pnpm build\" \"cd services/web && pnpm build\"",
+    "start": "concurrently -n \"api-gateway,auth-service,web\" -c \"green,cyan,magenta\" \"cd services/api-gateway && pnpm start:prod\" \"cd services/auth-service && uv run ./main.py\" \"cd services/web && pnpm start\"",
     "prepare": "husky"
   },
   "keywords": [],
@@ -17,6 +20,7 @@
     "@bufbuild/buf": "^1.71.0",
     "@commitlint/cli": "^21.0.2",
     "@commitlint/config-conventional": "^21.0.2",
+    "concurrently": "^10.0.3",
     "cross-env": "^10.1.0",
     "eslint": "^10.5.0",
     "husky": "^9.1.7",
