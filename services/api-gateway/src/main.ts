@@ -4,6 +4,8 @@ import { DocumentBuilder, SwaggerModule } from '@nestjs/swagger';
 
 import { AppModule } from './app.module';
 import { GrpcExceptionFilter } from './common/filters/grpc-exception-filter';
+import * as yaml from 'js-yaml';
+import fs from 'fs';
 
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
@@ -26,6 +28,10 @@ async function bootstrap() {
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
+
+  const yamlDoc = yaml.dump(document);
+
+  fs.writeFileSync('./openapi.yaml', yamlDoc, 'utf8');
 
   SwaggerModule.setup('docs', app, document);
 

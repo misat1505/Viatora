@@ -1,22 +1,18 @@
 'use server';
 
+import { authApiClient } from '@/lib/api';
 import { safeServerAction } from '@/utils/safe-server-action';
-import axios from 'axios';
 import { cookies } from 'next/headers';
-
-type User = { displayName: string };
 
 export const getCurrentUser = safeServerAction(async () => {
   const cookieStore = await cookies();
   const token = cookieStore.get('token')?.value;
 
-  const response = await axios.get(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+  const response = await authApiClient.authControllerGetMe({
     headers: {
       Authorization: `Bearer ${token}`,
     },
   });
 
-  const user = response.data.user as User;
-
-  return user;
+  return response.data.user;
 });
