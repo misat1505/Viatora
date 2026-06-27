@@ -11,7 +11,8 @@ import { firstValueFrom } from 'rxjs';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { AuthServiceClient } from 'src/generated/auth';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-// import { REDIS_CLIENT } from '../../redis/redis.module';
+import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate, OnModuleInit {
@@ -20,7 +21,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
   constructor(
     @Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc,
     private readonly grpcMetadataService: GrpcMetadataService,
-    // @Inject(REDIS_CLIENT) private readonly redis: Redis,
+    @Inject(CACHE_MANAGER) private readonly cache: Cache,
   ) {}
 
   onModuleInit() {
@@ -34,13 +35,15 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
 
     if (!token) throw new UnauthorizedException('Missing token');
 
-    // Try cache first (token:cache:{jti} — we cache by raw token here pre-decode)
-    // const cacheKey = `token:cache:${token}`;
-    // const cached = await this.redis.get(cacheKey);
-    // if (cached) {
-    //   request.user = JSON.parse(cached);
-    //   return true;
-    // }
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+
+    // Try cache first (api-gateway:token:cache:{tokenHash} — we cache by token hash)
+    const cacheKey = `api-gateway:token:cache:${tokenHash}`;
+    const cached = await this.cache.get(cacheKey);
+    if (cached) {
+      request.user = JSON.parse(cached as string);
+      return true;
+    }
 
     const result = await firstValueFrom(
       this.authService.validateToken(
@@ -59,7 +62,7 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
       jti: result.jti,
     };
 
-    // await this.redis.set(cacheKey, JSON.stringify(user), 'EX', 300); // 5 min
+    await this.cache.set(cacheKey, JSON.stringify(user));
     request.user = user;
     return true;
   }
