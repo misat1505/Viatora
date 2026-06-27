@@ -1,5 +1,6 @@
 'use server';
 
+import { AuthControllerGetMeResponse } from '@/generated/zod/auth/auth';
 import { authApiClient } from '@/lib/api';
 import { safeServerAction } from '@/utils/safe-server-action';
 import { cookies } from 'next/headers';
@@ -14,5 +15,5 @@ export const getCurrentUser = safeServerAction(async () => {
     },
   });
 
-  return response.data.user;
+  return AuthControllerGetMeResponse.parse(response.data.user);
 });

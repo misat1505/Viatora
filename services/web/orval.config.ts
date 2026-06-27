@@ -8,4 +8,13 @@ export default {
       clean: true,
     },
   },
+  types: {
+    input: '../api-gateway/openapi.yaml',
+    output: {
+      mode: 'tags-split',
+      target: './generated/zod',
+      client: 'zod',
+      clean: true,
+    },
+  },
 };
