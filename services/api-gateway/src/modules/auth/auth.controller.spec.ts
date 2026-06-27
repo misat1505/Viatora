@@ -5,6 +5,8 @@ import { AuthServiceClient } from 'src/generated/auth';
 import { AuthController } from './auth.controller';
 import { AUTH_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
+import { Cache } from 'cache-manager';
+import { CACHE_MANAGER } from '@nestjs/cache-manager';
 
 describe('AuthController', () => {
   let controller: AuthController;
@@ -19,6 +21,11 @@ describe('AuthController', () => {
 
   const grpcMetadataServiceMock: jest.Mocked<GrpcMetadataService> = {
     authMeta: 'service-key',
+  } as any;
+
+  const cacheManagerMock: jest.Mocked<Cache> = {
+    get: jest.fn(),
+    set: jest.fn(),
   } as any;
 
   const grpcClientMock = {
@@ -38,6 +45,10 @@ describe('AuthController', () => {
         {
           provide: GrpcMetadataService,
           useValue: grpcMetadataServiceMock,
+        },
+        {
+          provide: CACHE_MANAGER,
+          useValue: cacheManagerMock,
         },
       ],
     }).compile();
