@@ -46,9 +46,15 @@ importers:
       class-validator:
         specifier: ^0.15.1
         version: 0.15.1
+      fs:
+        specifier: 0.0.1-security
+        version: 0.0.1-security
       grpc-js:
         specifier: link:grpc\grpc-js
         version: link:grpc/grpc-js
+      js-yaml:
+        specifier: ^5.1.0
+        version: 5.1.0
       reflect-metadata:
         specifier: ^0.2.2
         version: 0.2.2
@@ -3202,6 +3208,12 @@ packages:
         integrity: sha512-OO0pH2lK6a0hZnAdau5ItzHPI6pUlvI7jMVnxUQRtw4owF2wk8lOSabtGDCTP4Ggrg2MbGnWO9X8K1t4+fGMDw==,
       }
 
+  fs@0.0.1-security:
+    resolution:
+      {
+        integrity: sha512-3XY9e1pP0CVEUCdj5BmfIZxRBTSDycnbqhIOGec9QYtmVH2fbLpj86CFWkrNOkt/Fvty4KZG5lTglL9j/gJ87w==,
+      }
+
   fsevents@2.3.3:
     resolution:
       {
@@ -3814,6 +3826,13 @@ packages:
     resolution:
       {
         integrity: sha512-ePWsvanv0DWuDRsW8dnt+R4jQ31SCRCQ7hhNcPXZPsoBZiemuZNYGf7adZdqX2D86j6rvKp3RpCxVTSb8WQlOw==,
+      }
+    hasBin: true
+
+  js-yaml@5.1.0:
+    resolution:
+      {
+        integrity: sha512-s8VA5jkR8f22S3NAXmhKPFqGUduqZGlsufabVOgN14iTdw/RXcym7bKkbwjxLK9Yw2lEvvmJjFp119+KPeo8Kg==,
       }
     hasBin: true
 
@@ -7461,6 +7480,8 @@ snapshots:
 
   fs.realpath@1.0.0: {}
 
+  fs@0.0.1-security: {}
+
   fsevents@2.3.3:
     optional: true
 
@@ -7993,6 +8014,10 @@ snapshots:
       argparse: 2.0.1
 
   js-yaml@4.2.0:
+    dependencies:
+      argparse: 2.0.1
+
+  js-yaml@5.1.0:
     dependencies:
       argparse: 2.0.1
 

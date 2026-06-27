@@ -1,5 +1,8 @@
 import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
+import { getAuth } from './generated/auth/auth';
+import { authApiClient } from './lib/api';
+import { AuthControllerRefreshResponse } from './generated/zod/auth/auth';
 
 export async function proxy(request: NextRequest) {
   if (request.headers.get('Next-Action')) {
@@ -27,11 +30,11 @@ export async function proxy(request: NextRequest) {
   }
 
   try {
-    const response = await axios.post(`${process.env.NEXT_PUBLIC_API_URL}/auth/refresh`, {
+    const response = await authApiClient.authControllerRefresh({
       refreshToken: refreshTokenCookie,
     });
 
-    const { accessToken, refreshToken } = response.data;
+    const { accessToken, refreshToken } = AuthControllerRefreshResponse.parse(response.data);
 
     const nextResponse = NextResponse.next();
 

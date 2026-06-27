@@ -38,6 +38,9 @@ jobs:
       - name: Generate gRPC
         run: pnpm grpc:gen
 
+      - name: Generate OpenApi
+        run: pnpm openapi:gen
+
       - name: Test
         run: pnpm test
 
