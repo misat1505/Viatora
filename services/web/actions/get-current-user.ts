@@ -15,5 +15,5 @@ export const getCurrentUser = safeServerAction(async () => {
     },
   });
 
-  return AuthControllerGetMeResponse.parse(response.data.user);
+  return AuthControllerGetMeResponse.parse(response.data);
 });

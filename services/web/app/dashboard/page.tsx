@@ -5,7 +5,7 @@ import { UnauthorizedError } from '@/utils/error';
 export const dynamic = 'force-dynamic';
 
 const DashboardPage = async () => {
-  const [error, user] = await getCurrentUser();
+  const [error, userData] = await getCurrentUser();
 
   if (error instanceof UnauthorizedError) {
     return (
@@ -22,8 +22,8 @@ const DashboardPage = async () => {
 
   return (
     <div>
-      {JSON.stringify(user, null, 2)}
-      <div>Name: {user.displayName}</div>
+      {JSON.stringify(userData.user, null, 2)}
+      <div>Name: {userData.user.displayName}</div>
     </div>
   );
 };
