@@ -12,7 +12,7 @@ import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { AuthServiceClient } from 'src/generated/auth';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { Cache, CACHE_MANAGER } from '@nestjs/cache-manager';
-// import { REDIS_CLIENT } from '../../redis/redis.module';
+import { createHash } from 'crypto';
 
 @Injectable()
 export class JwtAuthGuard implements CanActivate, OnModuleInit {
@@ -35,8 +35,10 @@ export class JwtAuthGuard implements CanActivate, OnModuleInit {
 
     if (!token) throw new UnauthorizedException('Missing token');
 
-    // Try cache first (api-gateway:token:cache:{jti} — we cache by raw token here pre-decode)
-    const cacheKey = `api-gateway:token:cache:${token}`;
+    const tokenHash = createHash('sha256').update(token).digest('hex');
+
+    // Try cache first (api-gateway:token:cache:{tokenHash} — we cache by token hash)
+    const cacheKey = `api-gateway:token:cache:${tokenHash}`;
     const cached = await this.cache.get(cacheKey);
     if (cached) {
       request.user = JSON.parse(cached as string);
