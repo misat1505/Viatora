@@ -3,6 +3,7 @@
 import axios from 'axios';
 import { useRouter } from 'next/navigation';
 import { PropsWithChildren } from 'react';
+import { Button } from './ui/button';
 
 type LogoutButtonProps = PropsWithChildren;
 
@@ -14,7 +15,11 @@ const LogoutButton = ({ children }: LogoutButtonProps) => {
     router.refresh();
   }
 
-  return <button onClick={handleLogout}>{children}</button>;
+  return (
+    <Button variant="destructive" onClick={handleLogout}>
+      {children}
+    </Button>
+  );
 };
 
 export default LogoutButton;
