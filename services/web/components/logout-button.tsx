@@ -10,7 +10,7 @@ const LogoutButton = ({ children }: LogoutButtonProps) => {
   const router = useRouter();
 
   async function handleLogout() {
-    await axios.post('/auth/logout');
+    await axios.post('/api/auth/logout');
     router.refresh();
   }
 

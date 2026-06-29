@@ -4,7 +4,7 @@ import { NextRequest, NextResponse } from 'next/server';
 export async function GET(request: NextRequest) {
   const redirect = request.nextUrl.searchParams.get('redirect');
 
-  const redirectUrl = new URL('/auth/callback', request.nextUrl.origin);
+  const redirectUrl = new URL('/api/auth/callback', request.nextUrl.origin);
 
   if (redirect) {
     redirectUrl.searchParams.set('redirect', redirect);

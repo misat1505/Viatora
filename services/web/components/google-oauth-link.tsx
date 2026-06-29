@@ -11,7 +11,9 @@ const GoogleOAuthLink = ({ redirect = 'self', children }: GoogleOAuthLinkProps) 
   const redirectPath =
     redirect === 'self' ? window.location.pathname + window.location.search : redirect;
 
-  return <Link href={`/auth/google?redirect=${encodeURIComponent(redirectPath)}`}>{children}</Link>;
+  return (
+    <Link href={`/api/auth/google?redirect=${encodeURIComponent(redirectPath)}`}>{children}</Link>
+  );
 };
 
 export default GoogleOAuthLink;

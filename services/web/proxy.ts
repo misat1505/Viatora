@@ -2,6 +2,9 @@ import { NextRequest, NextResponse } from 'next/server';
 import { authApiClient } from './lib/api';
 import { AuthControllerRefreshResponse } from './generated/zod/auth/auth';
 
+const locales = ['pl', 'en'];
+const defaultLocale = 'pl';
+
 export async function proxy(request: NextRequest) {
   if (request.headers.get('Next-Action')) {
     return NextResponse.next();
@@ -15,6 +18,15 @@ export async function proxy(request: NextRequest) {
 
   if (request.headers.get('accept')?.includes('text/html') === false) {
     return NextResponse.next();
+  }
+
+  const pathnameHasLocale = locales.some(
+    (locale) => pathname.startsWith(`/${locale}/`) || pathname === `/${locale}`,
+  );
+
+  if (!pathnameHasLocale) {
+    request.nextUrl.pathname = `/${defaultLocale}${pathname}`;
+    return NextResponse.redirect(request.nextUrl);
   }
 
   const refreshTokenCookie = request.cookies.get('refreshToken')?.value;
@@ -54,3 +66,5 @@ export async function proxy(request: NextRequest) {
 export const config = {
   matcher: ['/((?!_next|api|.*\\..*).*)'],
 };
+
+// spianata picante e gorgonzola, hawajska
