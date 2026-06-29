@@ -84,7 +84,7 @@ export class AuthController implements OnModuleInit {
   @ApiOkResponse({ type: AuthTokensDto })
   @Post('refresh')
   async refresh(@Body() body: RefreshTokenDto) {
-    return firstValueFrom(
+    const result = await firstValueFrom(
       this.authService.refreshToken(
         {
           refreshToken: body.refreshToken,
@@ -93,6 +93,9 @@ export class AuthController implements OnModuleInit {
         this.grpcMetadataService.authMeta,
       ),
     );
+    // @ts-expect-error expiresIn is Long in protobuf and we need to pick the low
+    result.expiresIn = result.expiresIn.low;
+    return result;
   }
 
   /** POST /auth/logout */
