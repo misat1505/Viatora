@@ -5,6 +5,10 @@ import { AuthControllerRefreshResponse } from './generated/zod/auth/auth';
 const locales = ['pl', 'en'];
 const defaultLocale = 'pl';
 
+function getLocale(request: NextRequest): string {
+  return request.cookies.get('NEXT_LOCALE')?.value ?? defaultLocale;
+}
+
 export async function proxy(request: NextRequest) {
   if (request.headers.get('Next-Action')) {
     return NextResponse.next();
@@ -25,7 +29,8 @@ export async function proxy(request: NextRequest) {
   );
 
   if (!pathnameHasLocale) {
-    request.nextUrl.pathname = `/${defaultLocale}${pathname}`;
+    const locale = getLocale(request);
+    request.nextUrl.pathname = `/${locale}${pathname}`;
     return NextResponse.redirect(request.nextUrl);
   }
 
