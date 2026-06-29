@@ -1,6 +1,4 @@
-import axios from 'axios';
 import { NextRequest, NextResponse } from 'next/server';
-import { getAuth } from './generated/auth/auth';
 import { authApiClient } from './lib/api';
 import { AuthControllerRefreshResponse } from './generated/zod/auth/auth';
 
@@ -16,11 +14,6 @@ export async function proxy(request: NextRequest) {
   }
 
   if (request.headers.get('accept')?.includes('text/html') === false) {
-    return NextResponse.next();
-  }
-
-  const accessTokenCookie = request.cookies.get('token')?.value;
-  if (accessTokenCookie) {
     return NextResponse.next();
   }
 
@@ -59,5 +52,5 @@ export async function proxy(request: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/dashboard'],
+  matcher: ['/((?!_next|api|.*\\..*).*)'],
 };

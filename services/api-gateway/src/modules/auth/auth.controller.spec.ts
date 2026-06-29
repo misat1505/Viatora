@@ -112,13 +112,18 @@ describe('AuthController', () => {
 
   describe('refresh', () => {
     it('should refresh tokens', async () => {
-      const result = {
+      const protoResult = {
         accessToken: 'new-access-token',
         refreshToken: 'new-refresh-token',
+        expiresIn: { low: 900 },
+      };
+      const apiResult = {
+        ...protoResult,
+        expiresIn: protoResult.expiresIn.low,
       };
 
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.refreshToken.mockReturnValue(of(result) as any);
+      authServiceMock.refreshToken.mockReturnValue(of(protoResult) as any);
 
       const response = await controller.refresh({
         refreshToken: 'old-refresh-token',
@@ -129,7 +134,7 @@ describe('AuthController', () => {
         { refreshToken: 'old-refresh-token' },
         'service-key',
       );
-      expect(response).toEqual(result);
+      expect(response).toEqual(apiResult);
     });
   });
 

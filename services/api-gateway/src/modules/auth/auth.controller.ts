@@ -27,6 +27,7 @@ import { LogoutDto } from './dto/logout.dto';
 import { MeDto } from './dto/me.dto';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
+import { InitiateGoogleDTO } from './dto/initiate-google.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
@@ -45,6 +46,7 @@ export class AuthController implements OnModuleInit {
 
   /** GET /auth/google — kicks off OAuth flow */
   @Get('google')
+  @ApiOkResponse({ type: InitiateGoogleDTO })
   async initiateGoogle(@Query('redirectUrl') redirectUrl: string) {
     const { redirectUrl: googleUrl } = await firstValueFrom(
       this.authService.initiateOAuth(
@@ -53,7 +55,9 @@ export class AuthController implements OnModuleInit {
         this.grpcMetadataService.authMeta,
       ),
     );
-    return { url: googleUrl };
+    const result = new InitiateGoogleDTO();
+    result.url = googleUrl;
+    return result;
   }
 
   /** GET /auth/google/callback — Google redirects here with ?code=&state= */
@@ -84,7 +88,7 @@ export class AuthController implements OnModuleInit {
   @ApiOkResponse({ type: AuthTokensDto })
   @Post('refresh')
   async refresh(@Body() body: RefreshTokenDto) {
-    return firstValueFrom(
+    const result = await firstValueFrom(
       this.authService.refreshToken(
         {
           refreshToken: body.refreshToken,
@@ -93,6 +97,9 @@ export class AuthController implements OnModuleInit {
         this.grpcMetadataService.authMeta,
       ),
     );
+    // @ts-expect-error expiresIn is Long in protobuf and we need to pick the low
+    result.expiresIn = result.expiresIn.low;
+    return result;
   }
 
   /** POST /auth/logout */

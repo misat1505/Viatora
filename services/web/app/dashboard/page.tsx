@@ -1,5 +1,6 @@
 import { getCurrentUser } from '@/actions/get-current-user';
 import GoogleOAuthLink from '@/components/google-oauth-link';
+import LogoutButton from '@/components/logout-button';
 import { UnauthorizedError } from '@/utils/error';
 
 export const dynamic = 'force-dynamic';
@@ -24,6 +25,8 @@ const DashboardPage = async () => {
     <div>
       {JSON.stringify(userData.user, null, 2)}
       <div>Name: {userData.user.displayName}</div>
+
+      <LogoutButton>Log out</LogoutButton>
     </div>
   );
 };
