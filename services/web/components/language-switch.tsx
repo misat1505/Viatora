@@ -2,6 +2,7 @@
 
 import { Locale } from '@/app/[lang]/dictionaries';
 import { useRouter } from 'next/navigation';
+import LocaleText from './locale-text';
 
 type LanguageSwitchProps = {
   lang: Locale;
@@ -19,7 +20,11 @@ const LanguageSwitch = ({ lang }: LanguageSwitchProps) => {
     router.push(newPath);
   }
 
-  return <button onClick={handleLanguageSwitch}>Switch language to {newLang}</button>;
+  return (
+    <button onClick={handleLanguageSwitch}>
+      <LocaleText k="translations.misc.change-language" values={{ lang: newLang }} />
+    </button>
+  );
 };
 
 export default LanguageSwitch;

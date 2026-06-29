@@ -1,3 +1,4 @@
+// components/locale-text.tsx
 'use client';
 
 import { useLocaleContext } from '@/providers/locale-provider';
@@ -14,13 +15,23 @@ function getNestedValue(obj: Translations, path: string): string {
   return path.split('.').reduce((acc: any, key) => acc?.[key], obj) ?? path;
 }
 
+function interpolate(template: string, values?: Record<string, string>): string {
+  if (!values) return template;
+  return Object.entries(values).reduce(
+    (str, [key, value]) => str.replace(new RegExp(`{${key}}`, 'g'), value),
+    template,
+  );
+}
+
 type LocaleTextProps = {
   k: TranslationKey;
+  values?: Record<string, string>;
 };
 
-const LocaleText = ({ k }: LocaleTextProps) => {
+const LocaleText = ({ k, values }: LocaleTextProps) => {
   const translations = useLocaleContext();
-  return <>{getNestedValue(translations, k)}</>;
+  const template = getNestedValue(translations, k);
+  return <>{interpolate(template, values)}</>;
 };
 
 export default LocaleText;

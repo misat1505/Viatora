@@ -1,5 +1,8 @@
 {
   "register": {
-    "registerWithGoogle": "Register with Google"
+    "register-with-google": "Register with Google"
+  },
+  "misc": {
+    "change-language": "Change language to {lang}"
   }
 }
