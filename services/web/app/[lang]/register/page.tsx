@@ -1,16 +1,11 @@
 import GoogleOAuthLink from '@/components/google-oauth-link';
-import { getDictionary, hasLocale } from '../dictionaries';
-import { notFound } from 'next/navigation';
+import LocaleText from '@/components/locale-text';
 
-const RegisterPage = async ({ params }: { params: Promise<{ lang: string }> }) => {
-  const { lang } = await params;
-
-  if (!hasLocale(lang)) notFound();
-
-  const dict = await getDictionary(lang);
-
+const RegisterPage = async () => {
   return (
-    <GoogleOAuthLink redirect="/dashboard">{dict.register.registerWithGoogle}</GoogleOAuthLink>
+    <GoogleOAuthLink redirect="/dashboard">
+      <LocaleText k="translations.register.registerWithGoogle" />
+    </GoogleOAuthLink>
   );
 };
 

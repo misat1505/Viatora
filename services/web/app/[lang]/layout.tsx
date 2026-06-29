@@ -3,6 +3,8 @@ import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Providers from '@/providers';
 import LanguageSwitch from '@/components/language-switch';
+import { getDictionary, Locale } from './dictionaries';
+import LocaleProvider from '@/providers/locale-provider';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -26,13 +28,17 @@ export async function generateStaticParams() {
 export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'>) {
   const { lang } = await params;
 
+  const dict = await getDictionary(lang as Locale);
+
   return (
     <html lang={lang} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <Providers>
-          <LanguageSwitch lang={lang} />
-          {children}
-        </Providers>
+        <LocaleProvider translations={dict}>
+          <Providers>
+            <LanguageSwitch lang={lang as Locale} />
+            {children}
+          </Providers>
+        </LocaleProvider>
       </body>
     </html>
   );

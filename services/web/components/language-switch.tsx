@@ -1,9 +1,10 @@
 'use client';
 
+import { Locale } from '@/app/[lang]/dictionaries';
 import { useRouter } from 'next/navigation';
 
 type LanguageSwitchProps = {
-  lang: string;
+  lang: Locale;
 };
 
 const LanguageSwitch = ({ lang }: LanguageSwitchProps) => {
