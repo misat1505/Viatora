@@ -33,7 +33,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
   return (
     <html lang={lang} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col">
-        <LocaleProvider translations={dict}>
+        <LocaleProvider translations={dict} locale={lang as Locale}>
           <Providers>
             <LanguageSwitch lang={lang as Locale} />
             {children}

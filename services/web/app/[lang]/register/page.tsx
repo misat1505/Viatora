@@ -4,7 +4,7 @@ import LocaleText from '@/components/locale-text';
 const RegisterPage = async () => {
   return (
     <GoogleOAuthLink redirect="/dashboard">
-      <LocaleText k="translations.register.register-with-google" />
+      <LocaleText k="register.register-with-google" />
     </GoogleOAuthLink>
   );
 };

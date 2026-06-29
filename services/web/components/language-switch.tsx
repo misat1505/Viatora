@@ -22,7 +22,7 @@ const LanguageSwitch = ({ lang }: LanguageSwitchProps) => {
 
   return (
     <button onClick={handleLanguageSwitch}>
-      <LocaleText k="translations.misc.change-language" values={{ lang: newLang }} />
+      <LocaleText k="misc.change-language" values={{ lang: newLang }} />
     </button>
   );
 };

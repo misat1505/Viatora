@@ -3,6 +3,6 @@
     "register-with-google": "Zaloguj się przez Google"
   },
   "misc": {
-    "change-language": "Zmień język na {lang}"
+    "change-language": "Zmień język na {{lang}}"
   }
 }

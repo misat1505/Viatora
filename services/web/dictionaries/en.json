@@ -3,6 +3,6 @@
     "register-with-google": "Register with Google"
   },
   "misc": {
-    "change-language": "Change language to {lang}"
+    "change-language": "Change language to {{lang}}"
   }
 }
