@@ -2,6 +2,7 @@ import { InternalServerErrorException } from '@nestjs/common';
 import { getCurrentUser } from './get-current-user';
 import { UserProfile } from 'src/generated/auth';
 import { AuthenticatedRequest } from '../types/authenticated-request';
+import { describe, it, expect } from 'vitest';
 
 describe('getCurrentUser', () => {
   it('should return user', () => {

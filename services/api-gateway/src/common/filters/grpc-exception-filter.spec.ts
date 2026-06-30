@@ -3,6 +3,7 @@ import { RpcException } from '@nestjs/microservices';
 import { status as GrpcStatus } from '@grpc/grpc-js';
 
 import { GrpcExceptionFilter } from './grpc-exception-filter';
+import { describe, it, expect, vi } from 'vitest';
 
 describe('GrpcExceptionFilter', () => {
   let filter: GrpcExceptionFilter;
@@ -12,8 +13,8 @@ describe('GrpcExceptionFilter', () => {
   });
 
   const createHost = () => {
-    const json = jest.fn();
-    const status = jest.fn().mockReturnValue({
+    const json = vi.fn();
+    const status = vi.fn().mockReturnValue({
       json,
     });
 

@@ -2,6 +2,7 @@ import { Test, TestingModule } from '@nestjs/testing';
 import { ClientGrpc } from '@nestjs/microservices';
 import { ExecutionContext, UnauthorizedException } from '@nestjs/common';
 import { of, throwError } from 'rxjs';
+import { beforeEach, describe, expect, it, vi, type Mocked } from 'vitest';
 
 import { JwtAuthGuard } from './jwt-auth.guard';
 import { AUTH_PACKAGE } from '../../grpc/clients.module';
@@ -10,40 +11,40 @@ import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { CACHE_MANAGER } from '@nestjs/cache-manager';
 import { createHash } from 'crypto';
 
-jest.mock('crypto', () => ({
-  createHash: jest.fn(),
+vi.mock('crypto', () => ({
+  createHash: vi.fn(),
 }));
 
 describe('JwtAuthGuard', () => {
   let guard: JwtAuthGuard;
 
-  const authServiceMock: jest.Mocked<AuthServiceClient> = {
-    validateToken: jest.fn(),
+  const authServiceMock: Mocked<AuthServiceClient> = {
+    validateToken: vi.fn(),
   } as any;
 
-  const grpcMetadataServiceMock: jest.Mocked<GrpcMetadataService> = {
+  const grpcMetadataServiceMock: Mocked<GrpcMetadataService> = {
     authMeta: 'service-key',
   } as any;
 
   const grpcClientMock = {
-    getService: jest.fn().mockReturnValue(authServiceMock),
+    getService: vi.fn().mockReturnValue(authServiceMock),
   } as Partial<ClientGrpc>;
 
   const cacheManagerMock = {
-    get: jest.fn(),
-    set: jest.fn(),
+    get: vi.fn(),
+    set: vi.fn(),
   } as any;
 
   const CACHE_KEY = 'api-gateway:token:cache:hashed-token';
 
   beforeEach(async () => {
-    jest.clearAllMocks();
+    vi.clearAllMocks();
 
-    // mock sha256
-    (createHash as jest.Mock).mockReturnValue({
-      update: jest.fn().mockReturnThis(),
-      digest: jest.fn().mockReturnValue('hashed-token'),
-    });
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    vi.mocked(createHash).mockReturnValue({
+      update: vi.fn().mockReturnThis(),
+      digest: vi.fn().mockReturnValue('hashed-token'),
+    } as any);
 
     const module: TestingModule = await Test.createTestingModule({
       providers: [
