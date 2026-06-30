@@ -21,8 +21,23 @@ dependencies = [
 [dependency-groups]
 dev = [
     "grpcio-tools>=1.81.1",
+    "mypy>=2.1.0",
     "pytest-asyncio>=1.4.0",
     "pytest>=9.1.1",
     "ruff>=0.15.20",
+    "types-grpcio>=1.0.0.20260614",
+    "types-protobuf>=7.34.1.20260518",
+    "types-python-jose>=3.5.0.20260408",
     "watchfiles>=1.2.0",
 ]
+
+[tool.mypy]
+exclude = "generated"
+
+[[tool.mypy.overrides]]
+module = "generated.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "config"
+disable_error_code = ["call-arg"]

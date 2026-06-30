@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from urllib.parse import parse_qs, urlparse
 
 import pytest
@@ -40,13 +41,16 @@ class FakeAsyncClient:
         return self.get_response
 
 
+@dataclass
+class SettingsMock:
+    google_client_id: str = "test-client-id"
+    google_client_secret: str = "test-secret"
+    google_redirect_uri: str = "http://localhost/callback"
+
+
 @pytest.fixture
 def settings():
-    return {
-        "google_client_id": "test-client-id",
-        "google_client_secret": "test-secret",
-        "google_redirect_uri": "http://localhost/callback",
-    }
+    return SettingsMock()
 
 
 @pytest.fixture

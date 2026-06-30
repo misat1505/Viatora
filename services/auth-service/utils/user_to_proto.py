@@ -2,8 +2,8 @@ from domain.user_dto import UserDTO
 from generated import auth_pb2
 
 
-def user_to_proto(user: UserDTO) -> auth_pb2.UserProfile:
-    return auth_pb2.UserProfile(
+def user_to_proto(user: UserDTO) -> auth_pb2.UserProfile:  # type: ignore[name-defined]
+    return auth_pb2.UserProfile(  # type: ignore[attr-defined]
         user_id=str(user.user_id),
         email=user.email,
         display_name=user.display_name,

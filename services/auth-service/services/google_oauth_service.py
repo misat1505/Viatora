@@ -25,8 +25,8 @@ class GoogleOAuthService:
 
     def build_authorization_url(self, state: str) -> str:
         params = {
-            "client_id": self.settings["google_client_id"],
-            "redirect_uri": self.settings["google_redirect_uri"],
+            "client_id": self.settings.google_client_id,
+            "redirect_uri": self.settings.google_redirect_uri,
             "response_type": "code",
             "scope": _SCOPES,
             "state": state,
@@ -41,9 +41,9 @@ class GoogleOAuthService:
                 _GOOGLE_TOKEN_URL,
                 data={
                     "code": code,
-                    "client_id": self.settings["google_client_id"],
-                    "client_secret": self.settings["google_client_secret"],
-                    "redirect_uri": self.settings["google_redirect_uri"],
+                    "client_id": self.settings.google_client_id,
+                    "client_secret": self.settings.google_client_secret,
+                    "redirect_uri": self.settings.google_redirect_uri,
                     "grant_type": "authorization_code",
                 },
             )

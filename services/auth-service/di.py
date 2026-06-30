@@ -1,5 +1,6 @@
 import logging
 
+from config import Settings
 from dependency_injector import containers, providers
 from grpc_server.auth_servicer import AuthServicer
 from repositories.refresh_token_repository import RefreshTokenRepository
@@ -17,7 +18,7 @@ logging.basicConfig(
 
 
 class Container(containers.DeclarativeContainer):
-    settings = providers.Configuration()
+    settings = providers.Dependency(instance_of=Settings).provided
 
     logger = providers.Object(logging.getLogger())
 

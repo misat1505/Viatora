@@ -47,7 +47,7 @@ class UserRepository:
 
             return user
 
-    async def update_last_login(self, user_id: str) -> User:
+    async def update_last_login(self, user_id: str) -> User | None:
         async with self.session_factory() as session:
             result = await session.execute(
                 select(User).where(User.id == uuid.UUID(str(user_id)))

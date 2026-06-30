@@ -11,7 +11,7 @@ class RefreshTokenRepository:
         self.session_factory = session_factory
 
     async def create_refresh_token(
-        self, user_id: str, new_token_hash: str, expires_at: datetime
+        self, user_id: str, new_token_hash: str, expires_at: datetime.datetime
     ):
         async with self.session_factory() as session:
             token = RefreshToken(
@@ -41,7 +41,7 @@ class RefreshTokenRepository:
         user_id: str,
         old_token_hash: str,
         new_token_hash: str,
-        expires_at: datetime,
+        expires_at: datetime.datetime,
     ):
         async with self.session_factory() as session:
             result = await session.execute(
