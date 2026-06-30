@@ -23,5 +23,6 @@ dev = [
     "grpcio-tools>=1.81.1",
     "pytest-asyncio>=1.4.0",
     "pytest>=9.1.1",
+    "ruff>=0.15.20",
     "watchfiles>=1.2.0",
 ]
