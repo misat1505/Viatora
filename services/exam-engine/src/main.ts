@@ -9,12 +9,12 @@ async function bootstrap() {
     {
       transport: Transport.GRPC,
       options: {
-        package: 'Viatora.content',
+        package: 'Viatora.exam',
         protoPath: join(
           __dirname,
-          '../../../docs/communication/grpc/content.proto',
+          '../../../docs/communication/grpc/exam.proto',
         ),
-        url: '0.0.0.0:50054',
+        url: '0.0.0.0:50052',
       },
     },
   );
