@@ -19,7 +19,7 @@ export const useRefreshTokenContext = () => {
 const RefreshTokenProvider = ({ children }: RefreshTokenContextProps) => {
   useEffect(() => {
     async function refreshToken() {
-      await axios.post('/auth/refresh');
+      await axios.post('/api/auth/refresh');
     }
 
     const delay = 1000 * 60 * 10;
