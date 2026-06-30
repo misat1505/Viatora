@@ -1,3 +1,4 @@
+from dataclasses import dataclass
 from datetime import UTC, datetime, timedelta
 from unittest.mock import AsyncMock
 
@@ -5,15 +6,18 @@ import pytest
 from services.token_service import TokenService
 
 
+@dataclass
+class SettingsMock:
+    jwt_private_key_path: str = "private.pem"
+    jwt_public_key_path: str = "public.pem"
+    jwt_access_token_expire_minutes: int = 15
+    jwt_refresh_token_expire_days: int = 30
+    jwt_access_token_algorithm: str = "HS256"
+
+
 @pytest.fixture
 def settings():
-    return {
-        "jwt_private_key_path": "private.pem",
-        "jwt_public_key_path": "public.pem",
-        "jwt_access_token_expire_minutes": 15,
-        "jwt_refresh_token_expire_days": 30,
-        "jwt_access_token_algorithm": "HS256",
-    }
+    return SettingsMock()
 
 
 @pytest.fixture

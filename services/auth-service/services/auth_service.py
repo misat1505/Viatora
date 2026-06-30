@@ -14,6 +14,7 @@ from domain.logout_dto import LogoutDTO
 from domain.refresh_token_dto import RefreshTokenDTO, RefreshTokenResponseDTO
 from domain.user_dto import UserDTO
 from domain.validate_token_dto import ValidateTokenDTO, ValidateTokenResponseDTO
+from exceptions.internal_exception import InternalException
 from exceptions.not_found_exception import NotFoundException
 from exceptions.unuathenticated_exception import UnuathenticatedException
 from services.google_oauth_service import GoogleOAuthService
@@ -95,7 +96,7 @@ class AuthService:
         )
 
         raw_refresh = self.token_service.generate_refresh_token()
-        await self.token_service.save_refresh_token(user.id, raw_refresh)
+        await self.token_service.save_refresh_token(str(user.id), raw_refresh)
 
         access_token, _, expires_in = self.token_service.create_access_token(
             str(user.id), user.email
@@ -104,6 +105,9 @@ class AuthService:
         if is_new:
             # await publish_user_registered(str(user.id), user.email, user.display_name)
             pass
+
+        if not user.last_login_at:
+            raise InternalException("Expected user.last_login_at to be defined")
 
         user_dto = UserDTO(
             user_id=str(user.id),
@@ -118,7 +122,7 @@ class AuthService:
         return HandleOAuthCallbackResponseDTO(
             access_token=access_token,
             refresh_token=raw_refresh,
-            expires_in=expires_in,
+            expires_in=expires_in,  # type: ignore[arg-type]
             user=user_dto,
             is_new_user=is_new,
             redirect_url=redirect_url,
@@ -140,6 +144,9 @@ class AuthService:
         )
 
         user = await self.user_service.get_user_by_id(str(rt.user_id))
+
+        if not user:
+            raise InternalException("Expected user to defined")
 
         access_token, _, expires_in = self.token_service.create_access_token(
             str(user.id), user.email
@@ -172,6 +179,9 @@ class AuthService:
 
         if not user:
             raise NotFoundException("User not found")
+
+        if not user.last_login_at:
+            raise InternalException("Expected user.last_login_at to be defined")
 
         return UserDTO(
             user_id=str(user.id),

@@ -14,8 +14,7 @@ async def create_tables() -> None:
 
 
 async def serve() -> None:
-    container = Container()
-    container.settings.from_pydantic(settings)
+    container = Container(settings=settings)
 
     await create_tables()
 

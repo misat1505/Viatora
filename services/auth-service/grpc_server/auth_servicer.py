@@ -27,7 +27,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     ):
         try:
             data = await self.auth_service.validate_token(request)
-            return auth_pb2.ValidateTokenResponse(**data.model_dump())
+            return auth_pb2.ValidateTokenResponse(**data.model_dump())  # type: ignore[attr-defined]
         except (JWTError, UnuathenticatedException) as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
 
@@ -35,7 +35,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     @ValidateRequest(InitiateOAuthDTO)
     async def InitiateOAuth(self, request: InitiateOAuthDTO, _):
         data = await self.auth_service.initiate_oauth(request)
-        return auth_pb2.InitiateOAuthResponse(**data.model_dump(), state=request.state)
+        return auth_pb2.InitiateOAuthResponse(**data.model_dump(), state=request.state)  # type: ignore[attr-defined]
 
     # HandleOAuthCallback
     @ValidateRequest(HandleOAuthCallbackDTO)
@@ -48,7 +48,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
             dumped = data.model_dump(exclude={"user"})
             converted = convert_datetimes_to_ints(dumped)
 
-            return auth_pb2.OAuthCallbackResponse(**converted, user=user_proto)
+            return auth_pb2.OAuthCallbackResponse(**converted, user=user_proto)  # type: ignore[attr-defined]
         except UnuathenticatedException as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
 
@@ -59,7 +59,7 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     ):
         try:
             data = await self.auth_service.refresh_token(request)
-            return auth_pb2.RefreshTokenResponse(**data.model_dump())
+            return auth_pb2.RefreshTokenResponse(**data.model_dump())  # type: ignore[attr-defined]
         except UnuathenticatedException as e:
             return await context.abort(grpc.StatusCode.UNAUTHENTICATED, str(e))
         except InternalException as e:
@@ -69,13 +69,13 @@ class AuthServicer(auth_pb2_grpc.AuthServiceServicer):
     @ValidateRequest(LogoutDTO)
     async def Logout(self, request: LogoutDTO, _):
         await self.auth_service.logout(request)
-        return auth_pb2.LogoutResponse(success=True)
+        return auth_pb2.LogoutResponse(success=True)  # type: ignore[attr-defined]
 
     # GetMe
     @ValidateRequest(GetMeDTO)
     async def GetMe(self, request: GetMeDTO, context: grpc.ServicerContext):
         try:
             user = await self.auth_service.get_me(request)
-            return auth_pb2.GetMeResponse(user=user_to_proto(user))
+            return auth_pb2.GetMeResponse(user=user_to_proto(user))  # type: ignore[attr-defined]
         except NotFoundException as e:
             return await context.abort(grpc.StatusCode.NOT_FOUND, str(e))

@@ -20,18 +20,18 @@ class TokenService:
         self._public_key = self._load_public_key()
 
     def _load_private_key(self) -> str:
-        with open(self.settings["jwt_private_key_path"]) as f:
+        with open(self.settings.jwt_private_key_path) as f:
             return f.read()
 
     def _load_public_key(self) -> str:
-        with open(self.settings["jwt_public_key_path"]) as f:
+        with open(self.settings.jwt_public_key_path) as f:
             return f.read()
 
     def create_access_token(self, user_id: str, email: str) -> tuple[str, str, int]:
         """Returns (token, jti, expires_in_seconds)."""
         jti = str(uuid.uuid4())
         expire = datetime.now(UTC) + timedelta(
-            minutes=self.settings["jwt_access_token_expire_minutes"]
+            minutes=self.settings.jwt_access_token_expire_minutes
         )
         payload = {
             "sub": user_id,
@@ -43,16 +43,16 @@ class TokenService:
         token = jwt.encode(
             payload,
             self._private_key,
-            algorithm=self.settings["jwt_access_token_algorithm"],
+            algorithm=self.settings.jwt_access_token_algorithm,
         )
-        return token, jti, self.settings["jwt_access_token_expire_minutes"] * 60
+        return token, jti, self.settings.jwt_access_token_expire_minutes * 60
 
     def decode_access_token(self, token: str) -> dict:
         """Raises JWTError on invalid/expired token."""
         return jwt.decode(
             token,
             self._public_key,
-            algorithms=[self.settings["jwt_access_token_algorithm"]],
+            algorithms=[self.settings.jwt_access_token_algorithm],
         )
 
     def generate_refresh_token(self) -> str:
@@ -63,7 +63,7 @@ class TokenService:
 
     def refresh_token_expires_at(self) -> datetime:
         return datetime.now(UTC) + timedelta(
-            days=self.settings["jwt_refresh_token_expire_days"]
+            days=self.settings.jwt_refresh_token_expire_days
         )
 
     async def create_refresh_token(
