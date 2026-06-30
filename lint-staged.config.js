@@ -18,7 +18,7 @@ export default {
   // =========================
   // TypeScript / JavaScript
   // =========================
-  '**/*.{ts,tsx,js,jsx}': [() => 'eslint --fix', prettierWrite],
+  '**/*.{ts,tsx,js,jsx}': [prettierWrite],
 
   // =========================
   // Python
