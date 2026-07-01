@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { StartExamDTO } from './dto/start-exam.dto';
+import { StartExamDTO, StartSessionResponseDTO } from './dto/start-exam.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ExamServiceClient } from 'src/generated/exam';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -15,6 +15,7 @@ import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { UserProfile } from 'src/generated/auth';
+import { ApiOkResponse } from '@nestjs/swagger';
 
 @Controller('/exams')
 @UseGuards(JwtAuthGuard)
@@ -32,19 +33,19 @@ export class ExamsController implements OnModuleInit {
   }
 
   @Post('/start')
+  @ApiOkResponse({ type: StartSessionResponseDTO })
   async startExamSession(
     @Body() dto: StartExamDTO,
     @CurrentUser() user: UserProfile,
-  ) {
-    const result = await firstValueFrom(
+  ): Promise<StartSessionResponseDTO> {
+    const examSession = await firstValueFrom(
       this.examService.startSession({
         category: dto.category,
         userId: user.userId,
       }),
     );
 
-    console.log(result);
-
-    return result;
+    // @ts-expect-error TODO: make this error go away
+    return examSession;
   }
 }

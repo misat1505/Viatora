@@ -1,5 +1,6 @@
 'use server';
 
+import { ExamsControllerStartExamSessionResponse } from '@/generated/zod/exams/exams';
 import { examsApiClient } from '@/lib/api';
 import { cookies } from 'next/headers';
 
@@ -14,6 +15,5 @@ export async function startExamSession(category: string) {
     { headers: { Authorization: `Bearer ${accessToken}` } },
   );
 
-  // TODO: validate
-  return response.data;
+  return ExamsControllerStartExamSessionResponse.parse(response.data);
 }

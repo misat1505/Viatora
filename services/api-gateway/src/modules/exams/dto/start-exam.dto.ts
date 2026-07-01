@@ -1,5 +1,14 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsString } from 'class-validator';
+import {
+  IsArray,
+  IsIn,
+  IsInt,
+  IsString,
+  Max,
+  Min,
+  ValidateNested,
+} from 'class-validator';
+import { Type } from 'class-transformer';
 
 export class StartExamDTO {
   @IsString()
@@ -8,4 +17,195 @@ export class StartExamDTO {
     example: 'B',
   })
   category!: string; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
+}
+
+// ── Media ────────────────────────────────────────────────────────
+
+export class MediaDTO {
+  @IsIn(['image', 'video', 'none'])
+  @ApiProperty({
+    description: 'Media type',
+    example: 'none',
+    enum: ['image', 'video', 'none'],
+  })
+  type!: string;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Media URL',
+    example: 'https://cdn.viatora.pl/media/abc123.jpg',
+  })
+  url!: string;
+}
+
+// ── Locale ───────────────────────────────────────────────────────
+
+export class LocaleDTO {
+  @IsString()
+  @ApiProperty({
+    description: 'Polish text',
+    example: 'Czy wolno wyprzedzać na przejściu dla pieszych?',
+  })
+  pl!: string;
+
+  @IsString()
+  @ApiProperty({
+    description: 'English text',
+    example: 'Is overtaking allowed on a pedestrian crossing?',
+  })
+  en!: string;
+}
+
+// ── Answers ──────────────────────────────────────────────────────
+
+export class AnswersDTO {
+  @ValidateNested()
+  @Type(() => LocaleDTO)
+  @ApiProperty({
+    description: 'Answer option A',
+    type: LocaleDTO,
+  })
+  a!: LocaleDTO;
+
+  @ValidateNested()
+  @Type(() => LocaleDTO)
+  @ApiProperty({
+    description: 'Answer option B',
+    type: LocaleDTO,
+  })
+  b!: LocaleDTO;
+
+  @ValidateNested()
+  @Type(() => LocaleDTO)
+  @ApiProperty({
+    description: 'Answer option C',
+    type: LocaleDTO,
+  })
+  c!: LocaleDTO;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Correct answer key',
+    example: 'a',
+  })
+  correctAnswer!: string;
+}
+
+// ── ExamQuestion ─────────────────────────────────────────────────
+
+export class ExamQuestionDTO {
+  @IsString()
+  @ApiProperty({
+    description: 'Sanity document _id',
+    example: 'question-123',
+  })
+  id!: string;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Slug of the question',
+    example: 'czy-wolno-wyprzedzac-na-przejsciu',
+  })
+  slug!: string;
+
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({
+    description: 'Categories this question belongs to',
+    example: ['B', 'B1'],
+    type: [String],
+  })
+  categories!: string[];
+
+  @IsIn(['basic', 'specialist'])
+  @ApiProperty({
+    description: 'Question type',
+    example: 'basic',
+    enum: ['basic', 'specialist'],
+  })
+  questionType!: string;
+
+  @ValidateNested()
+  @Type(() => LocaleDTO)
+  @ApiProperty({
+    description: 'Question text',
+    type: LocaleDTO,
+  })
+  text!: LocaleDTO;
+
+  @ValidateNested()
+  @Type(() => AnswersDTO)
+  @ApiProperty({
+    description: 'Answer options and correct answer',
+    type: AnswersDTO,
+  })
+  answers!: AnswersDTO;
+
+  @IsInt()
+  @Min(1)
+  @Max(3)
+  @ApiProperty({
+    description: 'Points awarded for this question',
+    example: 1,
+  })
+  points!: number;
+
+  @IsArray()
+  @IsString({ each: true })
+  @ApiProperty({
+    description: 'Tags associated with the question',
+    example: ['road-signs', 'right-of-way'],
+    type: [String],
+  })
+  tags!: string[];
+
+  @ValidateNested()
+  @Type(() => MediaDTO)
+  @ApiProperty({
+    description: 'Media attached to the question',
+    type: MediaDTO,
+  })
+  media!: MediaDTO;
+}
+
+// ── StartSessionResponse ─────────────────────────────────────────
+
+export class StartSessionResponseDTO {
+  @IsString()
+  @ApiProperty({
+    description: 'Session identifier',
+    example: 'sess_9f8a7b6c',
+  })
+  sessionId!: string;
+
+  @IsInt()
+  @ApiProperty({
+    description: 'Time limit for the session in seconds (always 1500)',
+    example: 1500,
+  })
+  timeLimitSeconds!: number;
+
+  @IsInt()
+  @ApiProperty({
+    description: 'Total number of questions (always 32)',
+    example: 32,
+  })
+  totalQuestions!: number;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Session start timestamp (ISO 8601)',
+    example: '2026-07-01T12:00:00.000Z',
+  })
+  startedAt!: string;
+
+  @IsArray()
+  @ValidateNested({ each: true })
+  @Type(() => ExamQuestionDTO)
+  @ApiProperty({
+    description:
+      'All 32 questions for the session (no correct answers exposed)',
+    type: [ExamQuestionDTO],
+  })
+  questions!: ExamQuestionDTO[];
 }

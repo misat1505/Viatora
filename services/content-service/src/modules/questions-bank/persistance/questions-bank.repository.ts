@@ -52,7 +52,8 @@ export class QuestionsBankRepository
         media,
         tags,
         categories,
-        questionType
+        questionType,
+        correctOption
       }
     `;
 
@@ -73,7 +74,7 @@ export class QuestionsBankRepository
           type: entry.media.type,
           url: entry.media.image.asset._ref,
         },
-        answers: entry.options,
+        answers: { ...entry.options, correctAnswer: entry.correctOption },
         questionType: entry.questionType,
         tags: entry.tags,
         text: entry.text,
