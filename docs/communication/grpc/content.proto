@@ -46,8 +46,7 @@ message GetQuestionByIdRequest {
 // Question served during active exam — normalized output (no answers, no correctness info)
 message ExamQuestion {
   string id          = 1;
-  string external_id = 2; // Official ID e.g. "1-001"
-  string text        = 3;
+  string text        = 2;
 
   // Unified answer format for UI:
   // BASIC:
@@ -58,42 +57,41 @@ message ExamQuestion {
   //  option_a = "A"
   //  option_b = "B"
   //  option_c = "C"
-  string option_a = 4;
-  string option_b = 5;
-  string option_c = 6;
+  string option_a = 3;
+  string option_b = 4;
+  string option_c = 5;
 
-  string media_url  = 7;
-  string media_type = 8; // "image" | "video" | "none"
+  string media_url  = 6;
+  string media_type = 7; // "image" | "video" | "none"
 
-  int32  points     = 9;  // 1 | 2 | 3
+  int32  points     = 8;  // 1 | 2 | 3
 
-  string question_type = 10; // "basic" | "specialist"
+  string question_type = 9; // "basic" | "specialist"
 
-  repeated string tags = 11;
+  repeated string tags = 10;
 }
 
 // Full question detail — post-exam only (includes correctness + explanation)
 message QuestionDetail {
   string id          = 1;
-  string external_id = 2;
-  string text        = 3;
+  string text        = 2;
 
-  string option_a = 4;
-  string option_b = 5;
-  string option_c = 6;
+  string option_a = 3;
+  string option_b = 4;
+  string option_c = 5;
 
-  string correct_option = 7;
+  string correct_option = 6;
 
-  string explanation = 8;
+  string explanation = 7;
 
-  string media_url  = 9;
-  string media_type = 10;
+  string media_url  = 8;
+  string media_type = 9;
 
-  int32  points     = 11;
+  int32  points     = 10;
 
-  string question_type = 12; // "basic" | "specialist"
+  string question_type = 11; // "basic" | "specialist"
 
-  repeated string tags = 13;
+  repeated string tags = 12;
 
-  string category = 14;
+  string category = 13;
 }
