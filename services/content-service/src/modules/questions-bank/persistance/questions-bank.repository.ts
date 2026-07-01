@@ -1,6 +1,9 @@
+/* eslint-disable @typescript-eslint/no-unsafe-member-access */
+/* eslint-disable @typescript-eslint/no-unsafe-assignment */
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
+  ExamQuestion,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
@@ -15,7 +18,7 @@ export const QUESTIONS_BANK_REPOSITORY_TOKEN = Symbol(
 export class QuestionsBankRepository
   implements IQuestionsBankRepository, OnModuleInit
 {
-  private sanityClient: SanityClient;
+  private sanityClient!: SanityClient;
 
   constructor(private readonly configService: ConfigService) {}
 
@@ -31,8 +34,6 @@ export class QuestionsBankRepository
   async getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']> {
-    console.log('question bank repository hit', filters);
-
     const { category, questionType, count, points } = filters;
 
     const query = `
@@ -45,6 +46,8 @@ export class QuestionsBankRepository
       ][0...$count]{
         _id,
         text,
+        slug,
+        points,
         options,
         media,
         tags,
@@ -60,8 +63,25 @@ export class QuestionsBankRepository
       points,
     });
 
-    console.log(JSON.stringify(result, null, 2));
+    const questions = (result as any[]).map((entry) => {
+      const question: ExamQuestion = {
+        id: entry._id,
+        categories: entry.categories,
+        slug: entry.slug.current,
+        points: entry.points,
+        media: {
+          type: entry.media.type,
+          url: entry.media.image.asset._ref,
+        },
+        answers: entry.options,
+        questionType: entry.questionType,
+        tags: entry.tags,
+        text: entry.text,
+      };
 
-    return result;
+      return question;
+    });
+
+    return questions;
   }
 }

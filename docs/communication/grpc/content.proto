@@ -19,7 +19,7 @@ service ContentService {
 
   // Fetches a single question with correct_option and explanation.
   // Used after exam completion for result breakdown.
-  rpc GetQuestionById (GetQuestionByIdRequest) returns (QuestionDetail);
+  rpc GetQuestionById (GetQuestionByIdRequest) returns (ExamQuestion);
 }
 
 // ── GetQuestions ─────────────────────────────────────────────────
@@ -43,56 +43,33 @@ message GetQuestionByIdRequest {
 }
 
 // ── Shared types ─────────────────────────────────────────────────
+message Media {
+  string type = 1; // "image" | "video" | "none"
+  string url  = 2;
+}
 
-// Question served during active exam — normalized output (no answers, no correctness info)
-message ExamQuestion {
-  string id          = 1;
-  string text        = 2;
+message Locale {
+  string pl = 1;
+  string en = 2;
+}
 
-  // Unified answer format for UI:
-  // BASIC:
-  //  option_a = "TAK"
-  //  option_b = "NIE"
-  //  option_c = ""
-  // SPECIALIST:
-  //  option_a = "A"
-  //  option_b = "B"
-  //  option_c = "C"
-  string option_a = 3;
-  string option_b = 4;
-  string option_c = 5;
-
-  string media_url  = 6;
-  string media_type = 7; // "image" | "video" | "none"
-
-  int32  points     = 8;  // 1 | 2 | 3
-
-  string question_type = 9; // "basic" | "specialist"
-
-  repeated string tags = 10;
+message Answers {
+  Locale a              = 1;
+  Locale b              = 2;
+  Locale c              = 3;
+  string correct_answer = 4;
 }
 
 // Full question detail — post-exam only (includes correctness + explanation)
-message QuestionDetail {
-  string id          = 1;
-  string text        = 2;
+message ExamQuestion {
+  string id                  = 1;
+  string slug                = 2;
+  repeated string categories = 3;
+  string question_type       = 4; // "basic" | "specialist"
 
-  string option_a = 3;
-  string option_b = 4;
-  string option_c = 5;
-
-  string correct_option = 6;
-
-  string explanation = 7;
-
-  string media_url  = 8;
-  string media_type = 9;
-
-  int32  points     = 10;
-
-  string question_type = 11; // "basic" | "specialist"
-
-  repeated string tags = 12;
-
-  string category = 13;
+  Locale text                = 5;
+  Answers answers            = 6;
+  string points              = 7;
+  repeated string tags       = 8;
+  Media media                = 9;
 }
