@@ -101,6 +101,20 @@ export default defineType({
     }),
 
     defineField({
+      name: 'points',
+      title: 'Points',
+      type: 'number',
+      validation: (Rule) => Rule.required().min(1).max(3).error('Points must be 1, 2 or 3'),
+      options: {
+        list: [
+          {title: '1 point', value: 1},
+          {title: '2 points', value: 2},
+          {title: '3 points', value: 3},
+        ],
+      },
+    }),
+
+    defineField({
       name: 'explanation',
       title: 'Explanation',
       type: 'object',

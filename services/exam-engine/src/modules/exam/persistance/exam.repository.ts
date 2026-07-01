@@ -35,6 +35,8 @@ export class ExamRepository implements IExamRepository, OnModuleInit {
           category: filters.category,
           // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           questionType: filters.questionType,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
+          points: filters.points,
           count: filters.count,
         },
         // @ts-expect-error metadata not in generated types

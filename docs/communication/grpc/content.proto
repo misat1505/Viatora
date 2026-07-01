@@ -27,7 +27,8 @@ service ContentService {
 message GetQuestionsRequest {
   string category      = 1; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
   string question_type = 2; // "BASIC" | "SPECIALIST"
-  int32  count         = 3; // fixed at 32 by regulation (reserved for future use)
+  int32 points         = 3; // 1 | 2 | 3
+  int32  count         = 4; // fixed at 32 by regulation (reserved for future use)
 }
 
 message GetQuestionsResponse {

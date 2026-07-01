@@ -14,6 +14,7 @@ export class ExamService {
       this.examRepository.getQuestionsByCategory({
         category,
         questionType: 'specialist',
+        points: 3,
         count: 5,
       }),
     ]);

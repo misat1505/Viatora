@@ -33,14 +33,15 @@ export class QuestionsBankRepository
   ): Promise<GetQuestionsResponse['questions']> {
     console.log('question bank repository hit', filters);
 
-    const { category, questionType, count } = filters;
+    const { category, questionType, count, points } = filters;
 
     const query = `
       *[
         _type == "question" &&
         !(_id in path("drafts.**")) &&
         $category in categories &&
-        questionType == $questionType
+        questionType == $questionType &&
+        points == $points
       ][0...$count]{
         _id,
         text,
@@ -56,6 +57,7 @@ export class QuestionsBankRepository
       category,
       questionType,
       count,
+      points,
     });
 
     console.log(JSON.stringify(result, null, 2));
