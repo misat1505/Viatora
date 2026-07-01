@@ -30,6 +30,7 @@ export class ExamRepository implements IExamRepository, OnModuleInit {
       this.contentService.getQuestions(
         {
           category: filters.category,
+          questionType: filters.questionType,
           count: filters.count,
         },
         // @ts-expect-error metadata not in generated types
