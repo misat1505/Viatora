@@ -69,7 +69,7 @@ message ExamQuestion {
 
   Locale text                = 5;
   Answers answers            = 6;
-  string points              = 7;
+  int32 points               = 7;
   repeated string tags       = 8;
   Media media                = 9;
 }

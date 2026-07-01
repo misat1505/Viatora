@@ -33,9 +33,7 @@ export class ExamRepository implements IExamRepository, OnModuleInit {
       this.contentService.getQuestions(
         {
           category: filters.category,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           questionType: filters.questionType,
-          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           points: filters.points,
           count: filters.count,
         },

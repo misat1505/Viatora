@@ -43,6 +43,8 @@ export class ExamsController implements OnModuleInit {
       }),
     );
 
+    console.log(result);
+
     return result;
   }
 }
