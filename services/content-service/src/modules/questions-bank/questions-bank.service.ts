@@ -1,6 +1,10 @@
 import { Inject, Injectable } from '@nestjs/common';
 import { QUESTIONS_BANK_REPOSITORY_TOKEN } from './persistance/questions-bank.repository';
 import { type IQuestionsBankRepository } from './persistance/questions-bank.repository.interface';
+import {
+  GetQuestionsRequest,
+  GetQuestionsResponse,
+} from 'src/generated/content';
 
 @Injectable()
 export class QuestionsBankService {
@@ -9,9 +13,11 @@ export class QuestionsBankService {
     private readonly questionBankRepository: IQuestionsBankRepository,
   ) {}
 
-  async getQuestionsByCategory(filters: any) {
+  async getQuestionsByCategory(
+    filters: GetQuestionsRequest,
+  ): Promise<GetQuestionsResponse> {
     const questions =
       await this.questionBankRepository.getQuestionsByCategory(filters);
-    return questions;
+    return { questions, cacheHit: 'miss' };
   }
 }

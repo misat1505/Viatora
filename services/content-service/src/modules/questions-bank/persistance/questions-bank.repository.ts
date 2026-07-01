@@ -1,8 +1,9 @@
 import { Injectable } from '@nestjs/common';
+import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
-  GetQuestionsFilters,
-  IQuestionsBankRepository,
-} from './questions-bank.repository.interface';
+  GetQuestionsRequest,
+  GetQuestionsResponse,
+} from 'src/generated/content';
 
 export const QUESTIONS_BANK_REPOSITORY_TOKEN = Symbol(
   'QUESTIONS_BANK_REPOSITORY_TOKEN',
@@ -10,8 +11,11 @@ export const QUESTIONS_BANK_REPOSITORY_TOKEN = Symbol(
 
 @Injectable()
 export class QuestionsBankRepository implements IQuestionsBankRepository {
-  async getQuestionsByCategory(filters: GetQuestionsFilters) {
+  async getQuestionsByCategory(
+    filters: GetQuestionsRequest,
+  ): Promise<GetQuestionsResponse['questions']> {
     console.log('question bank repository hit', filters);
+    // @ts-expect-error TODO: as for now it is not implemented
     return filters;
   }
 }
