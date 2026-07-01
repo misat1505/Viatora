@@ -1,14 +1,13 @@
 import { Body, Controller } from '@nestjs/common';
-import { AppService } from './app.service';
+import { ExamService } from './exam.service';
 import { GrpcMethod } from '@nestjs/microservices';
 
 @Controller()
-export class AppController {
-  constructor(private readonly appService: AppService) {}
+export class ExamController {
+  constructor(private readonly examService: ExamService) {}
 
   @GrpcMethod('ExamService', 'StartSession')
   startExamSession(@Body() dto: any) {
-    console.log(dto);
-    return 'Bob';
+    return this.examService.startExamSession(dto.category);
   }
 }
