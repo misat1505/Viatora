@@ -5,8 +5,10 @@ import {
   EXAM_REPOSITORY_TOKEN,
   ExamRepository,
 } from './persistance/exam.repository';
+import { GrpcClientsModule } from 'src/grpc/clients.module';
 
 @Module({
+  imports: [GrpcClientsModule],
   controllers: [ExamController],
   providers: [
     ExamService,
