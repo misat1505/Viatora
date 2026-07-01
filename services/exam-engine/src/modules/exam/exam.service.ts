@@ -12,7 +12,7 @@ export class ExamService {
   async startExamSession(category: string) {
     const questions = await this.examRepository.getQuestionsByCategory({
       category,
-      questionType: 'basic',
+      questionType: 'specialist',
       count: 5,
     });
     return questions;
