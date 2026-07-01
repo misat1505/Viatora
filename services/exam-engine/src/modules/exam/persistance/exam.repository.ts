@@ -1,12 +1,13 @@
 import { Inject, Injectable, OnModuleInit } from '@nestjs/common';
-import {
-  GetQuestionsFilters,
-  IExamRepository,
-} from './exam.repository.interface';
+import { IExamRepository } from './exam.repository.interface';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { CONTENT_PACKAGE } from 'src/grpc/clients.module';
-import { ContentServiceClient } from 'src/generated/content';
+import {
+  ContentServiceClient,
+  GetQuestionsRequest,
+  GetQuestionsResponse,
+} from 'src/generated/content';
 import { firstValueFrom } from 'rxjs';
 
 export const EXAM_REPOSITORY_TOKEN = Symbol('EXAM_REPOSITORY_TOKEN');
@@ -25,11 +26,14 @@ export class ExamRepository implements IExamRepository, OnModuleInit {
       this.grpcClient.getService<ContentServiceClient>('ContentService');
   }
 
-  async getQuestionsByCategory(filters: GetQuestionsFilters) {
+  async getQuestionsByCategory(
+    filters: GetQuestionsRequest,
+  ): Promise<GetQuestionsResponse['questions']> {
     const questions = await firstValueFrom(
       this.contentService.getQuestions(
         {
           category: filters.category,
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-assignment
           questionType: filters.questionType,
           count: filters.count,
         },
@@ -38,6 +42,6 @@ export class ExamRepository implements IExamRepository, OnModuleInit {
       ),
     );
 
-    return questions;
+    return questions.questions;
   }
 }

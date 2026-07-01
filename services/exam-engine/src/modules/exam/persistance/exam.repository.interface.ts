@@ -1,9 +1,10 @@
-export type GetQuestionsFilters = {
-  category: string;
-  questionType: string;
-  count: number;
-};
+import {
+  GetQuestionsRequest,
+  GetQuestionsResponse,
+} from 'src/generated/content';
 
 export interface IExamRepository {
-  getQuestionsByCategory(filters: GetQuestionsFilters): Promise<any>;
+  getQuestionsByCategory(
+    filters: GetQuestionsRequest,
+  ): Promise<GetQuestionsResponse['questions']>;
 }

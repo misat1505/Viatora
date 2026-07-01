@@ -10,11 +10,14 @@ export class ExamService {
   ) {}
 
   async startExamSession(category: string) {
-    const questions = await this.examRepository.getQuestionsByCategory({
-      category,
-      questionType: 'specialist',
-      count: 5,
-    });
-    return questions;
+    const questions = await Promise.all([
+      this.examRepository.getQuestionsByCategory({
+        category,
+        questionType: 'specialist',
+        count: 5,
+      }),
+    ]);
+
+    return questions.flat();
   }
 }

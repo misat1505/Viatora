@@ -38,6 +38,7 @@ export class QuestionsBankRepository
     const query = `
       *[
         _type == "question" &&
+        !(_id in path("drafts.**")) &&
         $category in categories &&
         questionType == $questionType
       ][0...$count]{
