@@ -168,4 +168,17 @@ export default defineType({
       },
     }),
   ],
+  preview: {
+    select: {
+      title: 'text.pl',
+      subtitle: 'questionType',
+    },
+    prepare(selection) {
+      const {title, subtitle} = selection
+      return {
+        title: title || 'No title',
+        subtitle: subtitle,
+      }
+    },
+  },
 })
