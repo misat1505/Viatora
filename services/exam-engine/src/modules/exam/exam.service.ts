@@ -1,6 +1,7 @@
-import { Inject, Injectable } from '@nestjs/common';
+import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
+import { EXAMS_CONFIG } from './config/exams-config';
 
 @Injectable()
 export class ExamService {
@@ -10,14 +11,17 @@ export class ExamService {
   ) {}
 
   async startExamSession(category: string) {
-    const questions = await Promise.all([
-      this.examRepository.getQuestionsByCategory({
-        category,
-        questionType: 'specialist',
-        points: 3,
-        count: 5,
-      }),
-    ]);
+    if (!Object.keys(EXAMS_CONFIG).includes(category))
+      throw new BadRequestException(`Catgeory ${category} is not supported.`);
+
+    const examConfiguration =
+      EXAMS_CONFIG[category as keyof typeof EXAMS_CONFIG];
+
+    const requests = examConfiguration.map((filter) =>
+      this.examRepository.getQuestionsByCategory({ ...filter, category }),
+    );
+
+    const questions = await Promise.all(requests);
 
     return questions.flat();
   }
