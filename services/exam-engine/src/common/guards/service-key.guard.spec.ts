@@ -15,6 +15,7 @@ describe('ServiceKeyGuard', () => {
 
     configService.getOrThrow.mockReturnValue('secret-key');
 
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     guard = new ServiceKeyGuard(configService);
     guard.onModuleInit();
   });
