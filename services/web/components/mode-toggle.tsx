@@ -12,8 +12,17 @@ import {
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
 
+type Pallette = 'caffeine' | 'supabase';
+
 export function ModeToggle() {
   const { setTheme } = useTheme();
+
+  function handleSwitch(pallette: Pallette, mode: 'dark' | 'light') {
+    setTheme(mode);
+    document.documentElement.classList.remove('theme-caffeine', 'supabase');
+
+    document.documentElement.classList.add(pallette);
+  }
 
   return (
     <DropdownMenu>
@@ -25,9 +34,18 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
-        <DropdownMenuItem onClick={() => setTheme('system')}>System</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSwitch('caffeine', 'light')}>
+          light-caffeine
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSwitch('caffeine', 'dark')}>
+          dark-caffeine
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSwitch('supabase', 'light')}>
+          light-supabase
+        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => handleSwitch('supabase', 'dark')}>
+          dark-supabase
+        </DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );
