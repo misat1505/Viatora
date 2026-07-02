@@ -2,9 +2,9 @@ import { Module } from '@nestjs/common';
 import { ExamController } from './exam.controller';
 import { ExamService } from './exam.service';
 import {
-  EXAM_REPOSITORY_TOKEN,
-  ExamRepository,
-} from './persistance/exam.repository';
+  QUESTIONS_REPOSITORY_TOKEN,
+  QuestionsRepository,
+} from './persistance/questions.repository';
 import { GrpcClientsModule } from 'src/grpc/clients.module';
 
 @Module({
@@ -12,7 +12,7 @@ import { GrpcClientsModule } from 'src/grpc/clients.module';
   controllers: [ExamController],
   providers: [
     ExamService,
-    { provide: EXAM_REPOSITORY_TOKEN, useClass: ExamRepository },
+    { provide: QUESTIONS_REPOSITORY_TOKEN, useClass: QuestionsRepository },
   ],
 })
 export class ExamModule {}

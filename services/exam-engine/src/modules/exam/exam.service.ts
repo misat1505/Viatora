@@ -1,14 +1,14 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
-import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
-import { type IExamRepository } from './persistance/exam.repository.interface';
+import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
+import { type IQuestionsRepository } from './persistance/questions.repository.interface';
 import { EXAMS_CONFIG } from './config/exams-config';
 import { ExamSession, StartSessionRequest } from 'src/generated/exam';
 
 @Injectable()
 export class ExamService {
   constructor(
-    @Inject(EXAM_REPOSITORY_TOKEN)
-    private readonly examRepository: IExamRepository,
+    @Inject(QUESTIONS_REPOSITORY_TOKEN)
+    private readonly questionsRepository: IQuestionsRepository,
   ) {}
 
   async startExamSession(dto: StartSessionRequest): Promise<ExamSession> {
@@ -21,7 +21,7 @@ export class ExamService {
       EXAMS_CONFIG[category as keyof typeof EXAMS_CONFIG];
 
     const requests = examConfiguration.map((filter) =>
-      this.examRepository.getQuestionsByCategory({ ...filter, category }),
+      this.questionsRepository.getQuestionsByCategory({ ...filter, category }),
     );
 
     const questions = await Promise.all(requests);

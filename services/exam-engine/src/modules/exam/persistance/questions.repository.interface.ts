@@ -3,7 +3,7 @@ import {
   GetQuestionsResponse,
 } from 'src/generated/content';
 
-export interface IExamRepository {
+export interface IQuestionsRepository {
   getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']>;
