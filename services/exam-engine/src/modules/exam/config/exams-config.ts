@@ -1,6 +1,6 @@
 type Category = 'B' | 'A' | 'A1' | 'A2' | 'B1' | 'C' | 'D' | 'AM';
 
-enum QuestionType {
+export enum QuestionType {
   BASIC = 'basic',
   SPECIALIST = 'specialist',
 }
