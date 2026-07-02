@@ -5,6 +5,7 @@ import Providers from '@/providers';
 import LanguageSwitch from '@/components/language-switch';
 import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
+import { ModeToggle } from '@/components/mode-toggle';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -31,11 +32,18 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
   const dict = await getDictionary(lang as Locale);
 
   return (
-    <html lang={lang} className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}>
+    <html
+      lang={lang}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      suppressHydrationWarning
+    >
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
           <Providers>
-            <LanguageSwitch lang={lang as Locale} />
+            <div>
+              <LanguageSwitch lang={lang as Locale} />
+              <ModeToggle />
+            </div>
             {children}
           </Providers>
         </LocaleProvider>
