@@ -2,7 +2,11 @@ import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
 import { type IQuestionsRepository } from './persistance/questions.repository.interface';
 import { EXAMS_CONFIG } from './config/exams-config';
-import { ExamSession, StartSessionRequest } from 'src/generated/exam';
+import {
+  ExamQuestionWithAnswer,
+  ExamSession,
+  StartSessionRequest,
+} from 'src/generated/exam';
 import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
 
@@ -31,13 +35,15 @@ export class ExamService {
     const questions = await Promise.all(requests);
 
     const flattenedQuestions = questions.flat();
+    const questionsWithAnswers: ExamQuestionWithAnswer[] =
+      flattenedQuestions.map((question) => ({ question, userAnswer: '' }));
 
     const examSessionDTO: Omit<ExamSession, 'sessionId'> = {
       userId,
       timeLimitSeconds: 1500,
       totalQuestions: flattenedQuestions.length,
       startedAt: new Date().toISOString(),
-      questions: flattenedQuestions,
+      questions: questionsWithAnswers,
     };
 
     const examSession =

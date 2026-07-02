@@ -44,12 +44,17 @@ message StartSessionRequest {
   string category = 2; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
 }
 
+message ExamQuestionWithAnswer {
+  Viatora.content.ExamQuestion question = 1;
+  string user_answer = 2;
+}
+
 message ExamSession {
   string     session_id         = 1;
   int32      time_limit_seconds = 2; // Always 1500
   int32      total_questions    = 3; // Always 32
   string     started_at         = 4; // ISO 8601
-  repeated Viatora.content.ExamQuestion questions = 5; // All 32 questions (no correct answers)
+  repeated ExamQuestionWithAnswer questions = 5; // All 32 questions
   string user_id                = 6;
 }
 

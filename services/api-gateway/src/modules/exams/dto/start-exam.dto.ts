@@ -168,6 +168,23 @@ export class ExamQuestionDTO {
   media!: MediaDTO;
 }
 
+export class ExamQuestionWithAnswerDTO {
+  @ValidateNested()
+  @Type(() => ExamQuestionDTO)
+  @ApiProperty({
+    description: 'Question data',
+    type: ExamQuestionDTO,
+  })
+  question!: ExamQuestionDTO;
+
+  @IsString()
+  @ApiProperty({
+    description: 'User selected answer (nullable - not answered yet)',
+    example: 'a',
+  })
+  userAnswer!: string;
+}
+
 // ── StartSessionResponse ─────────────────────────────────────────
 
 export class ExamSessionDTO {
@@ -207,11 +224,10 @@ export class ExamSessionDTO {
 
   @IsArray()
   @ValidateNested({ each: true })
-  @Type(() => ExamQuestionDTO)
+  @Type(() => ExamQuestionWithAnswerDTO)
   @ApiProperty({
-    description:
-      'All 32 questions for the session (no correct answers exposed)',
-    type: [ExamQuestionDTO],
+    description: 'All questions with user answers',
+    type: [ExamQuestionWithAnswerDTO],
   })
-  questions!: ExamQuestionDTO[];
+  questions!: ExamQuestionWithAnswerDTO[];
 }
