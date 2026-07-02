@@ -6,6 +6,7 @@ import LanguageSwitch from '@/components/language-switch';
 import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
 import { ModeToggle } from '@/components/mode-toggle';
+import { palletteInitScript } from '@/lib/pallette-script';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -37,6 +38,9 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
       className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
       suppressHydrationWarning
     >
+      <head>
+        <script dangerouslySetInnerHTML={{ __html: palletteInitScript }} />
+      </head>
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
           <Providers>

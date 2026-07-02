@@ -11,17 +11,17 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
+import { usePallette } from '@/providers/pallette-provider';
 
 type Pallette = 'caffeine' | 'supabase';
 
 export function ModeToggle() {
+  const { setPallette } = usePallette();
   const { setTheme } = useTheme();
 
   function handleSwitch(pallette: Pallette, mode: 'dark' | 'light') {
     setTheme(mode);
-    document.documentElement.classList.remove('theme-caffeine', 'supabase');
-
-    document.documentElement.classList.add(pallette);
+    setPallette(pallette);
   }
 
   return (
