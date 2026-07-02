@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { Moon, Sun } from 'lucide-react';
 import { useTheme } from 'next-themes';
 
@@ -11,18 +10,9 @@ import {
   DropdownMenuItem,
   DropdownMenuTrigger,
 } from '@/components/ui/dropdown-menu';
-import { usePallette } from '@/providers/pallette-provider';
-
-type Pallette = 'caffeine' | 'supabase';
 
 export function ModeToggle() {
-  const { setPallette } = usePallette();
   const { setTheme } = useTheme();
-
-  function handleSwitch(pallette: Pallette, mode: 'dark' | 'light') {
-    setTheme(mode);
-    setPallette(pallette);
-  }
 
   return (
     <DropdownMenu>
@@ -34,18 +24,8 @@ export function ModeToggle() {
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end">
-        <DropdownMenuItem onClick={() => handleSwitch('caffeine', 'light')}>
-          light-caffeine
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleSwitch('caffeine', 'dark')}>
-          dark-caffeine
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleSwitch('supabase', 'light')}>
-          light-supabase
-        </DropdownMenuItem>
-        <DropdownMenuItem onClick={() => handleSwitch('supabase', 'dark')}>
-          dark-supabase
-        </DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('light')}>Light</DropdownMenuItem>
+        <DropdownMenuItem onClick={() => setTheme('dark')}>Dark</DropdownMenuItem>
       </DropdownMenuContent>
     </DropdownMenu>
   );

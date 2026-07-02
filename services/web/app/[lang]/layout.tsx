@@ -7,6 +7,7 @@ import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
 import { ModeToggle } from '@/components/mode-toggle';
 import { palletteInitScript } from '@/lib/pallette-script';
+import { PalletteDropdown } from '@/components/pallette-dropdown';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -47,6 +48,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
             <div>
               <LanguageSwitch lang={lang as Locale} />
               <ModeToggle />
+              <PalletteDropdown />
             </div>
             {children}
           </Providers>
