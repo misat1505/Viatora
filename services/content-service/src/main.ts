@@ -12,7 +12,7 @@ async function bootstrap() {
         package: 'Viatora.content',
         protoPath: join(
           __dirname,
-          '../../../docs/communication/grpc/content.proto',
+          '../../../../docs/communication/grpc/content.proto',
         ),
         url: '0.0.0.0:50054',
       },

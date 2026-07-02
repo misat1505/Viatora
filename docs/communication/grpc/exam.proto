@@ -5,6 +5,9 @@ package Viatora.exam;
 option java_package = "pl.Viatora.grpc.exam";
 option java_multiple_files = true;
 
+import "content.proto";
+
+
 // ─────────────────────────────────────────────────────────────────
 // Exam Engine — gRPC server
 // Port: 50052
@@ -14,7 +17,7 @@ option java_multiple_files = true;
 service ExamService {
   // Verifies subscription (→ PaymentService), fetches questions (→ ContentService),
   // creates session in Redis. Returns first question.
-  rpc StartSession (StartSessionRequest) returns (StartSessionResponse);
+  rpc StartSession (StartSessionRequest) returns (ExamSession);
 
   // Returns current session state (remaining time, answered count).
   // Does NOT return correct answers — those are only revealed on FinishSession.
@@ -41,12 +44,18 @@ message StartSessionRequest {
   string category = 2; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
 }
 
-message StartSessionResponse {
-  string     session_id        = 1;
+message ExamQuestionWithAnswer {
+  Viatora.content.ExamQuestion question = 1;
+  string user_answer = 2;
+}
+
+message ExamSession {
+  string     session_id         = 1;
   int32      time_limit_seconds = 2; // Always 1500
-  int32      total_questions   = 3; // Always 32
-  string     started_at        = 4; // ISO 8601
-  repeated ExamQuestion questions = 5; // All 32 questions (no correct answers)
+  int32      total_questions    = 3; // Always 32
+  string     started_at         = 4; // ISO 8601
+  repeated ExamQuestionWithAnswer questions = 5; // All 32 questions
+  string user_id                = 6;
 }
 
 // ── GetSession ───────────────────────────────────────────────────
@@ -139,18 +148,6 @@ message GetResultResponse {
 
 // ── Shared types ──────────────────────────────────────────────────
 
-// Question as served during an active exam — NO correct_option, NO explanation
-message ExamQuestion {
-  string id         = 1;
-  string text       = 2;
-  string option_a   = 3;
-  string option_b   = 4;
-  string option_c   = 5;
-  string media_url  = 6;
-  string media_type = 7; // "image" | "video" | "none"
-  int32  points     = 8; // 1 | 2 | 3
-  string difficulty = 9; // "basic" | "medium" | "specialist"
-}
 
 // Per-question result revealed after session finish
 message AnswerResult {

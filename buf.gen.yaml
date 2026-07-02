@@ -11,3 +11,19 @@ plugins:
       - outputServices=grpc-js
       - useOptionals=none
       - outputClientImpl=grpc-js
+
+  - remote: buf.build/community/stephenh-ts-proto
+    out: services/exam-engine/src/generated
+    opt:
+      - nestJs=true
+      - outputServices=grpc-js
+      - useOptionals=none
+      - outputClientImpl=grpc-js
+
+  - remote: buf.build/community/stephenh-ts-proto
+    out: services/content-service/src/generated
+    opt:
+      - nestJs=true
+      - outputServices=grpc-js
+      - useOptionals=none
+      - outputClientImpl=grpc-js

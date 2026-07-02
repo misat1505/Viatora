@@ -3,6 +3,7 @@ import { AuthModule } from './modules/auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis from '@keyv/redis';
+import { ExamsModule } from './modules/exams/exams.module';
 
 @Module({
   imports: [
@@ -19,6 +20,7 @@ import KeyvRedis from '@keyv/redis';
     }),
     ConfigModule.forRoot({ isGlobal: true }),
     AuthModule,
+    ExamsModule,
   ],
 })
 export class AppModule {}

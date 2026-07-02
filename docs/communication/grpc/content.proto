@@ -19,14 +19,16 @@ service ContentService {
 
   // Fetches a single question with correct_option and explanation.
   // Used after exam completion for result breakdown.
-  rpc GetQuestionById (GetQuestionByIdRequest) returns (QuestionDetail);
+  rpc GetQuestionById (GetQuestionByIdRequest) returns (ExamQuestion);
 }
 
 // ── GetQuestions ─────────────────────────────────────────────────
 
 message GetQuestionsRequest {
-  string category = 1; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
-  int32  count    = 2; // fixed at 32 by regulation (reserved for future use)
+  string category      = 1; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
+  string question_type = 2; // "BASIC" | "SPECIALIST"
+  int32 points         = 3; // 1 | 2 | 3
+  int32  count         = 4; // fixed at 32 by regulation (reserved for future use)
 }
 
 message GetQuestionsResponse {
@@ -41,58 +43,33 @@ message GetQuestionByIdRequest {
 }
 
 // ── Shared types ─────────────────────────────────────────────────
+message Media {
+  string type = 1; // "image" | "video" | "none"
+  string url  = 2;
+}
 
-// Question served during active exam — normalized output (no answers, no correctness info)
-message ExamQuestion {
-  string id          = 1;
-  string external_id = 2; // Official ID e.g. "1-001"
-  string text        = 3;
+message Locale {
+  string pl = 1;
+  string en = 2;
+}
 
-  // Unified answer format for UI:
-  // BASIC:
-  //  option_a = "TAK"
-  //  option_b = "NIE"
-  //  option_c = ""
-  // SPECIALIST:
-  //  option_a = "A"
-  //  option_b = "B"
-  //  option_c = "C"
-  string option_a = 4;
-  string option_b = 5;
-  string option_c = 6;
-
-  string media_url  = 7;
-  string media_type = 8; // "image" | "video" | "none"
-
-  int32  points     = 9;  // 1 | 2 | 3
-
-  string question_type = 10; // "basic" | "specialist"
-
-  repeated string tags = 11;
+message Answers {
+  Locale a              = 1;
+  Locale b              = 2;
+  Locale c              = 3;
+  string correct_answer = 4;
 }
 
 // Full question detail — post-exam only (includes correctness + explanation)
-message QuestionDetail {
-  string id          = 1;
-  string external_id = 2;
-  string text        = 3;
+message ExamQuestion {
+  string id                  = 1;
+  string slug                = 2;
+  repeated string categories = 3;
+  string question_type       = 4; // "basic" | "specialist"
 
-  string option_a = 4;
-  string option_b = 5;
-  string option_c = 6;
-
-  string correct_option = 7;
-
-  string explanation = 8;
-
-  string media_url  = 9;
-  string media_type = 10;
-
-  int32  points     = 11;
-
-  string question_type = 12; // "basic" | "specialist"
-
-  repeated string tags = 13;
-
-  string category = 14;
+  Locale text                = 5;
+  Answers answers            = 6;
+  int32 points               = 7;
+  repeated string tags       = 8;
+  Media media                = 9;
 }
