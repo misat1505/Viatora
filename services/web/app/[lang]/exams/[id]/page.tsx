@@ -15,13 +15,13 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-8 flex items-center justify-between">
         <div>
-          <h1 className="text-2xl font-bold text-slate-900">Egzamin</h1>
-          <p className="text-sm text-slate-500">
+          <h1 className="text-2xl font-bold text-foreground">Egzamin</h1>
+          <p className="text-sm text-muted-foreground">
             {exam.totalQuestions} {exam.totalQuestions === 1 ? 'pytanie' : 'pytań'} · limit czasu:{' '}
             {minutes} min
           </p>
         </div>
-        <span className="rounded-full bg-slate-100 px-3 py-1 text-xs font-mono text-slate-500">
+        <span className="rounded-full bg-muted px-3 py-1 text-xs font-mono text-muted-foreground">
           {exam.sessionId.slice(0, 8)}
         </span>
       </div>

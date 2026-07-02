@@ -18,9 +18,9 @@ export function QuestionCard({
   const imageUrl = sanityImageUrl(question.media.url);
 
   return (
-    <div className="overflow-hidden rounded-2xl border border-slate-200 bg-white shadow-sm">
+    <div className="overflow-hidden rounded-2xl border border-border bg-card shadow-sm">
       {imageUrl && (
-        <div className="relative aspect-square w-full bg-slate-100 sm:aspect-video">
+        <div className="relative aspect-square w-full bg-muted sm:aspect-video">
           <Image
             src={imageUrl}
             alt={question.text[lang]}
@@ -34,20 +34,20 @@ export function QuestionCard({
 
       <div className="p-6">
         <div className="mb-3 flex flex-wrap items-center gap-2">
-          <span className="rounded-full bg-slate-100 px-2.5 py-1 text-xs font-medium text-slate-600">
+          <span className="rounded-full bg-muted px-2.5 py-1 text-xs font-medium text-muted-foreground">
             Pytanie {index + 1}
           </span>
-          <span className="rounded-full bg-blue-50 px-2.5 py-1 text-xs font-medium text-blue-700">
+          <span className="rounded-full bg-secondary px-2.5 py-1 text-xs font-medium text-secondary-foreground">
             {question.points} {question.points === 1 ? 'punkt' : 'punkty'}
           </span>
-          <span className="rounded-full bg-amber-50 px-2.5 py-1 text-xs font-medium text-amber-700">
+          <span className="rounded-full bg-accent px-2.5 py-1 text-xs font-medium text-accent-foreground">
             {question.questionType}
           </span>
           <div className="ml-auto flex flex-wrap gap-1">
             {question.categories.map((cat) => (
               <span
                 key={cat}
-                className="rounded border border-slate-200 px-1.5 py-0.5 text-xs font-semibold text-slate-500"
+                className="rounded border border-border px-1.5 py-0.5 text-xs font-semibold text-muted-foreground"
               >
                 {cat}
               </span>
@@ -55,7 +55,7 @@ export function QuestionCard({
           </div>
         </div>
 
-        <h2 className="mb-4 text-lg font-semibold text-slate-900">{question.text[lang]}</h2>
+        <h2 className="mb-4 text-lg font-semibold text-card-foreground">{question.text[lang]}</h2>
 
         <div className="space-y-2">
           {answerLabels.map((label) => {
@@ -67,10 +67,10 @@ export function QuestionCard({
                 key={label}
                 className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
                   isCorrect
-                    ? 'border-green-300 bg-green-50 text-green-800'
+                    ? 'border-primary/50 bg-primary/10 text-primary'
                     : isSelected
-                      ? 'border-red-300 bg-red-50 text-red-800'
-                      : 'border-slate-200 text-slate-700'
+                      ? 'border-destructive/50 bg-destructive/10 text-destructive'
+                      : 'border-border text-card-foreground'
                 }`}
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current text-xs font-bold uppercase">
@@ -92,7 +92,7 @@ export function QuestionCard({
             {question.tags.map((tag) => (
               <span
                 key={tag}
-                className="rounded-full bg-slate-50 px-2 py-0.5 text-xs text-slate-500"
+                className="rounded-full bg-muted px-2 py-0.5 text-xs text-muted-foreground"
               >
                 #{tag}
               </span>
