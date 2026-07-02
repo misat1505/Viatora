@@ -2,6 +2,7 @@ import { NestFactory } from '@nestjs/core';
 import { AppModule } from './app.module';
 import { MicroserviceOptions, Transport } from '@nestjs/microservices';
 import { join } from 'path';
+import { ServiceKeyGuard } from './common/guards/service-key.guard';
 
 async function bootstrap() {
   const app = await NestFactory.createMicroservice<MicroserviceOptions>(
@@ -18,6 +19,9 @@ async function bootstrap() {
       },
     },
   );
+
+  const guard = app.get(ServiceKeyGuard);
+  app.useGlobalGuards(guard);
 
   await app.listen();
 }
