@@ -10,6 +10,7 @@ import { PalletteDropdown } from '@/components/pallette-dropdown';
 import { getServerPalette } from '@/lib/get-server-pallette';
 import { LocalizedLink } from '@/components/localized-link';
 import { buttonVariants } from '@/components/ui/button';
+import { getServerTheme } from '@/lib/get-server-theme';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -35,16 +36,17 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
 
   const dict = await getDictionary(lang as Locale);
   const pallette = await getServerPalette();
+  const theme = await getServerTheme();
 
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased ${pallette}`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased ${pallette} ${theme}`}
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
-          <Providers pallette={pallette}>
+          <Providers pallette={pallette} theme={theme}>
             <div>
               <LanguageSwitch lang={lang as Locale} />
               <ModeToggle />
