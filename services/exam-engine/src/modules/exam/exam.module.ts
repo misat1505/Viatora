@@ -12,6 +12,10 @@ import {
 } from './persistance/exam.repository';
 import { ConfigService } from '@nestjs/config';
 import Redis from 'ioredis';
+import {
+  DEFAULT_EXAMS_CONFIGS_TOKEN,
+  EXAMS_CONFIG,
+} from './config/exams-config';
 
 @Module({
   imports: [GrpcClientsModule],
@@ -20,6 +24,7 @@ import Redis from 'ioredis';
     ExamService,
     { provide: QUESTIONS_REPOSITORY_TOKEN, useClass: QuestionsRepository },
     { provide: EXAM_REPOSITORY_TOKEN, useClass: ExamRepository },
+    { provide: DEFAULT_EXAMS_CONFIGS_TOKEN, useValue: EXAMS_CONFIG },
     {
       provide: 'REDIS',
       inject: [ConfigService],

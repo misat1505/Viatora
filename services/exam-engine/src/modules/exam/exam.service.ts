@@ -1,7 +1,10 @@
 import { BadRequestException, Inject, Injectable } from '@nestjs/common';
 import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
 import { type IQuestionsRepository } from './persistance/questions.repository.interface';
-import { EXAMS_CONFIG } from './config/exams-config';
+import {
+  DEFAULT_EXAMS_CONFIGS_TOKEN,
+  type ExamsConfigurations,
+} from './config/exams-config';
 import {
   ExamQuestionWithAnswer,
   ExamSession,
@@ -17,30 +20,41 @@ export class ExamService {
     private readonly questionsRepository: IQuestionsRepository,
     @Inject(EXAM_REPOSITORY_TOKEN)
     private readonly examRepository: IExamRepository,
+    @Inject(DEFAULT_EXAMS_CONFIGS_TOKEN)
+    private readonly examsConfigurations: ExamsConfigurations,
   ) {}
 
   async startExamSession(dto: StartSessionRequest): Promise<ExamSession> {
     const { category, userId } = dto;
 
-    if (!Object.keys(EXAMS_CONFIG).includes(category))
-      throw new BadRequestException(`Catgeory ${category} is not supported.`);
+    if (!Object.keys(this.examsConfigurations).includes(category))
+      throw new BadRequestException(`Category ${category} is not supported.`);
 
     const examConfiguration =
-      EXAMS_CONFIG[category as keyof typeof EXAMS_CONFIG];
+      this.examsConfigurations[category as keyof ExamsConfigurations];
+    const examQuestionConfiguration = examConfiguration.questionsConfigs;
 
-    const requests = examConfiguration.map((filter) =>
+    const requests = examQuestionConfiguration.map((filter) =>
       this.questionsRepository.getQuestionsByCategory({ ...filter, category }),
     );
 
     const questions = await Promise.all(requests);
 
     const flattenedQuestions = questions.flat();
+
+    if (examConfiguration.totalQuestions != flattenedQuestions.length) {
+      // TODO: raise an error, for now just a log
+      console.warn(
+        `Invalid exam configuration for category=${category}. Expected ${examConfiguration.totalQuestions} questions, but got ${flattenedQuestions.length}.`,
+      );
+    }
+
     const questionsWithAnswers: ExamQuestionWithAnswer[] =
       flattenedQuestions.map((question) => ({ question, userAnswer: '' }));
 
     const examSessionDTO: Omit<ExamSession, 'sessionId'> = {
       userId,
-      timeLimitSeconds: 1500,
+      timeLimitSeconds: examConfiguration.duration,
       totalQuestions: flattenedQuestions.length,
       startedAt: new Date().toISOString(),
       questions: questionsWithAnswers,
