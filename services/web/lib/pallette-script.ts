@@ -1,5 +1,12 @@
 export const PALLETTE_STORAGE_KEY = 'pallette';
-export const PALLETTES = ['caffeine', 'supabase'] as const;
+export const PALLETTES = [
+  'caffeine',
+  'supabase',
+  'vercel',
+  'twitter',
+  'notebook',
+  'claude',
+] as const;
 export type Pallette = (typeof PALLETTES)[number];
 export const DEFAULT_PALLETTE: Pallette = 'caffeine';
 

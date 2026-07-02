@@ -16,7 +16,15 @@ export function PalletteDropdown() {
   const colorsMap = {
     caffeine: ['#644A40', '#E8E8E8', '#FFDFB5', '#D8D8D8'],
     supabase: ['#72E3AD', '#EDEDED', '#FDFDFD', '#DFDFDF'],
+    vercel: ['#000000', '#EBEBEB', '#EBEBEB', '#E4E4E4'],
+    twitter: ['#1F9DF1', '#E3ECF6', '#0F1419', '#E1EAEF'],
+    notebook: ['#606060', '#F3EAC8', '#DEDEDE', '#747272'],
+    claude: ['#CA6442', '#E9E6DC', '#E9E6DC', '#DAD9D4'],
   };
+
+  const sortedColorsMap = Object.fromEntries(
+    Object.entries(colorsMap).sort(([a], [b]) => a.localeCompare(b)),
+  );
 
   const colors = colorsMap[pallette];
 
@@ -24,21 +32,22 @@ export function PalletteDropdown() {
     <DropdownMenu>
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
-          {colors.map((c) => (
-            <span key={c} className="w-2 h-2 rounded-xs" style={{ backgroundColor: c }}></span>
+          {colors.map((c, i) => (
+            <span key={i} className="w-2 h-2 rounded-xs" style={{ backgroundColor: c }}></span>
           ))}
           {capitalize(pallette)}
         </Button>
       </DropdownMenuTrigger>
-      <DropdownMenuContent align="end">
-        {Object.keys(colorsMap).map((pal) => (
+      <DropdownMenuContent align="end" className="w-fit">
+        {Object.keys(sortedColorsMap).map((pal, i) => (
           <DropdownMenuItem
-            key={pal}
+            key={i}
             onClick={() => setPallette(pal as keyof typeof colorsMap)}
             disabled={pal === pallette}
+            className="w-full"
           >
-            {colorsMap[pal as keyof typeof colorsMap].map((c) => (
-              <span key={c} className="w-2 h-2 rounded-xs" style={{ backgroundColor: c }}></span>
+            {colorsMap[pal as keyof typeof colorsMap].map((c, j) => (
+              <span key={j} className="w-2 h-2 rounded-xs" style={{ backgroundColor: c }}></span>
             ))}
             {capitalize(pal)}
           </DropdownMenuItem>
