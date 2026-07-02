@@ -24,4 +24,13 @@ export class ExamRepository implements IExamRepository {
 
     return exam;
   }
+
+  async getById(id: string): Promise<ExamSession | null> {
+    const key = `${this.prefix}:exams:${id}`;
+    const data = await this.redis.get(key);
+    if (!data) return null;
+
+    // TODO: proper validation
+    return JSON.parse(data) as ExamSession;
+  }
 }
