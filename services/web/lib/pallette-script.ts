@@ -23,6 +23,9 @@ export function applyPallette(next: Pallette) {
   try {
     localStorage.setItem(PALLETTE_STORAGE_KEY, next);
   } catch {}
+  try {
+    document.cookie = `${PALLETTE_STORAGE_KEY}=${next}; path=/; max-age=31536000`;
+  } catch {}
 }
 
 export const palletteInitScript = `

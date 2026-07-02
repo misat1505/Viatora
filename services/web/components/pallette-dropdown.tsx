@@ -33,9 +33,14 @@ export function PalletteDropdown() {
       <DropdownMenuTrigger asChild>
         <Button variant="outline">
           {colors.map((c, i) => (
-            <span key={i} className="w-2 h-2 rounded-xs" style={{ backgroundColor: c }}></span>
+            <span
+              key={i}
+              className="w-2 h-2 rounded-xs"
+              style={{ backgroundColor: c }}
+              suppressHydrationWarning
+            ></span>
           ))}
-          {capitalize(pallette)}
+          <span suppressHydrationWarning>{capitalize(pallette)}</span>
         </Button>
       </DropdownMenuTrigger>
       <DropdownMenuContent align="end" className="w-fit">

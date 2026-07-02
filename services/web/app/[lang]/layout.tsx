@@ -6,9 +6,11 @@ import LanguageSwitch from '@/components/language-switch';
 import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
 import { ModeToggle } from '@/components/mode-toggle';
-import { palletteInitScript } from '@/lib/pallette-script';
 import { PalletteDropdown } from '@/components/pallette-dropdown';
-import Script from 'next/script';
+import { getServerPalette } from '@/lib/get-server-pallette';
+import Link from 'next/link';
+import { LocalizedLink } from '@/components/localized-link';
+import { buttonVariants } from '@/components/ui/button';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -33,18 +35,14 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
   const { lang } = await params;
 
   const dict = await getDictionary(lang as Locale);
+  const pallette = await getServerPalette();
 
   return (
     <html
       lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased ${pallette}`}
       suppressHydrationWarning
     >
-      <head>
-        <Script id="palette-init" strategy="beforeInteractive">
-          {palletteInitScript}
-        </Script>
-      </head>
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
           <Providers>
@@ -52,6 +50,9 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
               <LanguageSwitch lang={lang as Locale} />
               <ModeToggle />
               <PalletteDropdown />
+              <LocalizedLink href="/register" className={buttonVariants({ variant: 'link' })}>
+                Register
+              </LocalizedLink>
             </div>
             {children}
           </Providers>
