@@ -6,6 +6,10 @@ import {
   QuestionsRepository,
 } from './persistance/questions.repository';
 import { GrpcClientsModule } from 'src/grpc/clients.module';
+import {
+  EXAM_REPOSITORY_TOKEN,
+  ExamRepository,
+} from './persistance/exam.repository';
 
 @Module({
   imports: [GrpcClientsModule],
@@ -13,6 +17,7 @@ import { GrpcClientsModule } from 'src/grpc/clients.module';
   providers: [
     ExamService,
     { provide: QUESTIONS_REPOSITORY_TOKEN, useClass: QuestionsRepository },
+    { provide: EXAM_REPOSITORY_TOKEN, useClass: ExamRepository },
   ],
 })
 export class ExamModule {}
