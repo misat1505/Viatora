@@ -170,13 +170,19 @@ export class ExamQuestionDTO {
 
 // ── StartSessionResponse ─────────────────────────────────────────
 
-export class StartSessionResponseDTO {
+export class ExamSessionDTO {
   @IsString()
   @ApiProperty({
     description: 'Session identifier',
     example: 'sess_9f8a7b6c',
   })
   sessionId!: string;
+
+  @ApiProperty({
+    description: 'Unique user identifier (UUID)',
+    example: 'e57a4daf-8079-4946-9076-a407f5c4b023',
+  })
+  userId!: string;
 
   @IsInt()
   @ApiProperty({

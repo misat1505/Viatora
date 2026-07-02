@@ -17,7 +17,7 @@ import "content.proto";
 service ExamService {
   // Verifies subscription (→ PaymentService), fetches questions (→ ContentService),
   // creates session in Redis. Returns first question.
-  rpc StartSession (StartSessionRequest) returns (StartSessionResponse);
+  rpc StartSession (StartSessionRequest) returns (ExamSession);
 
   // Returns current session state (remaining time, answered count).
   // Does NOT return correct answers — those are only revealed on FinishSession.
@@ -44,12 +44,13 @@ message StartSessionRequest {
   string category = 2; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
 }
 
-message StartSessionResponse {
-  string     session_id        = 1;
+message ExamSession {
+  string     session_id         = 1;
   int32      time_limit_seconds = 2; // Always 1500
-  int32      total_questions   = 3; // Always 32
-  string     started_at        = 4; // ISO 8601
+  int32      total_questions    = 3; // Always 32
+  string     started_at         = 4; // ISO 8601
   repeated Viatora.content.ExamQuestion questions = 5; // All 32 questions (no correct answers)
+  string user_id                = 6;
 }
 
 // ── GetSession ───────────────────────────────────────────────────

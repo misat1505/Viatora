@@ -6,7 +6,7 @@ import {
   Post,
   UseGuards,
 } from '@nestjs/common';
-import { StartExamDTO, StartSessionResponseDTO } from './dto/start-exam.dto';
+import { ExamSessionDTO, StartExamDTO } from './dto/start-exam.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ExamServiceClient } from 'src/generated/exam';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -33,11 +33,11 @@ export class ExamsController implements OnModuleInit {
   }
 
   @Post('/start')
-  @ApiOkResponse({ type: StartSessionResponseDTO })
+  @ApiOkResponse({ type: ExamSessionDTO })
   async startExamSession(
     @Body() dto: StartExamDTO,
     @CurrentUser() user: UserProfile,
-  ): Promise<StartSessionResponseDTO> {
+  ): Promise<ExamSessionDTO> {
     const examSession = await firstValueFrom(
       this.examService.startSession({
         category: dto.category,
