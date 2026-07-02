@@ -1,7 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import { applyPallette, getInitialPallette, type Pallette } from '@/lib/pallette-script';
+import { applyPallette, type Pallette } from '@/lib/pallette-script';
 
 type PalletteContextValue = {
   pallette: Pallette;
@@ -10,17 +10,19 @@ type PalletteContextValue = {
 
 const PalletteContext = React.createContext<PalletteContextValue | undefined>(undefined);
 
-export function PalletteProvider({ children }: { children: React.ReactNode }) {
-  // lazy init: przy KAŻDYM mount (w tym remount po zmianie [lang])
-  // odczytaj to, co faktycznie jest na <html> — nie zgaduj DEFAULT_PALLETTE
-  const [pallette, setPalletteState] = React.useState<Pallette>(() => getInitialPallette());
+export function PalletteProvider({
+  children,
+  initialPallette,
+}: {
+  initialPallette: Pallette | null;
+  children: React.ReactNode;
+}) {
+  const [pallette, setPalletteState] = React.useState<Pallette>(initialPallette ?? 'caffeine');
 
-  // useLayoutEffect, nie useEffect — synchronicznie, przed malowaniem,
-  // i za KAŻDYM razem gdy komponent (re)montuje się z danym stanem
   React.useLayoutEffect(() => {
     applyPallette(pallette);
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []); // tylko przy mount — zapewnia spójność DOM<->state po ewentualnym remoncie
+  }, []);
 
   const setPallette = React.useCallback((next: Pallette) => {
     setPalletteState(next);

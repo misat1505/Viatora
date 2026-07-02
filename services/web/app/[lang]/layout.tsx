@@ -8,7 +8,6 @@ import LocaleProvider from '@/providers/locale-provider';
 import { ModeToggle } from '@/components/mode-toggle';
 import { PalletteDropdown } from '@/components/pallette-dropdown';
 import { getServerPalette } from '@/lib/get-server-pallette';
-import Link from 'next/link';
 import { LocalizedLink } from '@/components/localized-link';
 import { buttonVariants } from '@/components/ui/button';
 
@@ -45,7 +44,7 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
     >
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
-          <Providers>
+          <Providers pallette={pallette}>
             <div>
               <LanguageSwitch lang={lang as Locale} />
               <ModeToggle />
