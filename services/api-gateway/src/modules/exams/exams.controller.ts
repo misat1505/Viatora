@@ -39,10 +39,14 @@ export class ExamsController implements OnModuleInit {
     @CurrentUser() user: UserProfile,
   ): Promise<ExamSessionDTO> {
     const examSession = await firstValueFrom(
-      this.examService.startSession({
-        category: dto.category,
-        userId: user.userId,
-      }),
+      this.examService.startSession(
+        {
+          category: dto.category,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
     );
 
     // @ts-expect-error TODO: make this error go away
