@@ -1,12 +1,7 @@
 'use client';
 
 import * as React from 'react';
-import {
-  DEFAULT_PALLETTE,
-  PALLETTE_STORAGE_KEY,
-  PALLETTES,
-  type Pallette,
-} from '@/lib/pallette-script';
+import { applyPallette, getInitialPallette, type Pallette } from '@/lib/pallette-script';
 
 type PalletteContextValue = {
   pallette: Pallette;
@@ -16,19 +11,20 @@ type PalletteContextValue = {
 const PalletteContext = React.createContext<PalletteContextValue | undefined>(undefined);
 
 export function PalletteProvider({ children }: { children: React.ReactNode }) {
-  const [pallette, setPalletteState] = React.useState<Pallette>(DEFAULT_PALLETTE);
+  // lazy init: przy KAŻDYM mount (w tym remount po zmianie [lang])
+  // odczytaj to, co faktycznie jest na <html> — nie zgaduj DEFAULT_PALLETTE
+  const [pallette, setPalletteState] = React.useState<Pallette>(() => getInitialPallette());
 
-  React.useEffect(() => {
-    const stored = (localStorage.getItem(PALLETTE_STORAGE_KEY) as Pallette) || DEFAULT_PALLETTE;
-    // eslint-disable-next-line react-hooks/set-state-in-effect
-    setPalletteState(stored);
-  }, []);
+  // useLayoutEffect, nie useEffect — synchronicznie, przed malowaniem,
+  // i za KAŻDYM razem gdy komponent (re)montuje się z danym stanem
+  React.useLayoutEffect(() => {
+    applyPallette(pallette);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []); // tylko przy mount — zapewnia spójność DOM<->state po ewentualnym remoncie
 
   const setPallette = React.useCallback((next: Pallette) => {
     setPalletteState(next);
-    localStorage.setItem(PALLETTE_STORAGE_KEY, next);
-    document.documentElement.classList.remove(...PALLETTES);
-    document.documentElement.classList.add(next);
+    applyPallette(next);
   }, []);
 
   return (

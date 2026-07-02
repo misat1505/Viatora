@@ -8,6 +8,7 @@ import LocaleProvider from '@/providers/locale-provider';
 import { ModeToggle } from '@/components/mode-toggle';
 import { palletteInitScript } from '@/lib/pallette-script';
 import { PalletteDropdown } from '@/components/pallette-dropdown';
+import Script from 'next/script';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -40,7 +41,9 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
       suppressHydrationWarning
     >
       <head>
-        <script dangerouslySetInnerHTML={{ __html: palletteInitScript }} />
+        <Script id="palette-init" strategy="beforeInteractive">
+          {palletteInitScript}
+        </Script>
       </head>
       <body className="min-h-full flex flex-col">
         <LocaleProvider translations={dict} locale={lang as Locale}>
