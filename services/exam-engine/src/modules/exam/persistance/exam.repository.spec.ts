@@ -53,4 +53,45 @@ describe('ExamRepository', () => {
       sessionId: 'mock-uuid',
     });
   });
+
+  // ─────────────────────────────────────────────
+  // 2. GET BY ID
+  // ─────────────────────────────────────────────
+  it('should return exam session from redis by id', async () => {
+    const exam = {
+      sessionId: 'mock-uuid',
+      userId: 'user-1',
+      timeLimitSeconds: 1500,
+      totalQuestions: 10,
+      startedAt: '2026-01-01T00:00:00Z',
+      questions: [],
+    };
+
+    const key = 'exam-engine:exams:mock-uuid';
+
+    // mock redis GET
+    const redisGetMock = vi.fn().mockResolvedValue(JSON.stringify(exam));
+
+    (repository as any).redis.get = redisGetMock;
+
+    const result = await repository.getById('mock-uuid');
+
+    // 1. correct key usage
+    expect(redisGetMock).toHaveBeenCalledWith(key);
+
+    // 2. correct parsing result
+    expect(result).toEqual(exam);
+  });
+
+  it('should return null when exam session does not exist', async () => {
+    const redisGetMock = vi.fn().mockResolvedValue(null);
+
+    (repository as any).redis.get = redisGetMock;
+
+    const result = await repository.getById('non-existing');
+
+    expect(redisGetMock).toHaveBeenCalledWith('exam-engine:exams:non-existing');
+
+    expect(result).toBeNull();
+  });
 });

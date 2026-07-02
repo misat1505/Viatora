@@ -1,4 +1,9 @@
-import { BadRequestException, Inject, Injectable } from '@nestjs/common';
+import {
+  BadRequestException,
+  Inject,
+  Injectable,
+  NotFoundException,
+} from '@nestjs/common';
 import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
 import { type IQuestionsRepository } from './persistance/questions.repository.interface';
 import {
@@ -8,6 +13,7 @@ import {
 import {
   ExamQuestionWithAnswer,
   ExamSession,
+  GetSessionRequest,
   StartSessionRequest,
 } from 'src/generated/exam';
 import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
@@ -63,6 +69,14 @@ export class ExamService {
     const examSession =
       await this.examRepository.createExamSession(examSessionDTO);
 
+    return examSession;
+  }
+
+  async getSessionById(dto: GetSessionRequest): Promise<ExamSession> {
+    const examSession = await this.examRepository.getById(dto.sessionId);
+    if (!examSession) throw new NotFoundException();
+
+    if (dto.userId !== examSession.userId) throw new NotFoundException();
     return examSession;
   }
 }

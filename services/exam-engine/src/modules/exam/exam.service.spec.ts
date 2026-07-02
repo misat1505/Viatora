@@ -1,5 +1,5 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException } from '@nestjs/common';
+import { BadRequestException, NotFoundException } from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 import { ExamService } from './exam.service';
@@ -19,6 +19,7 @@ describe('ExamService', () => {
 
   const examRepositoryMock = {
     createExamSession: vi.fn(),
+    getById: vi.fn(),
   };
 
   const examsConfigurationsMock = {
@@ -149,5 +150,49 @@ describe('ExamService', () => {
       question: { id: 'q1' },
       userAnswer: '',
     });
+  });
+
+  it('should return exam session when userId matches', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    });
+
+    const result = await service.getSessionById({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    });
+
+    expect(result).toEqual({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    });
+
+    expect(examRepositoryMock.getById).toHaveBeenCalledWith('sess_1');
+  });
+
+  it('should throw NotFoundException when session does not exist', async () => {
+    examRepositoryMock.getById.mockResolvedValue(null);
+
+    await expect(
+      service.getSessionById({
+        sessionId: 'sess_404',
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should throw NotFoundException when userId does not match session owner', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-2',
+    });
+
+    await expect(
+      service.getSessionById({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
   });
 });

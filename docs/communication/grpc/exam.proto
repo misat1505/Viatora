@@ -21,7 +21,7 @@ service ExamService {
 
   // Returns current session state (remaining time, answered count).
   // Does NOT return correct answers — those are only revealed on FinishSession.
-  rpc GetSession (GetSessionRequest) returns (GetSessionResponse);
+  rpc GetSession (GetSessionRequest) returns (ExamSession);
 
   // Records a single answer in the Redis session store.
   rpc SubmitAnswer (SubmitAnswerRequest) returns (SubmitAnswerResponse);
@@ -63,15 +63,6 @@ message ExamSession {
 message GetSessionRequest {
   string session_id = 1;
   string user_id    = 2; // Ownership check
-}
-
-message GetSessionResponse {
-  string session_id         = 1;
-  string status             = 2; // "in_progress" | "completed" | "timed_out"
-  int32  seconds_remaining  = 3;
-  int32  answered_count     = 4;
-  int32  total_questions    = 5;
-  repeated string answered_question_ids = 6;
 }
 
 // ── SubmitAnswer ─────────────────────────────────────────────────

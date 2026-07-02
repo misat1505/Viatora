@@ -1,8 +1,10 @@
 import {
   Body,
   Controller,
+  Get,
   Inject,
   OnModuleInit,
+  Param,
   Post,
   UseGuards,
 } from '@nestjs/common';
@@ -42,6 +44,27 @@ export class ExamsController implements OnModuleInit {
       this.examService.startSession(
         {
           category: dto.category,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    // @ts-expect-error TODO: make this error go away
+    return examSession;
+  }
+
+  @Get('/sessions/:id')
+  @ApiOkResponse({ type: ExamSessionDTO })
+  async getExamSession(
+    @Param('id') sessionId: string,
+    @CurrentUser() user: UserProfile,
+  ): Promise<ExamSessionDTO> {
+    const examSession = await firstValueFrom(
+      this.examService.getSession(
+        {
+          sessionId,
           userId: user.userId,
         },
         // @ts-expect-error metadata not in generated types

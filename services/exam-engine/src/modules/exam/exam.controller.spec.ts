@@ -9,6 +9,7 @@ describe('ExamController', () => {
 
   const examServiceMock = {
     startExamSession: vi.fn(),
+    getSessionById: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -45,6 +46,25 @@ describe('ExamController', () => {
     const result = await controller.startExamSession(dto);
 
     expect(examServiceMock.startExamSession).toHaveBeenCalledWith(dto);
+    expect(result).toEqual(expectedResponse);
+  });
+
+  it('should call ExamService.getSessionById with dto', async () => {
+    const dto = {
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    };
+
+    const expectedResponse = {
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    };
+
+    examServiceMock.getSessionById.mockResolvedValue(expectedResponse);
+
+    const result = await controller.getSessionById(dto);
+
+    expect(examServiceMock.getSessionById).toHaveBeenCalledWith(dto);
     expect(result).toEqual(expectedResponse);
   });
 });
