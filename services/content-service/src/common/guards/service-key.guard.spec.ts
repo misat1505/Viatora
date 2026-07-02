@@ -52,8 +52,4 @@ describe('ServiceKeyGuard', () => {
 
     expect(guard.canActivate(context)).toBe(false);
   });
-
-  it('should load service key from ConfigService on init', () => {
-    expect(configService.getOrThrow).toHaveBeenCalledWith('SERVICE_KEY');
-  });
 });

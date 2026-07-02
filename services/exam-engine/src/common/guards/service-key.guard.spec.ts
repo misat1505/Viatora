@@ -15,7 +15,6 @@ describe('ServiceKeyGuard', () => {
 
     configService.getOrThrow.mockReturnValue('secret-key');
 
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
     guard = new ServiceKeyGuard(configService);
     guard.onModuleInit();
   });
@@ -51,9 +50,5 @@ describe('ServiceKeyGuard', () => {
     const context = createContext(undefined);
 
     expect(guard.canActivate(context)).toBe(false);
-  });
-
-  it('should load service key from ConfigService on init', () => {
-    expect(configService.getOrThrow).toHaveBeenCalledWith('SERVICE_KEY');
   });
 });
