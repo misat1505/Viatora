@@ -1,5 +1,9 @@
 import { Test } from '@nestjs/testing';
-import { BadRequestException, NotFoundException } from '@nestjs/common';
+import {
+  BadRequestException,
+  InternalServerErrorException,
+  NotFoundException,
+} from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 import { ExamService } from './exam.service';
@@ -9,6 +13,11 @@ import {
   DEFAULT_EXAMS_CONFIGS_TOKEN,
   QuestionType,
 } from './config/exams-config';
+import { ExamQuestion } from 'src/generated/content';
+
+vi.mock('./utils/shuffle-questions', () => ({
+  shuffleQuestions: (questions: ExamQuestion[]) => questions,
+}));
 
 describe('ExamService', () => {
   let service: ExamService;
@@ -110,20 +119,18 @@ describe('ExamService', () => {
   // 3. WARN WHEN QUESTIONS MISMATCH
   // ─────────────────────────────────────────────
   it('should warn when question count mismatch', async () => {
-    const warnSpy = vi.spyOn(console, 'warn').mockImplementation(() => {});
-
     questionsRepositoryMock.getQuestionsByCategory.mockResolvedValue([]);
 
     examRepositoryMock.createExamSession.mockResolvedValue({
       sessionId: 'sess_1',
     });
 
-    await service.startExamSession({
-      category: 'B',
-      userId: 'user-1',
-    });
-
-    expect(warnSpy).toHaveBeenCalled();
+    await expect(
+      service.startExamSession({
+        category: 'B',
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow(InternalServerErrorException);
   });
 
   // ─────────────────────────────────────────────

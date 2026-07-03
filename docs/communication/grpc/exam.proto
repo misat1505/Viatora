@@ -56,6 +56,9 @@ message ExamSession {
   string     started_at         = 4; // ISO 8601
   repeated ExamQuestionWithAnswer questions = 5; // All 32 questions
   string user_id                = 6;
+  string category               = 7;
+  string current_question_id    = 8;
+  string status                 = 9; // "IN_PROGRESS" | "FINISHED"
 }
 
 // ── GetSession ───────────────────────────────────────────────────

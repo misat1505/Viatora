@@ -2,6 +2,7 @@ import {
   BadRequestException,
   Inject,
   Injectable,
+  InternalServerErrorException,
   NotFoundException,
 } from '@nestjs/common';
 import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
@@ -18,6 +19,8 @@ import {
 } from 'src/generated/exam';
 import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
+import { ExamStatus } from './types/exam';
+import { shuffleQuestions } from './utils/shuffle-questions';
 
 @Injectable()
 export class ExamService {
@@ -49,21 +52,25 @@ export class ExamService {
     const flattenedQuestions = questions.flat();
 
     if (examConfiguration.totalQuestions != flattenedQuestions.length) {
-      // TODO: raise an error, for now just a log
-      console.warn(
+      throw new InternalServerErrorException(
         `Invalid exam configuration for category=${category}. Expected ${examConfiguration.totalQuestions} questions, but got ${flattenedQuestions.length}.`,
       );
     }
 
+    const shuffledQuestions = shuffleQuestions(flattenedQuestions);
+
     const questionsWithAnswers: ExamQuestionWithAnswer[] =
-      flattenedQuestions.map((question) => ({ question, userAnswer: '' }));
+      shuffledQuestions.map((question) => ({ question, userAnswer: '' }));
 
     const examSessionDTO: Omit<ExamSession, 'sessionId'> = {
       userId,
       timeLimitSeconds: examConfiguration.duration,
-      totalQuestions: flattenedQuestions.length,
+      totalQuestions: questionsWithAnswers.length,
       startedAt: new Date().toISOString(),
       questions: questionsWithAnswers,
+      category: dto.category,
+      currentQuestionId: questionsWithAnswers[0].question!.id,
+      status: ExamStatus.IN_PROGRESS,
     };
 
     const examSession =

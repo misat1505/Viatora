@@ -11,6 +11,8 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string
 
   const minutes = Math.floor(exam.timeLimitSeconds / 60);
 
+  const currentQuestion = exam.questions.find((q) => q.question.id === exam.currentQuestionId);
+
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
       <div className="mb-8 flex items-center justify-between">
@@ -20,6 +22,14 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string
             {exam.totalQuestions} {exam.totalQuestions === 1 ? 'pytanie' : 'pytań'} · limit czasu:{' '}
             {minutes} min
           </p>
+          <p className="text-sm text-muted-foreground">{exam.category}</p>
+          <p className="text-sm text-muted-foreground">
+            Current question id: {exam.currentQuestionId}
+          </p>
+          <p className="text-sm text-muted-foreground">
+            Current question: {currentQuestion?.question.text[lang as Locale]}
+          </p>
+          <p className="text-sm text-muted-foreground">{exam.status}</p>
         </div>
         <span className="rounded-full bg-muted px-3 py-1 text-xs font-mono text-muted-foreground">
           {exam.sessionId.slice(0, 8)}
