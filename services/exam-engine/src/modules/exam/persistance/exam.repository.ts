@@ -33,4 +33,12 @@ export class ExamRepository implements IExamRepository {
     // TODO: proper validation
     return JSON.parse(data) as ExamSession;
   }
+
+  async updateById(id: string, exam: ExamSession): Promise<ExamSession> {
+    const key = `${this.prefix}:exams:${exam.sessionId}`;
+
+    await this.redis.set(key, JSON.stringify(exam));
+
+    return exam;
+  }
 }

@@ -1,5 +1,5 @@
 import { ApiProperty } from '@nestjs/swagger';
-import { IsBoolean, IsString } from 'class-validator';
+import { IsBoolean, IsInt, IsString, Min } from 'class-validator';
 
 export class AnswerQuestionDTO {
   @IsString()
@@ -20,8 +20,33 @@ export class AnswerQuestionDTO {
 export class AnswerQuestionResponseDTO {
   @IsBoolean()
   @ApiProperty({
-    description: 'Did the answer process succeed (not is the answer correct)',
+    description:
+      'Whether the answer was accepted (session active and not already answered)',
     example: true,
   })
-  ok!: boolean;
+  accepted!: boolean;
+
+  @IsInt()
+  @Min(0)
+  @ApiProperty({
+    description: 'Number of answered questions in the session',
+    example: 5,
+  })
+  answeredCount!: number;
+
+  @IsInt()
+  @Min(0)
+  @ApiProperty({
+    description: 'Total number of questions in the session',
+    example: 32,
+  })
+  totalQuestions!: number;
+
+  @IsInt()
+  @Min(0)
+  @ApiProperty({
+    description: 'Remaining time in seconds',
+    example: 1240,
+  })
+  secondsRemaining!: number;
 }

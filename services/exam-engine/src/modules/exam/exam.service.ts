@@ -16,6 +16,8 @@ import {
   ExamSession,
   GetSessionRequest,
   StartSessionRequest,
+  SubmitAnswerRequest,
+  SubmitAnswerResponse,
 } from 'src/generated/exam';
 import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
@@ -85,5 +87,54 @@ export class ExamService {
 
     if (dto.userId !== examSession.userId) throw new NotFoundException();
     return examSession;
+  }
+
+  async submitAnswer(dto: SubmitAnswerRequest): Promise<SubmitAnswerResponse> {
+    const exam = await this.examRepository.getById(dto.sessionId);
+    if (!exam || exam.userId !== dto.userId)
+      throw new NotFoundException('Exam not found.');
+
+    const currentQuestion = exam.questions.find(
+      (q) => q.question?.id === dto.questionId,
+    );
+    if (!currentQuestion) throw new NotFoundException('Question not found.');
+
+    if (exam.currentQuestionId !== dto.questionId)
+      throw new BadRequestException(
+        'Cannot answer to this question right now.',
+      );
+
+    const isInvalidAnswerForBasicQuestion =
+      currentQuestion.question?.questionType === 'basic' &&
+      dto.selectedOption === 'c';
+    if (isInvalidAnswerForBasicQuestion)
+      throw new BadRequestException("Invalid answer for 'basic' question.");
+
+    const secondsRemaining =
+      (Date.now() - new Date(exam.startedAt).getTime()) / 1000;
+    // TODO: uncomment this when it stops to be annoying for dev
+    // if (secondsRemaining < 0) throw new BadRequestException('Time has elapsed');
+
+    currentQuestion.userAnswer = dto.selectedOption;
+    const currentQuestionAbsoluteId = exam.questions.findIndex(
+      (q) => q.question?.id === dto.questionId,
+    );
+
+    const nextQuestionAbsoluteId = currentQuestionAbsoluteId + 1;
+
+    const nextQuestionId =
+      nextQuestionAbsoluteId >= exam.totalQuestions
+        ? 'STOP'
+        : exam.questions[nextQuestionAbsoluteId].question!.id;
+    exam.currentQuestionId = nextQuestionId;
+
+    await this.examRepository.updateById(exam.sessionId, exam);
+
+    return {
+      accepted: true,
+      answeredCount: currentQuestionAbsoluteId + 1,
+      totalQuestions: exam.totalQuestions,
+      secondsRemaining,
+    };
   }
 }

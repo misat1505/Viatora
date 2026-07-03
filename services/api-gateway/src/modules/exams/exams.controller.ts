@@ -87,7 +87,7 @@ export class ExamsController implements OnModuleInit {
     @Body() dto: AnswerQuestionDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<AnswerQuestionResponseDTO> {
-    await firstValueFrom(
+    const result = await firstValueFrom(
       this.examService.submitAnswer(
         {
           sessionId,
@@ -100,6 +100,6 @@ export class ExamsController implements OnModuleInit {
       ),
     );
 
-    return { ok: true };
+    return result;
   }
 }
