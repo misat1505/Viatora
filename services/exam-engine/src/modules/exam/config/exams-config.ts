@@ -21,38 +21,36 @@ const defaultCategoryConfig: ExamConfig = {
   totalQuestions: 32,
   duration: 1500, // 25 min
   questionsConfigs: [
-    // TODO: uncomment that, but for now to reduce sanity calls we will have just 1 request
-
-    // {
-    //     questionType: QuestionType.BASIC,
-    //     points: 3,
-    //     count: 10,
-    //   },
-    //   {
-    //     questionType: QuestionType.BASIC,
-    //     points: 2,
-    //     count: 6,
-    //   },
-    //   {
-    //     questionType: QuestionType.BASIC,
-    //     points: 1,
-    //     count: 4,
-    //   },
+    {
+      questionType: QuestionType.BASIC,
+      points: 3,
+      count: 10,
+    },
+    {
+      questionType: QuestionType.BASIC,
+      points: 2,
+      count: 6,
+    },
+    {
+      questionType: QuestionType.BASIC,
+      points: 1,
+      count: 4,
+    },
     {
       questionType: QuestionType.SPECIALIST,
       points: 3,
       count: 6,
     },
-    // {
-    //   questionType: QuestionType.SPECIALIST,
-    //   points: 2,
-    //   count: 4,
-    // },
-    // {
-    //   questionType: QuestionType.SPECIALIST,
-    //   points: 1,
-    //   count: 2,
-    // },
+    {
+      questionType: QuestionType.SPECIALIST,
+      points: 2,
+      count: 4,
+    },
+    {
+      questionType: QuestionType.SPECIALIST,
+      points: 1,
+      count: 2,
+    },
   ],
 };
 

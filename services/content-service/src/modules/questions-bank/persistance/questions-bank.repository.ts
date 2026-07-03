@@ -70,7 +70,7 @@ export class QuestionsBankRepository
         points: entry.points,
         media: {
           type: entry.media.type,
-          url: entry.media.image.asset._ref,
+          url: entry.media?.image?.asset?._ref ?? '',
         },
         answers: { ...entry.options, correctAnswer: entry.correctOption },
         questionType: entry.questionType,
