@@ -78,7 +78,7 @@ export function QuestionCard({
                   {label}
                 </span>
                 <span>{question.answers[label][lang]}</span>
-                {isCorrect && (
+                {isSelected && isCorrect && (
                   <span className="ml-auto text-xs font-semibold uppercase tracking-wide">
                     Poprawna
                   </span>

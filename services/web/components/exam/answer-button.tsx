@@ -24,21 +24,19 @@ const AnswerButton = ({
   const router = useRouter();
 
   async function handleClick() {
-    console.log({ examId, questionId, label });
-    const result = await answerQuestion(examId, { questionId, userAnswer: label });
-    console.log(result);
+    await answerQuestion(examId, { questionId, userAnswer: label });
     router.refresh();
+  }
+
+  function getClassNames() {
+    if (!isSelected) return '';
+    if (isCorrect) return 'border-primary/50 bg-primary/10 text-primary';
+    return 'border-destructive/50 bg-destructive/10 text-destructive';
   }
 
   return (
     <button
-      className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors w-full hover:cursor-pointer ${
-        isCorrect
-          ? 'border-primary/50 bg-primary/10 text-primary'
-          : isSelected
-            ? 'border-destructive/50 bg-destructive/10 text-destructive'
-            : 'border-border text-card-foreground'
-      }`}
+      className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors w-full hover:cursor-pointer ${getClassNames()}`}
       onClick={handleClick}
     >
       {children}
