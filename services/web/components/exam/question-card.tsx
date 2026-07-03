@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { Locale } from '@/app/[lang]/dictionaries';
 import { ExamSessionDTO } from '@/generated/viatoraAPI.schemas';
 import { sanityImageUrl } from '@/lib/sanity-image';
+import AnswerButton from './answer-button';
 
 const answerLabels = ['a', 'b', 'c'] as const;
 
@@ -9,10 +10,12 @@ export function QuestionCard({
   entry,
   index,
   lang,
+  examId,
 }: {
   entry: ExamSessionDTO['questions'][number];
   index: number;
   lang: Locale;
+  examId: ExamSessionDTO['sessionId'];
 }) {
   const { question, userAnswer } = entry;
   const imageUrl = sanityImageUrl(question.media.url);
@@ -63,15 +66,13 @@ export function QuestionCard({
             const isSelected = label === userAnswer;
 
             return (
-              <div
+              <AnswerButton
                 key={label}
-                className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-sm transition-colors ${
-                  isCorrect
-                    ? 'border-primary/50 bg-primary/10 text-primary'
-                    : isSelected
-                      ? 'border-destructive/50 bg-destructive/10 text-destructive'
-                      : 'border-border text-card-foreground'
-                }`}
+                label={label}
+                isCorrect={isCorrect}
+                isSelected={isSelected}
+                questionId={question.id}
+                examId={examId}
               >
                 <span className="flex h-6 w-6 shrink-0 items-center justify-center rounded-full border border-current text-xs font-bold uppercase">
                   {label}
@@ -82,7 +83,7 @@ export function QuestionCard({
                     Poprawna
                   </span>
                 )}
-              </div>
+              </AnswerButton>
             );
           })}
         </div>
