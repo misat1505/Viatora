@@ -230,4 +230,26 @@ export class ExamSessionDTO {
     type: [ExamQuestionWithAnswerDTO],
   })
   questions!: ExamQuestionWithAnswerDTO[];
+
+  @IsString()
+  @ApiProperty({
+    description: 'Category of the test',
+    example: 'B',
+  })
+  category!: string; // "B" | "A" | "A1" | "A2" | "B1" | "C" | "D" | "AM"
+
+  @IsString()
+  @ApiProperty({
+    description: 'Current question ID being solved',
+    example: 'question-123',
+  })
+  currentQuestionId!: string;
+
+  @IsIn(['IN_PROGRESS', 'FINISHED'])
+  @ApiProperty({
+    description: 'Current session status',
+    example: 'IN_PROGRESS',
+    enum: ['IN_PROGRESS', 'FINISHED'],
+  })
+  status!: string;
 }
