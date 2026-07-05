@@ -245,5 +245,114 @@
       "description": "This feature is only available to signed-in users. Sign in to get access.",
       "googleButton": "Sign in with Google"
     }
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Category B driving theory",
+      "title": "Pass your theory exam",
+      "titleHighlight": "on the first try",
+      "subtitle": "Over 3,200 questions matching the official exam center database, a real exam simulation, and study mode in 5 languages.",
+      "ctaPrimary": "Start for free",
+      "ctaSecondary": "Browse the question bank",
+      "questionCard": {
+        "badge": "Road signs",
+        "progress": "Question 12 of 20",
+        "question": "This sign indicates that:",
+        "options": [
+          "the driver must yield the right of way",
+          "the road with priority changes direction ahead",
+          "you are approaching a roundabout",
+          "left turns are prohibited"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "stats": [
+      {
+        "value": "3200+",
+        "label": "questions in the bank"
+      },
+      {
+        "value": "5",
+        "label": "interface languages"
+      },
+      {
+        "value": "24/7",
+        "label": "access to study"
+      }
+    ],
+    "categories": {
+      "eyebrow": "Question bank",
+      "title": "Every exam category in one place",
+      "subtitle": "Questions organized exactly like the official theory exam.",
+      "items": [
+        {
+          "title": "Road signs",
+          "description": "Warning, prohibition, mandatory, and information signs — learn to recognize them instantly."
+        },
+        {
+          "title": "Right of way",
+          "description": "Intersections, roundabouts, and the tricky situations that come up most often on the exam."
+        },
+        {
+          "title": "Maneuvers and speed",
+          "description": "Overtaking, passing, braking distances, and safe following distance."
+        },
+        {
+          "title": "First aid",
+          "description": "The basic rules for helping people injured in a road accident."
+        },
+        {
+          "title": "Documents and regulations",
+          "description": "Required equipment, insurance, and the paperwork every driver needs."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "How it works",
+      "title": "Three steps between you and your license",
+      "items": [
+        {
+          "title": "Pick your language and level",
+          "description": "Set your interface language and start with a diagnostic test that shows your strengths."
+        },
+        {
+          "title": "Practice with real exam questions",
+          "description": "Take topic-based or randomized tests, just like the ones you'll see at the exam center."
+        },
+        {
+          "title": "Take a timed mock exam",
+          "description": "The simulation mirrors the real time limit and format of the official exam, so you walk in confident."
+        }
+      ]
+    },
+    "features": {
+      "eyebrow": "Why Viatora",
+      "title": "Built to actually help you pass",
+      "subtitle": "Not just a question bank — a complete study environment.",
+      "items": [
+        {
+          "title": "5 interface languages",
+          "description": "Study in Polish, English, Ukrainian, German, or Russian — questions and explanations switch along with the language."
+        },
+        {
+          "title": "Progress statistics",
+          "description": "See which categories give you the most trouble, and go back to them before the examiner does."
+        },
+        {
+          "title": "Timed exam mode",
+          "description": "The exact time limit and question count of the real theory exam, faithfully reproduced."
+        },
+        {
+          "title": "Continuously updated bank",
+          "description": "Questions are reviewed to stay in line with current traffic regulations."
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Ready for your first attempt?",
+      "subtitle": "Create a free account and take your first test today.",
+      "cta": "Start for free"
+    }
   }
 }

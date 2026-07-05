@@ -245,5 +245,114 @@
       "description": "Ta funkcja jest dostępna tylko dla zalogowanych użytkowników. Zaloguj się, aby uzyskać dostęp.",
       "googleButton": "Zaloguj się przez Google"
     }
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Teoria na prawo jazdy kat. B",
+      "title": "Zdaj teorię",
+      "titleHighlight": "za pierwszym podejściem",
+      "subtitle": "Ponad 3200 pytań zgodnych z aktualną bazą WORD, symulacja prawdziwego egzaminu i tryb nauki w 5 językach.",
+      "ctaPrimary": "Zacznij za darmo",
+      "ctaSecondary": "Zobacz bazę pytań",
+      "questionCard": {
+        "badge": "Znaki drogowe",
+        "progress": "Pytanie 12 z 20",
+        "question": "Ten znak informuje, że:",
+        "options": [
+          "kierujący jest zobowiązany ustąpić pierwszeństwa",
+          "droga z pierwszeństwem zmienia kierunek",
+          "zbliżasz się do skrzyżowania o ruchu okrężnym",
+          "obowiązuje zakaz skręcania w lewo"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "stats": [
+      {
+        "value": "3200+",
+        "label": "pytań w bazie"
+      },
+      {
+        "value": "5",
+        "label": "języków interfejsu"
+      },
+      {
+        "value": "24/7",
+        "label": "dostęp do nauki"
+      }
+    ],
+    "categories": {
+      "eyebrow": "Baza pytań",
+      "title": "Wszystkie kategorie egzaminacyjne w jednym miejscu",
+      "subtitle": "Pytania podzielone dokładnie tak, jak na egzaminie państwowym.",
+      "items": [
+        {
+          "title": "Znaki drogowe",
+          "description": "Ostrzegawcze, zakazu, nakazu i informacyjne — rozpoznawaj je bez wahania."
+        },
+        {
+          "title": "Pierwszeństwo przejazdu",
+          "description": "Skrzyżowania, ronda i sytuacje sporne, które najczęściej pojawiają się na egzaminie."
+        },
+        {
+          "title": "Manewry i prędkość",
+          "description": "Wyprzedzanie, wymijanie, hamowanie i odległości bezpieczeństwa."
+        },
+        {
+          "title": "Pierwsza pomoc",
+          "description": "Podstawowe zasady udzielania pomocy poszkodowanym w wypadku."
+        },
+        {
+          "title": "Dokumenty i przepisy",
+          "description": "Obowiązkowe wyposażenie, ubezpieczenie i formalności kierowcy."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "Jak to działa",
+      "title": "Trzy kroki dzielące Cię od prawa jazdy",
+      "items": [
+        {
+          "title": "Wybierz język i poziom",
+          "description": "Ustaw język interfejsu i zacznij od testu diagnostycznego, który pokaże Twoje mocne strony."
+        },
+        {
+          "title": "Ćwicz pytania z prawdziwej bazy",
+          "description": "Rozwiązuj testy tematyczne lub losowe, dokładnie takie, jakie spotkasz na WORD."
+        },
+        {
+          "title": "Zdaj egzamin próbny na czas",
+          "description": "Symulacja odwzorowuje realny czas i format egzaminu państwowego, żebyś czuł się pewnie."
+        }
+      ]
+    },
+    "features": {
+      "eyebrow": "Dlaczego Viatora",
+      "title": "Zbudowane, żeby naprawdę pomóc Ci zdać",
+      "subtitle": "Nie tylko baza pytań — pełne środowisko do nauki.",
+      "items": [
+        {
+          "title": "5 języków interfejsu",
+          "description": "Ucz się po polsku, angielsku, ukraińsku, niemiecku lub rosyjsku — pytania i wyjaśnienia zmieniają się razem z językiem."
+        },
+        {
+          "title": "Statystyki postępów",
+          "description": "Zobacz, które kategorie sprawiają Ci najwięcej trudności, i wracaj do nich, zanim zrobi to egzaminator."
+        },
+        {
+          "title": "Tryb egzaminu na czas",
+          "description": "Dokładnie odwzorowany limit czasu i liczba pytań jak na prawdziwym egzaminie teoretycznym."
+        },
+        {
+          "title": "Baza aktualizowana na bieżąco",
+          "description": "Pytania są weryfikowane pod kątem zgodności z obowiązującymi przepisami ruchu drogowego."
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Gotowy na pierwsze podejście?",
+      "subtitle": "Załóż darmowe konto i rozwiąż swój pierwszy test już dziś.",
+      "cta": "Zacznij za darmo"
+    }
   }
 }
