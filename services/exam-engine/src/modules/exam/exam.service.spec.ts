@@ -1,9 +1,4 @@
 import { Test } from '@nestjs/testing';
-import {
-  BadRequestException,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 import { ExamService } from './exam.service';
@@ -14,6 +9,15 @@ import {
   QuestionType,
 } from './config/exams-config';
 import { ExamQuestion } from 'src/generated/content';
+import {
+  ExamCategoryNotSupportedException,
+  InvalidAnswerForQuestionTypeException,
+} from 'src/common/exceptions/bad-request.exception';
+import { ExamInitializationException } from 'src/common/exceptions/internal.exception';
+import {
+  ExamSessionNotFoundException,
+  QuestionNotFoundException,
+} from 'src/common/exceptions/not-found.exception';
 
 vi.mock('./utils/shuffle-questions', () => ({
   shuffleQuestions: (questions: ExamQuestion[]) => questions,
@@ -88,7 +92,7 @@ describe('ExamService', () => {
         category: 'INVALID',
         userId: 'user-1',
       }),
-    ).rejects.toBeInstanceOf(BadRequestException);
+    ).rejects.toBeInstanceOf(ExamCategoryNotSupportedException);
   });
 
   // ─────────────────────────────────────────────
@@ -131,7 +135,7 @@ describe('ExamService', () => {
         category: 'B',
         userId: 'user-1',
       }),
-    ).rejects.toThrow(InternalServerErrorException);
+    ).rejects.toThrow(ExamInitializationException);
   });
 
   // ─────────────────────────────────────────────
@@ -187,7 +191,7 @@ describe('ExamService', () => {
         sessionId: 'sess_404',
         userId: 'user-1',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
   });
 
   it('should throw NotFoundException when userId does not match session owner', async () => {
@@ -201,7 +205,7 @@ describe('ExamService', () => {
         sessionId: 'sess_1',
         userId: 'user-1',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
   });
 
   it('should submit answer successfully', async () => {
@@ -317,7 +321,7 @@ describe('ExamService', () => {
         questionId: 'q1',
         selectedOption: 'a',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
   });
 
   it('should throw when exam belongs to another user', async () => {
@@ -333,7 +337,7 @@ describe('ExamService', () => {
         questionId: 'q1',
         selectedOption: 'a',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
   });
 
   it('should throw when question does not exist', async () => {
@@ -351,7 +355,7 @@ describe('ExamService', () => {
         questionId: 'q1',
         selectedOption: 'a',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(QuestionNotFoundException);
   });
 
   it("should throw when answer 'c' is selected for basic question", async () => {
@@ -376,6 +380,6 @@ describe('ExamService', () => {
         questionId: 'q1',
         selectedOption: 'c',
       }),
-    ).rejects.toBeInstanceOf(BadRequestException);
+    ).rejects.toBeInstanceOf(InvalidAnswerForQuestionTypeException);
   });
 });
