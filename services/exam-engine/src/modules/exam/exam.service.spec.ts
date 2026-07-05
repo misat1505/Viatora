@@ -29,6 +29,7 @@ describe('ExamService', () => {
   const examRepositoryMock = {
     createExamSession: vi.fn(),
     getById: vi.fn(),
+    updateById: vi.fn(),
   };
 
   const examsConfigurationsMock = {
@@ -201,5 +202,180 @@ describe('ExamService', () => {
         userId: 'user-1',
       }),
     ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should submit answer successfully', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      startedAt: new Date().toISOString(),
+      currentQuestionId: 'q1',
+      totalQuestions: 2,
+      questions: [
+        {
+          question: {
+            id: 'q1',
+            questionType: 'basic',
+          },
+          userAnswer: '',
+        },
+        {
+          question: {
+            id: 'q2',
+            questionType: 'basic',
+          },
+          userAnswer: '',
+        },
+      ],
+    });
+
+    examRepositoryMock.updateById.mockResolvedValue(undefined);
+
+    const result = await service.submitAnswer({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      questionId: 'q1',
+      selectedOption: 'a',
+    });
+
+    expect(examRepositoryMock.updateById).toHaveBeenCalled();
+
+    expect(result.accepted).toBe(true);
+    expect(result.answeredCount).toBe(1);
+    expect(result.totalQuestions).toBe(2);
+  });
+
+  it('should move currentQuestionId to STOP after last answer', async () => {
+    const exam = {
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      startedAt: new Date().toISOString(),
+      currentQuestionId: 'q1',
+      totalQuestions: 1,
+      questions: [
+        {
+          question: {
+            id: 'q1',
+            questionType: 'basic',
+          },
+          userAnswer: '',
+        },
+      ],
+    };
+
+    examRepositoryMock.getById.mockResolvedValue(exam);
+    examRepositoryMock.updateById.mockResolvedValue(undefined);
+
+    await service.submitAnswer({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      questionId: 'q1',
+      selectedOption: 'a',
+    });
+
+    expect(exam.currentQuestionId).toBe('STOP');
+  });
+
+  it('should move currentQuestionId to STOP after last answer', async () => {
+    const exam = {
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      startedAt: new Date().toISOString(),
+      currentQuestionId: 'q1',
+      totalQuestions: 1,
+      questions: [
+        {
+          question: {
+            id: 'q1',
+            questionType: 'basic',
+          },
+          userAnswer: '',
+        },
+      ],
+    };
+
+    examRepositoryMock.getById.mockResolvedValue(exam);
+    examRepositoryMock.updateById.mockResolvedValue(undefined);
+
+    await service.submitAnswer({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      questionId: 'q1',
+      selectedOption: 'a',
+    });
+
+    expect(exam.currentQuestionId).toBe('STOP');
+  });
+
+  it('should throw when exam does not exist', async () => {
+    examRepositoryMock.getById.mockResolvedValue(null);
+
+    await expect(
+      service.submitAnswer({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+        questionId: 'q1',
+        selectedOption: 'a',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should throw when exam belongs to another user', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-2',
+    });
+
+    await expect(
+      service.submitAnswer({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+        questionId: 'q1',
+        selectedOption: 'a',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it('should throw when question does not exist', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      currentQuestionId: 'q1',
+      questions: [],
+    });
+
+    await expect(
+      service.submitAnswer({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+        questionId: 'q1',
+        selectedOption: 'a',
+      }),
+    ).rejects.toBeInstanceOf(NotFoundException);
+  });
+
+  it("should throw when answer 'c' is selected for basic question", async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      currentQuestionId: 'q1',
+      questions: [
+        {
+          question: {
+            id: 'q1',
+            questionType: 'basic',
+          },
+        },
+      ],
+    });
+
+    await expect(
+      service.submitAnswer({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+        questionId: 'q1',
+        selectedOption: 'c',
+      }),
+    ).rejects.toBeInstanceOf(BadRequestException);
   });
 });
