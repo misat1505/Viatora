@@ -12,6 +12,7 @@ import { Locale } from '@/app/[lang]/dictionaries';
 import { ModeToggle } from './mode-toggle';
 import { TranslationPath, useLocaleContext } from '@/providers/locale-provider';
 import LocaleText from './locale-text';
+import LanguageSwitch from './language-switch';
 
 interface NavItem {
   href: string;
@@ -85,6 +86,7 @@ export function Navbar({ lang }: NavbarProps) {
         {/* Right side controls */}
         <div className="flex items-center gap-2">
           <ModeToggle />
+          <LanguageSwitch lang={lang} />
           {/* Mobile menu */}
           <Sheet>
             <SheetTrigger asChild>
