@@ -1,6 +1,30 @@
 {
   "register": {
-    "register-with-google": "Zaloguj się przez Google"
+    "title": "Załóż konto",
+    "subtitle": "Zacznij przygotowania do egzaminu teoretycznego na prawo jazdy.",
+    "googleButton": "Kontynuuj z Google",
+    "divider": "lub",
+    "form": {
+      "nameLabel": "Imię i nazwisko",
+      "namePlaceholder": "Jan Kowalski",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "jan.kowalski@example.com",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Minimum 8 znaków",
+      "confirmPasswordLabel": "Powtórz hasło",
+      "confirmPasswordPlaceholder": "Powtórz wpisane hasło",
+      "submit": "Utwórz konto",
+      "submitting": "Tworzenie konta...",
+      "success": "Konto zostało utworzone! Sprawdź swoją skrzynkę e-mail, aby je potwierdzić.",
+      "error": "Nie udało się utworzyć konta. Spróbuj ponownie.",
+      "passwordMismatch": "Podane hasła nie są identyczne."
+    },
+    "haveAccount": "Masz już konto?",
+    "signIn": "Zaloguj się",
+    "termsPrefix": "Zakładając konto, akceptujesz nasz",
+    "termsLink": "regulamin",
+    "and": "oraz",
+    "privacyLink": "politykę prywatności"
   },
   "misc": {
     "change-language": "Zmień język na {{lang}}"
@@ -213,6 +237,13 @@
       "submitting": "Wysyłanie...",
       "success": "Dziękujemy! Twoja wiadomość została wysłana, odpowiemy najszybciej jak to możliwe.",
       "error": "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz bezpośrednio na nasz adres e-mail."
+    }
+  },
+  "auth": {
+    "loginRequired": {
+      "title": "Zaloguj się, aby kontynuować",
+      "description": "Ta funkcja jest dostępna tylko dla zalogowanych użytkowników. Zaloguj się, aby uzyskać dostęp.",
+      "googleButton": "Zaloguj się przez Google"
     }
   }
 }
