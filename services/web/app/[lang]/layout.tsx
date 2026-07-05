@@ -2,15 +2,12 @@ import type { Metadata } from 'next';
 import { Geist, Geist_Mono } from 'next/font/google';
 import './globals.css';
 import Providers from '@/providers';
-import LanguageSwitch from '@/components/language-switch';
 import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
-import { ModeToggle } from '@/components/mode-toggle';
-import { PalletteDropdown } from '@/components/pallette-dropdown';
 import { getServerPalette } from '@/lib/get-server-pallette';
-import { LocalizedLink } from '@/components/localized-link';
-import { buttonVariants } from '@/components/ui/button';
 import { getServerTheme } from '@/lib/get-server-theme';
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -32,10 +29,10 @@ export async function generateStaticParams() {
 }
 
 export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'>) {
-  const { lang } = await params;
+  const lang = (await params).lang as Locale;
 
   const [dict, pallette, theme] = await Promise.all([
-    getDictionary(lang as Locale),
+    getDictionary(lang),
     getServerPalette(),
     getServerTheme(),
   ]);
@@ -47,17 +44,11 @@ export default async function RootLayout({ children, params }: LayoutProps<'/[la
       suppressHydrationWarning
     >
       <body className="min-h-full flex flex-col">
-        <LocaleProvider translations={dict} locale={lang as Locale}>
+        <LocaleProvider translations={dict} locale={lang}>
           <Providers pallette={pallette}>
-            <div>
-              <LanguageSwitch lang={lang as Locale} />
-              <ModeToggle />
-              <PalletteDropdown />
-              <LocalizedLink href="/register" className={buttonVariants({ variant: 'link' })}>
-                Register
-              </LocalizedLink>
-            </div>
-            {children}
+            <Navbar lang={lang} />
+            <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+            <Footer />
           </Providers>
         </LocaleProvider>
       </body>
