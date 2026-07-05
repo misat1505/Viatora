@@ -1,6 +1,8 @@
 import { getExamById } from '@/actions/exams/get-exam-by-id';
 import { Locale } from '@/app/[lang]/dictionaries';
-import { NotFoundError } from '@/utils/error';
+import { QuestionView } from '@/components/exam/question-view';
+import GoogleOAuthLink from '@/components/google-oauth-link';
+import { NotFoundError, UnauthorizedError } from '@/utils/error';
 import { notFound } from 'next/navigation';
 
 const ExamQuestionPage = async ({
@@ -12,6 +14,14 @@ const ExamQuestionPage = async ({
 
   const [error, exam] = await getExamById(examId);
   if (error instanceof NotFoundError) return notFound();
+  if (error instanceof UnauthorizedError) {
+    return (
+      <div>
+        <p>Login to use this feature.</p>
+        <GoogleOAuthLink>Login with Google</GoogleOAuthLink>
+      </div>
+    );
+  }
 
   if (error) throw error;
 
@@ -21,7 +31,13 @@ const ExamQuestionPage = async ({
   const isCurrentQuestionValid = currentQuestion.question.id === exam.currentQuestionId;
   if (!isCurrentQuestionValid) return <div>You cant answer to this question now.</div>;
 
-  return <div>{JSON.stringify(currentQuestion, null, 2)}</div>;
+  return (
+    <QuestionView
+      question={currentQuestion.question}
+      userAnswer={currentQuestion.userAnswer}
+      lang={lang}
+    />
+  );
 };
 
 export default ExamQuestionPage;
