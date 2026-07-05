@@ -1,5 +1,4 @@
 import { Test } from '@nestjs/testing';
-import { NotFoundException } from '@nestjs/common';
 import { describe, it, expect, beforeEach, vi, afterEach } from 'vitest';
 
 import { ExamService } from './exam.service';
@@ -15,7 +14,10 @@ import {
   InvalidAnswerForQuestionTypeException,
 } from 'src/common/exceptions/bad-request.exception';
 import { ExamInitializationException } from 'src/common/exceptions/internal.exception';
-import { ExamSessionNotFoundException } from 'src/common/exceptions/not-found.exception';
+import {
+  ExamSessionNotFoundException,
+  QuestionNotFoundException,
+} from 'src/common/exceptions/not-found.exception';
 
 vi.mock('./utils/shuffle-questions', () => ({
   shuffleQuestions: (questions: ExamQuestion[]) => questions,
@@ -353,7 +355,7 @@ describe('ExamService', () => {
         questionId: 'q1',
         selectedOption: 'a',
       }),
-    ).rejects.toBeInstanceOf(NotFoundException);
+    ).rejects.toBeInstanceOf(QuestionNotFoundException);
   });
 
   it("should throw when answer 'c' is selected for basic question", async () => {

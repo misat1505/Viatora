@@ -15,3 +15,9 @@ export class ExamSessionNotFoundException extends DomainNotFoundException {
     super(message);
   }
 }
+
+export class QuestionNotFoundException extends DomainNotFoundException {
+  constructor(message = 'Question not found') {
+    super(message);
+  }
+}

@@ -1,10 +1,4 @@
-import {
-  BadRequestException,
-  Inject,
-  Injectable,
-  InternalServerErrorException,
-  NotFoundException,
-} from '@nestjs/common';
+import { Inject, Injectable } from '@nestjs/common';
 import { QUESTIONS_REPOSITORY_TOKEN } from './persistance/questions.repository';
 import { type IQuestionsRepository } from './persistance/questions.repository.interface';
 import {
@@ -23,9 +17,10 @@ import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
 import { ExamStatus } from './types/exam';
 import { shuffleQuestions } from './utils/shuffle-questions';
-import { RpcException } from '@nestjs/microservices';
-import { status } from '@grpc/grpc-js';
-import { ExamSessionNotFoundException } from 'src/common/exceptions/not-found.exception';
+import {
+  ExamSessionNotFoundException,
+  QuestionNotFoundException,
+} from 'src/common/exceptions/not-found.exception';
 import {
   CannotAnswerCurrentQuestionException,
   ExamCategoryNotSupportedException,
@@ -109,7 +104,7 @@ export class ExamService {
     const currentQuestion = exam.questions.find(
       (q) => q.question?.id === dto.questionId,
     );
-    if (!currentQuestion) throw new NotFoundException('Question not found.');
+    if (!currentQuestion) throw new QuestionNotFoundException();
 
     if (exam.currentQuestionId !== dto.questionId)
       throw new CannotAnswerCurrentQuestionException();
