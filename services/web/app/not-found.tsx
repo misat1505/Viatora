@@ -1,8 +1,8 @@
 import { cookies } from 'next/headers';
 import { Compass } from 'lucide-react';
 
-import { Locale } from './dictionaries';
-import { getDictionary } from './dictionaries';
+import { Locale } from './[lang]/dictionaries';
+import { getDictionary } from './[lang]/dictionaries';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
 import Link from 'next/link';
