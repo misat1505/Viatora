@@ -1,66 +1,25 @@
-import type { Metadata } from 'next';
-import { Geist, Geist_Mono } from 'next/font/google';
-import './globals.css';
 import Providers from '@/providers';
-import LanguageSwitch from '@/components/language-switch';
 import { getDictionary, Locale } from './dictionaries';
 import LocaleProvider from '@/providers/locale-provider';
-import { ModeToggle } from '@/components/mode-toggle';
-import { PalletteDropdown } from '@/components/pallette-dropdown';
 import { getServerPalette } from '@/lib/get-server-pallette';
-import { LocalizedLink } from '@/components/localized-link';
-import { buttonVariants } from '@/components/ui/button';
-import { getServerTheme } from '@/lib/get-server-theme';
-
-const geistSans = Geist({
-  variable: '--font-geist-sans',
-  subsets: ['latin'],
-});
-
-const geistMono = Geist_Mono({
-  variable: '--font-geist-mono',
-  subsets: ['latin'],
-});
-
-export const metadata: Metadata = {
-  title: 'Viatora',
-  description: 'Pass your driving license test',
-};
+import { Navbar } from '@/components/navbar';
+import { Footer } from '@/components/footer';
 
 export async function generateStaticParams() {
   return [{ lang: 'pl' }, { lang: 'en' }];
 }
 
-export default async function RootLayout({ children, params }: LayoutProps<'/[lang]'>) {
-  const { lang } = await params;
-
-  const [dict, pallette, theme] = await Promise.all([
-    getDictionary(lang as Locale),
-    getServerPalette(),
-    getServerTheme(),
-  ]);
+export default async function LangLayout({ children, params }: LayoutProps<'/[lang]'>) {
+  const lang = (await params).lang as Locale;
+  const [dict, pallette] = await Promise.all([getDictionary(lang), getServerPalette()]);
 
   return (
-    <html
-      lang={lang}
-      className={`${geistSans.variable} ${geistMono.variable} h-full antialiased ${pallette} ${theme}`}
-      suppressHydrationWarning
-    >
-      <body className="min-h-full flex flex-col">
-        <LocaleProvider translations={dict} locale={lang as Locale}>
-          <Providers pallette={pallette}>
-            <div>
-              <LanguageSwitch lang={lang as Locale} />
-              <ModeToggle />
-              <PalletteDropdown />
-              <LocalizedLink href="/register" className={buttonVariants({ variant: 'link' })}>
-                Register
-              </LocalizedLink>
-            </div>
-            {children}
-          </Providers>
-        </LocaleProvider>
-      </body>
-    </html>
+    <LocaleProvider translations={dict} locale={lang}>
+      <Providers pallette={pallette}>
+        <Navbar lang={lang} />
+        <main className="min-h-[calc(100vh-4rem)]">{children}</main>
+        <Footer />
+      </Providers>
+    </LocaleProvider>
   );
 }

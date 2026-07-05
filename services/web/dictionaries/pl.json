@@ -1,8 +1,365 @@
 {
   "register": {
-    "register-with-google": "Zaloguj się przez Google"
+    "title": "Załóż konto",
+    "subtitle": "Zacznij przygotowania do egzaminu teoretycznego na prawo jazdy.",
+    "googleButton": "Kontynuuj z Google",
+    "divider": "lub",
+    "form": {
+      "nameLabel": "Imię i nazwisko",
+      "namePlaceholder": "Jan Kowalski",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "jan.kowalski@example.com",
+      "passwordLabel": "Hasło",
+      "passwordPlaceholder": "Minimum 8 znaków",
+      "confirmPasswordLabel": "Powtórz hasło",
+      "confirmPasswordPlaceholder": "Powtórz wpisane hasło",
+      "submit": "Utwórz konto",
+      "submitting": "Tworzenie konta...",
+      "success": "Konto zostało utworzone! Sprawdź swoją skrzynkę e-mail, aby je potwierdzić.",
+      "error": "Nie udało się utworzyć konta. Spróbuj ponownie.",
+      "passwordMismatch": "Podane hasła nie są identyczne."
+    },
+    "haveAccount": "Masz już konto?",
+    "signIn": "Zaloguj się",
+    "termsPrefix": "Zakładając konto, akceptujesz nasz",
+    "termsLink": "regulamin",
+    "and": "oraz",
+    "privacyLink": "politykę prywatności"
   },
   "misc": {
     "change-language": "Zmień język na {{lang}}"
+  },
+  "navbar": {
+    "dashboard": "Panel",
+    "exams": "Egzaminy",
+    "question-bank": "Baza pytań",
+    "statistics": "Statystyki",
+    "settings": "Ustawienia",
+    "open-menu": "Otwórz menu"
+  },
+  "footer": {
+    "tagline": "Przygotuj się do egzaminu teoretycznego na prawo jazdy z pewnością siebie.",
+    "product": "Produkt",
+    "account": "Konto",
+    "legal": "Informacje prawne",
+    "exams": "Egzaminy",
+    "question-bank": "Baza pytań",
+    "statistics": "Statystyki",
+    "register": "Zarejestruj się",
+    "settings": "Ustawienia",
+    "privacy-policy": "Polityka prywatności",
+    "terms-of-use": "Warunki korzystania",
+    "contact": "Kontakt",
+    "copyright": "© {{year}} Viatora. Wszelkie prawa zastrzeżone.",
+    "made-for-learners": "Stworzone dla osób uczących się, a nie do stania w kolejce w urzędzie."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "description": "Dostosuj wygląd i język aplikacji Viatora.",
+    "language": {
+      "title": "Język",
+      "description": "Wybierz język używany w pytaniach egzaminacyjnych oraz interfejsie."
+    },
+    "theme": {
+      "title": "Motyw",
+      "description": "Przełączaj między jasnym, ciemnym i systemowym wyglądem."
+    },
+    "color-palette": {
+      "title": "Paleta kolorów",
+      "description": "Wybierz kolor akcentów używany przez przyciski, linki i wyróżnienia."
+    }
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "lastUpdatedDate": "5 lipca 2026",
+    "sections": {
+      "general": {
+        "title": "Postanowienia ogólne",
+        "content": "Niniejsza polityka prywatności określa zasady przetwarzania i ochrony danych osobowych użytkowników korzystających z aplikacji Viatora (dalej: „Aplikacja”), służącej do przygotowania i przeprowadzania egzaminów teoretycznych na prawo jazdy. Ochrona danych osobowych odbywa się zgodnie z wymogami Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) oraz właściwymi przepisami prawa polskiego."
+      },
+      "controller": {
+        "title": "Administrator danych osobowych",
+        "content": "Administratorem danych osobowych jest [nazwa podmiotu / firmy], z siedzibą pod adresem [adres siedziby], NIP: [numer NIP], adres e-mail kontaktowy: [adres e-mail]. W sprawach dotyczących ochrony danych osobowych można kontaktować się pod powyższym adresem e-mail."
+      },
+      "scope": {
+        "title": "Zakres zbieranych danych",
+        "intro": "W związku z korzystaniem z Aplikacji możemy przetwarzać następujące kategorie danych:",
+        "items": [
+          "dane podane podczas rejestracji konta (np. adres e-mail, imię, hasło w formie zaszyfrowanej),",
+          "wyniki egzaminów próbnych, historia postępów w nauce i statystyki użytkowania,",
+          "preferencje użytkownika zapisywane lokalnie lub w plikach cookies (np. wybrany język interfejsu, motyw kolorystyczny),",
+          "dane techniczne (adres IP, typ przeglądarki, system operacyjny, dane o urządzeniu),",
+          "dane niezbędne do rozliczeń, jeśli Aplikacja oferuje płatne funkcje (np. dane do faktury, identyfikator transakcji od operatora płatności),",
+          "korespondencja z użytkownikiem prowadzona w ramach obsługi zgłoszeń i wsparcia technicznego."
+        ]
+      },
+      "legalBases": {
+        "title": "Cele i podstawy prawne przetwarzania",
+        "intro": "Dane osobowe przetwarzane są w następujących celach:",
+        "items": [
+          "świadczenie usług dostępnych w Aplikacji, w tym prowadzenie konta użytkownika i egzaminów teoretycznych — na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy),",
+          "rozliczenia i obsługa płatności za usługi płatne — na podstawie art. 6 ust. 1 lit. b i c RODO (wykonanie umowy oraz obowiązki podatkowo-księgowe),",
+          "obsługa zgłoszeń, pytań i reklamacji — na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora),",
+          "analiza i poprawa jakości działania Aplikacji (statystyki, analityka) — na podstawie art. 6 ust. 1 lit. f RODO,",
+          "marketing bezpośredni własnych usług, w tym newsletter — na podstawie art. 6 ust. 1 lit. a RODO (zgoda) lub lit. f RODO (prawnie uzasadniony interes), w zależności od formy kontaktu,",
+          "wypełnienie obowiązków prawnych ciążących na administratorze — na podstawie art. 6 ust. 1 lit. c RODO."
+        ]
+      },
+      "recipients": {
+        "title": "Odbiorcy danych",
+        "content": "Dane osobowe mogą być przekazywane podmiotom wspierającym działanie Aplikacji, w szczególności dostawcom usług hostingowych, operatorom płatności, dostawcom narzędzi analitycznych oraz podmiotom świadczącym usługi księgowe i prawne. Podmioty te przetwarzają dane wyłącznie na podstawie zawartych umów powierzenia przetwarzania danych i zgodnie z instrukcjami administratora."
+      },
+      "ewr": {
+        "title": "Przekazywanie danych poza Europejski Obszar Gospodarczy",
+        "content": "Jeżeli którykolwiek z dostawców usług, z których korzysta administrator, przetwarza dane poza Europejskim Obszarem Gospodarczym, przekazanie takie odbywa się z zapewnieniem odpowiedniego poziomu ochrony danych, w szczególności na podstawie standardowych klauzul umownych zatwierdzonych przez Komisję Europejską."
+      },
+      "retention": {
+        "title": "Okres przechowywania danych",
+        "content": "Dane osobowe przechowywane są przez okres niezbędny do realizacji celów, dla których zostały zebrane, w tym przez okres posiadania konta w Aplikacji, a po jego usunięciu — przez okres wymagany przepisami prawa (np. podatkowymi) lub do czasu przedawnienia ewentualnych roszczeń."
+      },
+      "rights": {
+        "title": "Prawa użytkownika",
+        "intro": "Każdemu użytkownikowi przysługuje prawo do:",
+        "items": [
+          "dostępu do swoich danych osobowych,",
+          "sprostowania (poprawiania) danych,",
+          "usunięcia danych („prawo do bycia zapomnianym”),",
+          "ograniczenia przetwarzania danych,",
+          "przenoszenia danych,",
+          "wniesienia sprzeciwu wobec przetwarzania danych opartego na prawnie uzasadnionym interesie administratora,",
+          "cofnięcia zgody w dowolnym momencie, bez wpływu na zgodność z prawem przetwarzania dokonanego przed jej cofnięciem,",
+          "wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO), jeśli użytkownik uzna, że przetwarzanie jego danych narusza przepisy RODO."
+        ],
+        "footer": "W celu realizacji powyższych praw prosimy o kontakt pod adresem e-mail wskazanym w punkcie 2."
+      },
+      "cookies": {
+        "title": "Pliki cookies",
+        "content": "Aplikacja wykorzystuje pliki cookies oraz podobne technologie w celu zapewnienia poprawnego działania (np. zapamiętania wybranego języka interfejsu czy motywu kolorystycznego), utrzymania sesji zalogowanego użytkownika oraz — za zgodą użytkownika — do celów analitycznych. Użytkownik może zarządzać ustawieniami plików cookies w ustawieniach swojej przeglądarki, w tym zablokować ich zapisywanie, co może wpłynąć na funkcjonalność Aplikacji."
+      },
+      "security": {
+        "title": "Bezpieczeństwo danych",
+        "content": "Administrator stosuje odpowiednie środki techniczne i organizacyjne mające na celu zabezpieczenie danych osobowych przed nieuprawnionym dostępem, utratą, zniszczeniem lub ujawnieniem, w tym szyfrowanie transmisji danych oraz kontrolę dostępu do systemów przetwarzających dane."
+      },
+      "changes": {
+        "title": "Zmiany polityki prywatności",
+        "content": "Polityka prywatności może być okresowo aktualizowana, w szczególności w związku ze zmianami przepisów prawa lub funkcjonalności Aplikacji. O istotnych zmianach użytkownicy zostaną poinformowani za pośrednictwem Aplikacji lub adresu e-mail podanego przy rejestracji."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "content": "W przypadku pytań dotyczących niniejszej polityki prywatności lub przetwarzania danych osobowych prosimy o kontakt pod adresem:"
+      }
+    }
+  },
+  "terms": {
+    "title": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "lastUpdatedDate": "5 lipca 2026",
+    "sections": {
+      "general": {
+        "title": "Postanowienia ogólne",
+        "content": "Niniejszy regulamin (dalej: „Regulamin”) określa zasady korzystania z aplikacji Viatora (dalej: „Aplikacja”), służącej do nauki i przeprowadzania egzaminów teoretycznych na prawo jazdy. Korzystanie z Aplikacji oznacza akceptację postanowień niniejszego Regulaminu. Osoby, które nie akceptują Regulaminu, powinny zaprzestać korzystania z Aplikacji."
+      },
+      "scope": {
+        "title": "Zakres usług",
+        "content": "Aplikacja udostępnia materiały edukacyjne, testy próbne oraz symulacje egzaminu teoretycznego na prawo jazdy. Aplikacja ma charakter wyłącznie pomocniczy i edukacyjny — nie jest oficjalnym narzędziem egzaminacyjnym i nie jest powiązana z żadnym Wojewódzkim Ośrodkiem Ruchu Drogowego ani organem państwowym odpowiedzialnym za przeprowadzanie egzaminów na prawo jazdy."
+      },
+      "account": {
+        "title": "Konto użytkownika",
+        "intro": "Korzystanie z pełnej funkcjonalności Aplikacji może wymagać założenia konta. Zakładając konto, użytkownik zobowiązuje się do:",
+        "items": [
+          "podania prawdziwych i aktualnych danych podczas rejestracji,",
+          "zachowania poufności danych logowania i niebezpieczeństwo udostępniania hasła osobom trzecim,",
+          "niezwłocznego poinformowania administratora o podejrzeniu nieautoryzowanego dostępu do konta,",
+          "korzystania z konta wyłącznie osobiście, bez udostępniania go osobom trzecim."
+        ]
+      },
+      "usage": {
+        "title": "Zasady korzystania",
+        "intro": "Korzystając z Aplikacji, użytkownik zobowiązuje się nie podejmować działań, które mogłyby zakłócić jej funkcjonowanie lub naruszyć prawa innych użytkowników, w tym w szczególności zabrania się:",
+        "items": [
+          "kopiowania, rozpowszechniania lub odsprzedawania treści Aplikacji bez zgody administratora,",
+          "podejmowania prób nieautoryzowanego dostępu do systemów Aplikacji lub kont innych użytkowników,",
+          "wykorzystywania Aplikacji w sposób sprzeczny z prawem, dobrymi obyczajami lub naruszający prawa osób trzecich,",
+          "korzystania z automatycznych skryptów, botów lub innych narzędzi w celu masowego pobierania treści Aplikacji."
+        ]
+      },
+      "payments": {
+        "title": "Płatności i subskrypcje",
+        "content": "Część funkcjonalności Aplikacji może być dostępna odpłatnie, w ramach jednorazowej płatności lub subskrypcji. Szczegółowe informacje o cenach, okresie rozliczeniowym oraz zasadach odnawiania subskrypcji są prezentowane przed dokonaniem płatności. Płatności obsługiwane są przez zewnętrznych operatorów płatności. Zwroty realizowane są zgodnie z obowiązującymi przepisami prawa, w tym przepisami o ochronie konsumentów."
+      },
+      "ip": {
+        "title": "Własność intelektualna",
+        "content": "Wszelkie prawa własności intelektualnej do Aplikacji, w tym do jej treści edukacyjnych, bazy pytań, kodu źródłowego, znaków towarowych i elementów graficznych, przysługują administratorowi lub jego licencjodawcom. Korzystanie z Aplikacji nie oznacza przeniesienia jakichkolwiek praw własności intelektualnej na użytkownika."
+      },
+      "liability": {
+        "title": "Odpowiedzialność",
+        "content": "Administrator dokłada starań, aby treści zawarte w Aplikacji były aktualne i zgodne z obowiązującymi przepisami ruchu drogowego, jednak nie gwarantuje zdania rzeczywistego egzaminu państwowego na prawo jazdy. Aplikacja ma charakter pomocniczy, a wyniki uzyskane w testach próbnych nie stanowią gwarancji wyniku egzaminu państwowego. Administrator nie ponosi odpowiedzialności za szkody wynikające z niewłaściwego korzystania z Aplikacji lub z przerw w jej działaniu spowodowanych czynnikami niezależnymi od administratora."
+      },
+      "complaints": {
+        "title": "Reklamacje",
+        "content": "Reklamacje dotyczące funkcjonowania Aplikacji lub płatnych usług można zgłaszać na adres e-mail wskazany w punkcie 12. Reklamacja powinna zawierać opis problemu oraz dane umożliwiające kontakt z użytkownikiem. Reklamacje rozpatrywane są w terminie 14 dni od dnia ich otrzymania."
+      },
+      "termination": {
+        "title": "Rozwiązanie umowy i usunięcie konta",
+        "content": "Użytkownik może w każdej chwili zrezygnować z korzystania z Aplikacji i zażądać usunięcia swojego konta. Administrator może zawiesić lub usunąć konto użytkownika w przypadku naruszenia postanowień niniejszego Regulaminu, w szczególności zasad określonych w punkcie 4."
+      },
+      "changes": {
+        "title": "Zmiany regulaminu",
+        "content": "Administrator zastrzega sobie prawo do wprowadzania zmian w Regulaminie, w szczególności w związku ze zmianą przepisów prawa lub funkcjonalności Aplikacji. O istotnych zmianach użytkownicy zostaną poinformowani za pośrednictwem Aplikacji lub adresu e-mail podanego przy rejestracji, z odpowiednim wyprzedzeniem przed ich wejściem w życie."
+      },
+      "final": {
+        "title": "Postanowienia końcowe",
+        "content": "W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego. Wszelkie spory wynikające z korzystania z Aplikacji będą rozstrzygane przez sąd właściwy dla siedziby administratora, z zastrzeżeniem bezwzględnie obowiązujących przepisów dotyczących ochrony konsumentów."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "content": "W przypadku pytań dotyczących niniejszego Regulaminu prosimy o kontakt pod adresem:"
+      }
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "description": "Masz pytanie dotyczące aplikacji, egzaminu lub napotkałeś problem? Napisz do nas — odpowiadamy zwykle w ciągu 1-2 dni roboczych.",
+    "emailLabel": "E-mail",
+    "emailValue": "kontakt@viatora.app",
+    "addressLabel": "Adres",
+    "addressValue": "[nazwa podmiotu / firmy], [ulica i numer], [kod pocztowy i miasto]",
+    "formTitle": "Napisz do nas",
+    "form": {
+      "nameLabel": "Imię i nazwisko",
+      "namePlaceholder": "Jan Kowalski",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "jan.kowalski@example.com",
+      "messageLabel": "Wiadomość",
+      "messagePlaceholder": "Opisz swoje pytanie lub problem...",
+      "submit": "Wyślij wiadomość",
+      "submitting": "Wysyłanie...",
+      "success": "Dziękujemy! Twoja wiadomość została wysłana, odpowiemy najszybciej jak to możliwe.",
+      "error": "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz bezpośrednio na nasz adres e-mail."
+    }
+  },
+  "auth": {
+    "loginRequired": {
+      "title": "Zaloguj się, aby kontynuować",
+      "description": "Ta funkcja jest dostępna tylko dla zalogowanych użytkowników. Zaloguj się, aby uzyskać dostęp.",
+      "googleButton": "Zaloguj się przez Google"
+    }
+  },
+  "home": {
+    "hero": {
+      "eyebrow": "Teoria na prawo jazdy kat. B",
+      "title": "Zdaj teorię",
+      "titleHighlight": "za pierwszym podejściem",
+      "subtitle": "Ponad 3200 pytań zgodnych z aktualną bazą WORD, symulacja prawdziwego egzaminu i tryb nauki w 5 językach.",
+      "ctaPrimary": "Zacznij za darmo",
+      "ctaSecondary": "Zobacz bazę pytań",
+      "questionCard": {
+        "badge": "Znaki drogowe",
+        "progress": "Pytanie 12 z 20",
+        "question": "Ten znak informuje, że:",
+        "options": [
+          "kierujący jest zobowiązany ustąpić pierwszeństwa",
+          "droga z pierwszeństwem zmienia kierunek",
+          "zbliżasz się do skrzyżowania o ruchu okrężnym",
+          "obowiązuje zakaz skręcania w lewo"
+        ],
+        "correctIndex": 1
+      }
+    },
+    "stats": [
+      {
+        "value": "3200+",
+        "label": "pytań w bazie"
+      },
+      {
+        "value": "5",
+        "label": "języków interfejsu"
+      },
+      {
+        "value": "24/7",
+        "label": "dostęp do nauki"
+      }
+    ],
+    "categories": {
+      "eyebrow": "Baza pytań",
+      "title": "Wszystkie kategorie egzaminacyjne w jednym miejscu",
+      "subtitle": "Pytania podzielone dokładnie tak, jak na egzaminie państwowym.",
+      "items": [
+        {
+          "title": "Znaki drogowe",
+          "description": "Ostrzegawcze, zakazu, nakazu i informacyjne — rozpoznawaj je bez wahania."
+        },
+        {
+          "title": "Pierwszeństwo przejazdu",
+          "description": "Skrzyżowania, ronda i sytuacje sporne, które najczęściej pojawiają się na egzaminie."
+        },
+        {
+          "title": "Manewry i prędkość",
+          "description": "Wyprzedzanie, wymijanie, hamowanie i odległości bezpieczeństwa."
+        },
+        {
+          "title": "Pierwsza pomoc",
+          "description": "Podstawowe zasady udzielania pomocy poszkodowanym w wypadku."
+        },
+        {
+          "title": "Dokumenty i przepisy",
+          "description": "Obowiązkowe wyposażenie, ubezpieczenie i formalności kierowcy."
+        }
+      ]
+    },
+    "steps": {
+      "eyebrow": "Jak to działa",
+      "title": "Trzy kroki dzielące Cię od prawa jazdy",
+      "items": [
+        {
+          "title": "Wybierz język i poziom",
+          "description": "Ustaw język interfejsu i zacznij od testu diagnostycznego, który pokaże Twoje mocne strony."
+        },
+        {
+          "title": "Ćwicz pytania z prawdziwej bazy",
+          "description": "Rozwiązuj testy tematyczne lub losowe, dokładnie takie, jakie spotkasz na WORD."
+        },
+        {
+          "title": "Zdaj egzamin próbny na czas",
+          "description": "Symulacja odwzorowuje realny czas i format egzaminu państwowego, żebyś czuł się pewnie."
+        }
+      ]
+    },
+    "features": {
+      "eyebrow": "Dlaczego Viatora",
+      "title": "Zbudowane, żeby naprawdę pomóc Ci zdać",
+      "subtitle": "Nie tylko baza pytań — pełne środowisko do nauki.",
+      "items": [
+        {
+          "title": "5 języków interfejsu",
+          "description": "Ucz się po polsku, angielsku, ukraińsku, niemiecku lub rosyjsku — pytania i wyjaśnienia zmieniają się razem z językiem."
+        },
+        {
+          "title": "Statystyki postępów",
+          "description": "Zobacz, które kategorie sprawiają Ci najwięcej trudności, i wracaj do nich, zanim zrobi to egzaminator."
+        },
+        {
+          "title": "Tryb egzaminu na czas",
+          "description": "Dokładnie odwzorowany limit czasu i liczba pytań jak na prawdziwym egzaminie teoretycznym."
+        },
+        {
+          "title": "Baza aktualizowana na bieżąco",
+          "description": "Pytania są weryfikowane pod kątem zgodności z obowiązującymi przepisami ruchu drogowego."
+        }
+      ]
+    },
+    "finalCta": {
+      "title": "Gotowy na pierwsze podejście?",
+      "subtitle": "Załóż darmowe konto i rozwiąż swój pierwszy test już dziś.",
+      "cta": "Zacznij za darmo"
+    }
+  },
+  "notFound": {
+    "code": "BŁĄD 404",
+    "title": "Wygląda na to, że skręciłeś w złą stronę",
+    "description": "Nie znaleźliśmy strony, której szukasz. Sprawdź adres albo wróć na dobrą trasę.",
+    "ctaHome": "Wróć na stronę główną",
+    "ctaContact": "Zgłoś problem"
   }
 }

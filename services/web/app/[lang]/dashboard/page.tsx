@@ -1,5 +1,5 @@
 import { getCurrentUser } from '@/actions/get-current-user';
-import GoogleOAuthLink from '@/components/google-oauth-link';
+import { LoginRequired } from '@/components/login-required';
 import LogoutButton from '@/components/logout-button';
 import StartExamSessionButton from '@/components/start-exam-session-button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
@@ -7,19 +7,16 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { UnauthorizedError } from '@/utils/error';
+import { Locale } from '../dictionaries';
 
 export const dynamic = 'force-dynamic';
 
-const DashboardPage = async () => {
+const DashboardPage = async ({ params }: { params: Promise<{ lang: Locale }> }) => {
+  const { lang } = await params;
   const [error, userData] = await getCurrentUser();
 
   if (error instanceof UnauthorizedError) {
-    return (
-      <div>
-        <p>Login to use this feature.</p>
-        <GoogleOAuthLink>Login with Google</GoogleOAuthLink>
-      </div>
-    );
+    return <LoginRequired lang={lang} />;
   }
 
   if (error) {
