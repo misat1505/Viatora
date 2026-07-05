@@ -10,14 +10,21 @@ import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Locale } from '@/app/[lang]/dictionaries';
-import { ExamQuestionDTO } from '@/generated/viatoraAPI.schemas';
+import { ExamQuestionDTO, ExamSessionDTO } from '@/generated/viatoraAPI.schemas';
+import { answerQuestion } from '@/actions/exams/answer-question';
+import { useRouter } from 'next/navigation';
+import { sanityImageUrl } from '@/lib/sanity-image';
 
 type AnswerKey = 'a' | 'b' | 'c';
 
 interface QuestionViewProps {
+  examId: ExamSessionDTO['sessionId'];
   question: ExamQuestionDTO;
   userAnswer: string;
   lang: Locale;
+  nextQuestionSlug: ExamQuestionDTO['slug'];
+  answeredQuestionsCount: number;
+  totalQuestionsCount: number;
 }
 
 const dict = {
@@ -65,7 +72,17 @@ function formatPoints(n: number, lang: Locale) {
   return `${n} ${n === 1 ? t.pointsOne : t.pointsFew}`;
 }
 
-export function QuestionView({ question, userAnswer, lang }: QuestionViewProps) {
+export function QuestionView({
+  examId,
+  question,
+  userAnswer,
+  lang,
+  nextQuestionSlug,
+  answeredQuestionsCount,
+  totalQuestionsCount,
+}: QuestionViewProps) {
+  const router = useRouter();
+
   const t = dict[lang] ?? dict.en;
   const isBasic = question.questionType === 'basic';
   const options: AnswerKey[] = isBasic ? ['a', 'b'] : ['a', 'b', 'c'];
@@ -77,7 +94,12 @@ export function QuestionView({ question, userAnswer, lang }: QuestionViewProps) 
     if (!selected) return;
     setPending(true);
     try {
-      console.log(selected);
+      await answerQuestion(examId, { questionId: question.id, userAnswer: selected });
+      if (nextQuestionSlug !== 'STOP') {
+        router.push(`/${lang}/exams/${examId}/q/${nextQuestionSlug}`);
+      } else {
+        console.log('Finished an exam.');
+      }
     } finally {
       setPending(false);
     }
@@ -93,17 +115,21 @@ export function QuestionView({ question, userAnswer, lang }: QuestionViewProps) 
       <Card className="flex w-full max-w-2xl flex-col">
         <CardHeader className="gap-4">
           <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap gap-1.5"></div>
+            <div className="flex flex-wrap gap-1.5">
+              <Badge variant="secondary">
+                {answeredQuestionsCount} / {totalQuestionsCount}
+              </Badge>
+            </div>
             <Badge variant="secondary">{formatPoints(question.points, lang)}</Badge>
           </div>
 
           <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
             {question.media.type === 'image' && question.media.url ? (
               <Image
-                src={question.media.url}
+                src={sanityImageUrl(question.media.url)!}
                 alt={question.text[lang] || question.text.en}
                 fill
-                className="object-cover"
+                className="object-contain"
                 sizes="(max-width: 640px) 100vw, 640px"
               />
             ) : (
