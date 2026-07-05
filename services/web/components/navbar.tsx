@@ -8,18 +8,15 @@ import { cn } from '@/lib/utils';
 import { buttonVariants } from '@/components/ui/button';
 import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 
-import { ModeToggle } from '@/components/mode-toggle';
-import { PalletteDropdown } from '@/components/pallette-dropdown';
 import { LocalizedLink } from '@/components/localized-link';
-import LanguageSwitch from './language-switch';
 import { Locale } from '@/app/[lang]/dictionaries';
+import { ModeToggle } from './mode-toggle';
 
 interface NavItem {
   href: string;
   label: string;
 }
 
-// Podmień href/label na docelowe strony aplikacji
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'Dashboard' },
   { href: '/exams', label: 'Exams' },
@@ -28,7 +25,6 @@ const navItems: NavItem[] = [
   { href: '/settings', label: 'Settings' },
 ];
 
-// Sprawdza czy dany link jest aktywny, uwzględniając prefiks językowy (np. /pl/exam)
 function isActive(pathname: string, href: string, lang: string) {
   const localePrefix = `/${lang}`;
   const normalized = pathname.startsWith(localePrefix)
@@ -86,6 +82,7 @@ export function Navbar({ lang }: NavbarProps) {
 
         {/* Right side controls */}
         <div className="flex items-center gap-2">
+          <ModeToggle />
           {/* Mobile menu */}
           <Sheet>
             <SheetTrigger asChild>

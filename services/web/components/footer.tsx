@@ -1,4 +1,3 @@
-import * as React from 'react';
 import { GraduationCap } from 'lucide-react';
 
 import { LocalizedLink } from '@/components/localized-link';
@@ -77,7 +76,9 @@ export function Footer() {
 
         {/* Bottom bar */}
         <div className="mt-10 flex flex-col-reverse items-center justify-between gap-4 border-t border-border pt-6 sm:flex-row">
-          <p className="text-sm text-muted-foreground">© {year} Viatora. All rights reserved.</p>
+          <p className="text-sm text-muted-foreground">
+            &copy; {year} Viatora. All rights reserved.
+          </p>
           <p className="text-xs text-muted-foreground">Made for learners, not for the DMV queue.</p>
         </div>
       </div>
