@@ -1,17 +1,23 @@
 import { getExamById } from '@/actions/exams/get-exam-by-id';
 import { QuestionCard } from '@/components/exam/question-card';
 import { Locale } from '../../dictionaries';
+import { redirect } from 'next/navigation';
 
-const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string }> }) => {
+const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: Locale }> }) => {
   const examId = (await params).id;
   const lang = (await params).lang;
   const [error, exam] = await getExamById(examId);
 
   if (error) throw error;
 
+  const currentQuestion = exam.questions.find((q) => q.question.id === exam.currentQuestionId);
+  if (!currentQuestion) throw Error('Current question not found');
+
+  return redirect(`/${lang}/exams/${exam.sessionId}/q/${currentQuestion.question.slug}`);
+
   const minutes = Math.floor(exam.timeLimitSeconds / 60);
 
-  const currentQuestion = exam.questions.find((q) => q.question.id === exam.currentQuestionId);
+  const currentQuestion2 = exam.questions.find((q) => q.question.id === exam.currentQuestionId);
 
   return (
     <div className="mx-auto max-w-2xl px-4 py-10">
@@ -27,7 +33,7 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string
             Current question id: {exam.currentQuestionId}
           </p>
           <p className="text-sm text-muted-foreground">
-            Current question: {currentQuestion?.question.text[lang as Locale]}
+            Current question: {currentQuestion2?.question.text[lang as Locale]}
           </p>
           <p className="text-sm text-muted-foreground">{exam.status}</p>
         </div>
