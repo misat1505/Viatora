@@ -44,5 +44,175 @@
       "title": "Paleta kolorów",
       "description": "Wybierz kolor akcentów używany przez przyciski, linki i wyróżnienia."
     }
+  },
+  "privacy": {
+    "title": "Polityka prywatności",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "lastUpdatedDate": "5 lipca 2026",
+    "sections": {
+      "general": {
+        "title": "Postanowienia ogólne",
+        "content": "Niniejsza polityka prywatności określa zasady przetwarzania i ochrony danych osobowych użytkowników korzystających z aplikacji Viatora (dalej: „Aplikacja”), służącej do przygotowania i przeprowadzania egzaminów teoretycznych na prawo jazdy. Ochrona danych osobowych odbywa się zgodnie z wymogami Rozporządzenia Parlamentu Europejskiego i Rady (UE) 2016/679 z dnia 27 kwietnia 2016 r. (RODO) oraz właściwymi przepisami prawa polskiego."
+      },
+      "controller": {
+        "title": "Administrator danych osobowych",
+        "content": "Administratorem danych osobowych jest [nazwa podmiotu / firmy], z siedzibą pod adresem [adres siedziby], NIP: [numer NIP], adres e-mail kontaktowy: [adres e-mail]. W sprawach dotyczących ochrony danych osobowych można kontaktować się pod powyższym adresem e-mail."
+      },
+      "scope": {
+        "title": "Zakres zbieranych danych",
+        "intro": "W związku z korzystaniem z Aplikacji możemy przetwarzać następujące kategorie danych:",
+        "items": [
+          "dane podane podczas rejestracji konta (np. adres e-mail, imię, hasło w formie zaszyfrowanej),",
+          "wyniki egzaminów próbnych, historia postępów w nauce i statystyki użytkowania,",
+          "preferencje użytkownika zapisywane lokalnie lub w plikach cookies (np. wybrany język interfejsu, motyw kolorystyczny),",
+          "dane techniczne (adres IP, typ przeglądarki, system operacyjny, dane o urządzeniu),",
+          "dane niezbędne do rozliczeń, jeśli Aplikacja oferuje płatne funkcje (np. dane do faktury, identyfikator transakcji od operatora płatności),",
+          "korespondencja z użytkownikiem prowadzona w ramach obsługi zgłoszeń i wsparcia technicznego."
+        ]
+      },
+      "legalBases": {
+        "title": "Cele i podstawy prawne przetwarzania",
+        "intro": "Dane osobowe przetwarzane są w następujących celach:",
+        "items": [
+          "świadczenie usług dostępnych w Aplikacji, w tym prowadzenie konta użytkownika i egzaminów teoretycznych — na podstawie art. 6 ust. 1 lit. b RODO (wykonanie umowy),",
+          "rozliczenia i obsługa płatności za usługi płatne — na podstawie art. 6 ust. 1 lit. b i c RODO (wykonanie umowy oraz obowiązki podatkowo-księgowe),",
+          "obsługa zgłoszeń, pytań i reklamacji — na podstawie art. 6 ust. 1 lit. f RODO (prawnie uzasadniony interes administratora),",
+          "analiza i poprawa jakości działania Aplikacji (statystyki, analityka) — na podstawie art. 6 ust. 1 lit. f RODO,",
+          "marketing bezpośredni własnych usług, w tym newsletter — na podstawie art. 6 ust. 1 lit. a RODO (zgoda) lub lit. f RODO (prawnie uzasadniony interes), w zależności od formy kontaktu,",
+          "wypełnienie obowiązków prawnych ciążących na administratorze — na podstawie art. 6 ust. 1 lit. c RODO."
+        ]
+      },
+      "recipients": {
+        "title": "Odbiorcy danych",
+        "content": "Dane osobowe mogą być przekazywane podmiotom wspierającym działanie Aplikacji, w szczególności dostawcom usług hostingowych, operatorom płatności, dostawcom narzędzi analitycznych oraz podmiotom świadczącym usługi księgowe i prawne. Podmioty te przetwarzają dane wyłącznie na podstawie zawartych umów powierzenia przetwarzania danych i zgodnie z instrukcjami administratora."
+      },
+      "ewr": {
+        "title": "Przekazywanie danych poza Europejski Obszar Gospodarczy",
+        "content": "Jeżeli którykolwiek z dostawców usług, z których korzysta administrator, przetwarza dane poza Europejskim Obszarem Gospodarczym, przekazanie takie odbywa się z zapewnieniem odpowiedniego poziomu ochrony danych, w szczególności na podstawie standardowych klauzul umownych zatwierdzonych przez Komisję Europejską."
+      },
+      "retention": {
+        "title": "Okres przechowywania danych",
+        "content": "Dane osobowe przechowywane są przez okres niezbędny do realizacji celów, dla których zostały zebrane, w tym przez okres posiadania konta w Aplikacji, a po jego usunięciu — przez okres wymagany przepisami prawa (np. podatkowymi) lub do czasu przedawnienia ewentualnych roszczeń."
+      },
+      "rights": {
+        "title": "Prawa użytkownika",
+        "intro": "Każdemu użytkownikowi przysługuje prawo do:",
+        "items": [
+          "dostępu do swoich danych osobowych,",
+          "sprostowania (poprawiania) danych,",
+          "usunięcia danych („prawo do bycia zapomnianym”),",
+          "ograniczenia przetwarzania danych,",
+          "przenoszenia danych,",
+          "wniesienia sprzeciwu wobec przetwarzania danych opartego na prawnie uzasadnionym interesie administratora,",
+          "cofnięcia zgody w dowolnym momencie, bez wpływu na zgodność z prawem przetwarzania dokonanego przed jej cofnięciem,",
+          "wniesienia skargi do Prezesa Urzędu Ochrony Danych Osobowych (UODO), jeśli użytkownik uzna, że przetwarzanie jego danych narusza przepisy RODO."
+        ],
+        "footer": "W celu realizacji powyższych praw prosimy o kontakt pod adresem e-mail wskazanym w punkcie 2."
+      },
+      "cookies": {
+        "title": "Pliki cookies",
+        "content": "Aplikacja wykorzystuje pliki cookies oraz podobne technologie w celu zapewnienia poprawnego działania (np. zapamiętania wybranego języka interfejsu czy motywu kolorystycznego), utrzymania sesji zalogowanego użytkownika oraz — za zgodą użytkownika — do celów analitycznych. Użytkownik może zarządzać ustawieniami plików cookies w ustawieniach swojej przeglądarki, w tym zablokować ich zapisywanie, co może wpłynąć na funkcjonalność Aplikacji."
+      },
+      "security": {
+        "title": "Bezpieczeństwo danych",
+        "content": "Administrator stosuje odpowiednie środki techniczne i organizacyjne mające na celu zabezpieczenie danych osobowych przed nieuprawnionym dostępem, utratą, zniszczeniem lub ujawnieniem, w tym szyfrowanie transmisji danych oraz kontrolę dostępu do systemów przetwarzających dane."
+      },
+      "changes": {
+        "title": "Zmiany polityki prywatności",
+        "content": "Polityka prywatności może być okresowo aktualizowana, w szczególności w związku ze zmianami przepisów prawa lub funkcjonalności Aplikacji. O istotnych zmianach użytkownicy zostaną poinformowani za pośrednictwem Aplikacji lub adresu e-mail podanego przy rejestracji."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "content": "W przypadku pytań dotyczących niniejszej polityki prywatności lub przetwarzania danych osobowych prosimy o kontakt pod adresem:"
+      }
+    }
+  },
+  "terms": {
+    "title": "Regulamin",
+    "lastUpdated": "Ostatnia aktualizacja",
+    "lastUpdatedDate": "5 lipca 2026",
+    "sections": {
+      "general": {
+        "title": "Postanowienia ogólne",
+        "content": "Niniejszy regulamin (dalej: „Regulamin”) określa zasady korzystania z aplikacji Viatora (dalej: „Aplikacja”), służącej do nauki i przeprowadzania egzaminów teoretycznych na prawo jazdy. Korzystanie z Aplikacji oznacza akceptację postanowień niniejszego Regulaminu. Osoby, które nie akceptują Regulaminu, powinny zaprzestać korzystania z Aplikacji."
+      },
+      "scope": {
+        "title": "Zakres usług",
+        "content": "Aplikacja udostępnia materiały edukacyjne, testy próbne oraz symulacje egzaminu teoretycznego na prawo jazdy. Aplikacja ma charakter wyłącznie pomocniczy i edukacyjny — nie jest oficjalnym narzędziem egzaminacyjnym i nie jest powiązana z żadnym Wojewódzkim Ośrodkiem Ruchu Drogowego ani organem państwowym odpowiedzialnym za przeprowadzanie egzaminów na prawo jazdy."
+      },
+      "account": {
+        "title": "Konto użytkownika",
+        "intro": "Korzystanie z pełnej funkcjonalności Aplikacji może wymagać założenia konta. Zakładając konto, użytkownik zobowiązuje się do:",
+        "items": [
+          "podania prawdziwych i aktualnych danych podczas rejestracji,",
+          "zachowania poufności danych logowania i niebezpieczeństwo udostępniania hasła osobom trzecim,",
+          "niezwłocznego poinformowania administratora o podejrzeniu nieautoryzowanego dostępu do konta,",
+          "korzystania z konta wyłącznie osobiście, bez udostępniania go osobom trzecim."
+        ]
+      },
+      "usage": {
+        "title": "Zasady korzystania",
+        "intro": "Korzystając z Aplikacji, użytkownik zobowiązuje się nie podejmować działań, które mogłyby zakłócić jej funkcjonowanie lub naruszyć prawa innych użytkowników, w tym w szczególności zabrania się:",
+        "items": [
+          "kopiowania, rozpowszechniania lub odsprzedawania treści Aplikacji bez zgody administratora,",
+          "podejmowania prób nieautoryzowanego dostępu do systemów Aplikacji lub kont innych użytkowników,",
+          "wykorzystywania Aplikacji w sposób sprzeczny z prawem, dobrymi obyczajami lub naruszający prawa osób trzecich,",
+          "korzystania z automatycznych skryptów, botów lub innych narzędzi w celu masowego pobierania treści Aplikacji."
+        ]
+      },
+      "payments": {
+        "title": "Płatności i subskrypcje",
+        "content": "Część funkcjonalności Aplikacji może być dostępna odpłatnie, w ramach jednorazowej płatności lub subskrypcji. Szczegółowe informacje o cenach, okresie rozliczeniowym oraz zasadach odnawiania subskrypcji są prezentowane przed dokonaniem płatności. Płatności obsługiwane są przez zewnętrznych operatorów płatności. Zwroty realizowane są zgodnie z obowiązującymi przepisami prawa, w tym przepisami o ochronie konsumentów."
+      },
+      "ip": {
+        "title": "Własność intelektualna",
+        "content": "Wszelkie prawa własności intelektualnej do Aplikacji, w tym do jej treści edukacyjnych, bazy pytań, kodu źródłowego, znaków towarowych i elementów graficznych, przysługują administratorowi lub jego licencjodawcom. Korzystanie z Aplikacji nie oznacza przeniesienia jakichkolwiek praw własności intelektualnej na użytkownika."
+      },
+      "liability": {
+        "title": "Odpowiedzialność",
+        "content": "Administrator dokłada starań, aby treści zawarte w Aplikacji były aktualne i zgodne z obowiązującymi przepisami ruchu drogowego, jednak nie gwarantuje zdania rzeczywistego egzaminu państwowego na prawo jazdy. Aplikacja ma charakter pomocniczy, a wyniki uzyskane w testach próbnych nie stanowią gwarancji wyniku egzaminu państwowego. Administrator nie ponosi odpowiedzialności za szkody wynikające z niewłaściwego korzystania z Aplikacji lub z przerw w jej działaniu spowodowanych czynnikami niezależnymi od administratora."
+      },
+      "complaints": {
+        "title": "Reklamacje",
+        "content": "Reklamacje dotyczące funkcjonowania Aplikacji lub płatnych usług można zgłaszać na adres e-mail wskazany w punkcie 12. Reklamacja powinna zawierać opis problemu oraz dane umożliwiające kontakt z użytkownikiem. Reklamacje rozpatrywane są w terminie 14 dni od dnia ich otrzymania."
+      },
+      "termination": {
+        "title": "Rozwiązanie umowy i usunięcie konta",
+        "content": "Użytkownik może w każdej chwili zrezygnować z korzystania z Aplikacji i zażądać usunięcia swojego konta. Administrator może zawiesić lub usunąć konto użytkownika w przypadku naruszenia postanowień niniejszego Regulaminu, w szczególności zasad określonych w punkcie 4."
+      },
+      "changes": {
+        "title": "Zmiany regulaminu",
+        "content": "Administrator zastrzega sobie prawo do wprowadzania zmian w Regulaminie, w szczególności w związku ze zmianą przepisów prawa lub funkcjonalności Aplikacji. O istotnych zmianach użytkownicy zostaną poinformowani za pośrednictwem Aplikacji lub adresu e-mail podanego przy rejestracji, z odpowiednim wyprzedzeniem przed ich wejściem w życie."
+      },
+      "final": {
+        "title": "Postanowienia końcowe",
+        "content": "W sprawach nieuregulowanych niniejszym Regulaminem zastosowanie mają przepisy prawa polskiego. Wszelkie spory wynikające z korzystania z Aplikacji będą rozstrzygane przez sąd właściwy dla siedziby administratora, z zastrzeżeniem bezwzględnie obowiązujących przepisów dotyczących ochrony konsumentów."
+      },
+      "contact": {
+        "title": "Kontakt",
+        "content": "W przypadku pytań dotyczących niniejszego Regulaminu prosimy o kontakt pod adresem:"
+      }
+    }
+  },
+  "contact": {
+    "title": "Kontakt",
+    "description": "Masz pytanie dotyczące aplikacji, egzaminu lub napotkałeś problem? Napisz do nas — odpowiadamy zwykle w ciągu 1-2 dni roboczych.",
+    "emailLabel": "E-mail",
+    "emailValue": "kontakt@viatora.app",
+    "addressLabel": "Adres",
+    "addressValue": "[nazwa podmiotu / firmy], [ulica i numer], [kod pocztowy i miasto]",
+    "formTitle": "Napisz do nas",
+    "form": {
+      "nameLabel": "Imię i nazwisko",
+      "namePlaceholder": "Jan Kowalski",
+      "emailLabel": "Adres e-mail",
+      "emailPlaceholder": "jan.kowalski@example.com",
+      "messageLabel": "Wiadomość",
+      "messagePlaceholder": "Opisz swoje pytanie lub problem...",
+      "submit": "Wyślij wiadomość",
+      "submitting": "Wysyłanie...",
+      "success": "Dziękujemy! Twoja wiadomość została wysłana, odpowiemy najszybciej jak to możliwe.",
+      "error": "Nie udało się wysłać wiadomości. Spróbuj ponownie lub napisz bezpośrednio na nasz adres e-mail."
+    }
   }
 }

@@ -44,5 +44,175 @@
       "title": "Color palette",
       "description": "Set the accent color used for buttons, links, and highlights."
     }
+  },
+  "privacy": {
+    "title": "Privacy Policy",
+    "lastUpdated": "Last updated",
+    "lastUpdatedDate": "July 5, 2026",
+    "sections": {
+      "general": {
+        "title": "General provisions",
+        "content": "This privacy policy sets out how personal data is processed and protected for users of the Viatora application (the \"App\"), which helps users prepare for and take theoretical driving exams. Personal data is processed in accordance with Regulation (EU) 2016/679 of the European Parliament and of the Council of 27 April 2016 (GDPR) and applicable Polish law."
+      },
+      "controller": {
+        "title": "Data controller",
+        "content": "The data controller is [company / entity name], registered at [registered address], VAT/Tax ID: [tax ID], contact email: [email address]. For any matters related to personal data protection, please contact us at the email address above."
+      },
+      "scope": {
+        "title": "Scope of data collected",
+        "intro": "In connection with your use of the App, we may process the following categories of data:",
+        "items": [
+          "data provided during account registration (e.g. email address, name, password stored in encrypted form),",
+          "practice exam results, learning progress history, and usage statistics,",
+          "user preferences stored locally or in cookies (e.g. selected interface language, color theme),",
+          "technical data (IP address, browser type, operating system, device information),",
+          "data required for billing, if the App offers paid features (e.g. invoicing details, transaction identifiers from the payment provider),",
+          "correspondence with the user handled as part of support requests and customer service."
+        ]
+      },
+      "legalBases": {
+        "title": "Purposes and legal bases for processing",
+        "intro": "Personal data is processed for the following purposes:",
+        "items": [
+          "providing the services available in the App, including maintaining the user account and theoretical exams — under Art. 6(1)(b) GDPR (performance of a contract),",
+          "billing and processing payments for paid services — under Art. 6(1)(b) and (c) GDPR (performance of a contract and tax/accounting obligations),",
+          "handling support requests, questions, and complaints — under Art. 6(1)(f) GDPR (legitimate interest of the controller),",
+          "analyzing and improving the App's performance (statistics, analytics) — under Art. 6(1)(f) GDPR,",
+          "direct marketing of our own services, including newsletters — under Art. 6(1)(a) GDPR (consent) or Art. 6(1)(f) GDPR (legitimate interest), depending on the form of contact,",
+          "fulfilling the controller's legal obligations — under Art. 6(1)(c) GDPR."
+        ]
+      },
+      "recipients": {
+        "title": "Recipients of data",
+        "content": "Personal data may be shared with entities that support the App's operation, in particular hosting providers, payment processors, analytics providers, and accounting or legal service providers. These entities process data solely under data processing agreements and in accordance with the controller's instructions."
+      },
+      "ewr": {
+        "title": "Transfers outside the European Economic Area",
+        "content": "If any of the service providers used by the controller processes data outside the European Economic Area, such transfer is carried out with appropriate safeguards in place, in particular standard contractual clauses approved by the European Commission."
+      },
+      "retention": {
+        "title": "Data retention period",
+        "content": "Personal data is retained for as long as necessary to fulfill the purposes for which it was collected, including for the duration of the App account, and after its deletion — for the period required by applicable law (e.g. tax law) or until any potential claims become time-barred."
+      },
+      "rights": {
+        "title": "Your rights",
+        "intro": "Every user has the right to:",
+        "items": [
+          "access their personal data,",
+          "rectify (correct) their data,",
+          "erase their data (\"the right to be forgotten\"),",
+          "restrict the processing of their data,",
+          "data portability,",
+          "object to processing based on the controller's legitimate interest,",
+          "withdraw consent at any time, without affecting the lawfulness of processing carried out before its withdrawal,",
+          "lodge a complaint with the President of the Personal Data Protection Office (UODO) if the user believes that the processing of their data violates GDPR."
+        ],
+        "footer": "To exercise the rights above, please contact us at the email address listed in section 2."
+      },
+      "cookies": {
+        "title": "Cookies",
+        "content": "The App uses cookies and similar technologies to ensure it functions correctly (e.g. remembering the selected interface language or color theme), to maintain a logged-in user's session, and — with the user's consent — for analytics purposes. Users can manage cookie settings in their browser, including blocking cookies, which may affect the App's functionality."
+      },
+      "security": {
+        "title": "Data security",
+        "content": "The controller applies appropriate technical and organizational measures to protect personal data against unauthorized access, loss, destruction, or disclosure, including encryption of data in transit and access controls for systems that process data."
+      },
+      "changes": {
+        "title": "Changes to this privacy policy",
+        "content": "This privacy policy may be updated periodically, in particular in connection with changes in applicable law or the App's functionality. Users will be informed of material changes through the App or via the email address provided at registration."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "If you have any questions about this privacy policy or the processing of your personal data, please contact us at:"
+      }
+    }
+  },
+  "terms": {
+    "title": "Terms of Use",
+    "lastUpdated": "Last updated",
+    "lastUpdatedDate": "July 5, 2026",
+    "sections": {
+      "general": {
+        "title": "General provisions",
+        "content": "These terms of use (the \"Terms\") set out the rules for using the Viatora application (the \"App\"), which provides learning materials and theoretical driving exam simulations. By using the App, you agree to these Terms. If you do not accept the Terms, please stop using the App."
+      },
+      "scope": {
+        "title": "Scope of services",
+        "content": "The App provides educational materials, practice tests, and simulations of the theoretical driving exam. The App is intended solely as a learning aid — it is not an official examination tool and is not affiliated with any driving license examination center or government authority responsible for administering driving exams."
+      },
+      "account": {
+        "title": "User account",
+        "intro": "Full use of the App may require creating an account. By creating an account, you agree to:",
+        "items": [
+          "provide accurate and up-to-date information during registration,",
+          "keep your login credentials confidential and avoid sharing your password with third parties,",
+          "notify the administrator promptly if you suspect unauthorized access to your account,",
+          "use your account personally, without sharing it with third parties."
+        ]
+      },
+      "usage": {
+        "title": "Rules of use",
+        "intro": "When using the App, you agree not to engage in activities that could disrupt its operation or infringe on the rights of other users. In particular, it is prohibited to:",
+        "items": [
+          "copy, distribute, or resell the App's content without the administrator's consent,",
+          "attempt unauthorized access to the App's systems or other users' accounts,",
+          "use the App in a manner that violates the law, good practice, or the rights of third parties,",
+          "use automated scripts, bots, or other tools to bulk-download the App's content."
+        ]
+      },
+      "payments": {
+        "title": "Payments and subscriptions",
+        "content": "Some features of the App may be available for a fee, either as a one-time payment or a subscription. Detailed pricing, billing periods, and renewal terms are shown before any payment is made. Payments are processed by third-party payment providers. Refunds are handled in accordance with applicable law, including consumer protection regulations."
+      },
+      "ip": {
+        "title": "Intellectual property",
+        "content": "All intellectual property rights in the App, including its educational content, question bank, source code, trademarks, and graphic elements, belong to the administrator or its licensors. Use of the App does not transfer any intellectual property rights to the user."
+      },
+      "liability": {
+        "title": "Liability",
+        "content": "The administrator makes reasonable efforts to keep the App's content accurate and up to date with applicable traffic regulations, but does not guarantee that using the App will result in passing the official state driving exam. The App is intended as a learning aid, and results from practice tests do not guarantee any particular outcome on the official exam. The administrator is not liable for damages resulting from improper use of the App or from interruptions caused by factors beyond the administrator's control."
+      },
+      "complaints": {
+        "title": "Complaints",
+        "content": "Complaints about the App's functionality or paid features can be submitted to the email address listed in section 12. A complaint should describe the issue and include contact details. Complaints are handled within 14 days of receipt."
+      },
+      "termination": {
+        "title": "Termination and account deletion",
+        "content": "You may stop using the App and request deletion of your account at any time. The administrator may suspend or delete a user's account in the event of a violation of these Terms, in particular the rules set out in section 4."
+      },
+      "changes": {
+        "title": "Changes to these Terms",
+        "content": "The administrator reserves the right to make changes to these Terms, in particular in connection with changes in applicable law or the App's functionality. Users will be informed of material changes through the App or via the email address provided at registration, with reasonable notice before the changes take effect."
+      },
+      "final": {
+        "title": "Final provisions",
+        "content": "Matters not covered by these Terms are governed by Polish law. Any disputes arising from the use of the App will be resolved by the court with jurisdiction over the administrator's registered office, subject to mandatory consumer protection provisions."
+      },
+      "contact": {
+        "title": "Contact",
+        "content": "If you have any questions about these Terms, please contact us at:"
+      }
+    }
+  },
+  "contact": {
+    "title": "Contact",
+    "description": "Have a question about the app or the exam, or ran into a problem? Send us a message — we usually reply within 1-2 business days.",
+    "emailLabel": "Email",
+    "emailValue": "kontakt@viatora.app",
+    "addressLabel": "Address",
+    "addressValue": "[company / entity name], [street and number], [postal code and city]",
+    "formTitle": "Send us a message",
+    "form": {
+      "nameLabel": "Full name",
+      "namePlaceholder": "Jane Doe",
+      "emailLabel": "Email address",
+      "emailPlaceholder": "jane.doe@example.com",
+      "messageLabel": "Message",
+      "messagePlaceholder": "Describe your question or issue...",
+      "submit": "Send message",
+      "submitting": "Sending...",
+      "success": "Thanks! Your message has been sent, we'll get back to you as soon as possible.",
+      "error": "We couldn't send your message. Please try again or email us directly."
+    }
   }
 }
