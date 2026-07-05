@@ -18,6 +18,10 @@ import { firstValueFrom } from 'rxjs';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { UserProfile } from 'src/generated/auth';
 import { ApiOkResponse } from '@nestjs/swagger';
+import {
+  AnswerQuestionDTO,
+  AnswerQuestionResponseDTO,
+} from './dto/answer-question.dto';
 
 @Controller('/exams')
 @UseGuards(JwtAuthGuard)
@@ -74,5 +78,28 @@ export class ExamsController implements OnModuleInit {
 
     // @ts-expect-error TODO: make this error go away
     return examSession;
+  }
+
+  @Post('/sessions/:id/answer')
+  @ApiOkResponse({ type: AnswerQuestionResponseDTO })
+  async answerQuestion(
+    @Param('id') sessionId: string,
+    @Body() dto: AnswerQuestionDTO,
+    @CurrentUser() user: UserProfile,
+  ): Promise<AnswerQuestionResponseDTO> {
+    const result = await firstValueFrom(
+      this.examService.submitAnswer(
+        {
+          sessionId,
+          questionId: dto.questionId,
+          selectedOption: dto.userAnswer,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
   }
 }

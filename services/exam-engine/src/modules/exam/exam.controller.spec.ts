@@ -10,6 +10,7 @@ describe('ExamController', () => {
   const examServiceMock = {
     startExamSession: vi.fn(),
     getSessionById: vi.fn(),
+    submitAnswer: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -66,5 +67,65 @@ describe('ExamController', () => {
 
     expect(examServiceMock.getSessionById).toHaveBeenCalledWith(dto);
     expect(result).toEqual(expectedResponse);
+  });
+
+  it('should call ExamService.submitAnswer with dto', async () => {
+    const dto = {
+      sessionId: 'sess_1',
+      questionId: 'question-1',
+      selectedOption: 'a',
+      userId: 'user-1',
+    };
+
+    const expectedResponse = {
+      correct: true,
+      examFinished: false,
+    };
+
+    examServiceMock.submitAnswer.mockResolvedValue(expectedResponse);
+
+    const result = await controller.submitAnswer(dto);
+
+    expect(examServiceMock.submitAnswer).toHaveBeenCalledWith(dto);
+    expect(result).toEqual(expectedResponse);
+  });
+
+  it('should propagate errors from startExamSession', async () => {
+    examServiceMock.startExamSession.mockRejectedValue(
+      new Error('service failed'),
+    );
+
+    await expect(
+      controller.startExamSession({
+        category: 'B',
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow('service failed');
+  });
+
+  it('should propagate errors from getSessionById', async () => {
+    examServiceMock.getSessionById.mockRejectedValue(
+      new Error('service failed'),
+    );
+
+    await expect(
+      controller.getSessionById({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow('service failed');
+  });
+
+  it('should propagate errors from submitAnswer', async () => {
+    examServiceMock.submitAnswer.mockRejectedValue(new Error('service failed'));
+
+    await expect(
+      controller.submitAnswer({
+        sessionId: 'sess_1',
+        questionId: 'question-1',
+        selectedOption: 'a',
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow('service failed');
   });
 });

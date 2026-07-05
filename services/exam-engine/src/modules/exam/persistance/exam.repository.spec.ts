@@ -2,6 +2,7 @@ import { describe, it, expect, beforeEach, vi } from 'vitest';
 import Redis from 'ioredis';
 
 import { ExamRepository } from './exam.repository';
+import { ExamStatus } from '../types/exam';
 
 vi.mock('uuid', () => ({
   v4: () => 'mock-uuid',
@@ -12,6 +13,7 @@ describe('ExamRepository', () => {
 
   const redisMock = {
     set: vi.fn(),
+    get: vi.fn(),
   } as unknown as Redis;
 
   beforeEach(() => {
@@ -29,6 +31,9 @@ describe('ExamRepository', () => {
       totalQuestions: 10,
       startedAt: '2026-01-01T00:00:00Z',
       questions: [],
+      currentQuestionId: 'q2',
+      category: 'B',
+      status: ExamStatus.IN_PROGRESS,
     };
 
     const result = await repository.createExamSession(dto);
@@ -93,5 +98,31 @@ describe('ExamRepository', () => {
     expect(redisGetMock).toHaveBeenCalledWith('exam-engine:exams:non-existing');
 
     expect(result).toBeNull();
+  });
+
+  it('should update exam session in redis', async () => {
+    const exam = {
+      sessionId: 'mock-uuid',
+      userId: 'user-1',
+      timeLimitSeconds: 1500,
+      totalQuestions: 10,
+      startedAt: '2026-01-01T00:00:00Z',
+      questions: [],
+      currentQuestionId: 'q2',
+      category: 'B',
+      status: ExamStatus.IN_PROGRESS,
+    };
+
+    (redisMock.set as any).mockResolvedValue('OK');
+
+    const result = await repository.updateById('ignored-id', exam);
+
+    // eslint-disable-next-line @typescript-eslint/unbound-method
+    expect(redisMock.set).toHaveBeenCalledWith(
+      'exam-engine:exams:mock-uuid',
+      JSON.stringify(exam),
+    );
+
+    expect(result).toEqual(exam);
   });
 });

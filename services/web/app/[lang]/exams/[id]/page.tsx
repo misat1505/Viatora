@@ -38,7 +38,13 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: string
 
       <div className="space-y-6">
         {exam.questions.map((entry, index) => (
-          <QuestionCard key={entry.question.id} entry={entry} index={index} lang={lang as Locale} />
+          <QuestionCard
+            key={entry.question.id}
+            entry={entry}
+            index={index}
+            examId={examId}
+            lang={lang as Locale}
+          />
         ))}
       </div>
     </div>
