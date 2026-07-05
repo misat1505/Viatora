@@ -23,6 +23,15 @@ import { EXAM_REPOSITORY_TOKEN } from './persistance/exam.repository';
 import { type IExamRepository } from './persistance/exam.repository.interface';
 import { ExamStatus } from './types/exam';
 import { shuffleQuestions } from './utils/shuffle-questions';
+import { RpcException } from '@nestjs/microservices';
+import { status } from '@grpc/grpc-js';
+import { ExamSessionNotFoundException } from 'src/common/exceptions/not-found.exception';
+import {
+  CannotAnswerCurrentQuestionException,
+  ExamCategoryNotSupportedException,
+  InvalidAnswerForQuestionTypeException,
+} from 'src/common/exceptions/bad-request.exception';
+import { ExamInitializationException } from 'src/common/exceptions/internal.exception';
 
 @Injectable()
 export class ExamService {
@@ -39,7 +48,9 @@ export class ExamService {
     const { category, userId } = dto;
 
     if (!Object.keys(this.examsConfigurations).includes(category))
-      throw new BadRequestException(`Category ${category} is not supported.`);
+      throw new ExamCategoryNotSupportedException(
+        `Category ${category} is not supported.`,
+      );
 
     const examConfiguration =
       this.examsConfigurations[category as keyof ExamsConfigurations];
@@ -54,7 +65,7 @@ export class ExamService {
     const flattenedQuestions = questions.flat();
 
     if (examConfiguration.totalQuestions != flattenedQuestions.length) {
-      throw new InternalServerErrorException(
+      throw new ExamInitializationException(
         `Invalid exam configuration for category=${category}. Expected ${examConfiguration.totalQuestions} questions, but got ${flattenedQuestions.length}.`,
       );
     }
@@ -83,16 +94,17 @@ export class ExamService {
 
   async getSessionById(dto: GetSessionRequest): Promise<ExamSession> {
     const examSession = await this.examRepository.getById(dto.sessionId);
-    if (!examSession) throw new NotFoundException();
+    if (!examSession) throw new ExamSessionNotFoundException();
 
-    if (dto.userId !== examSession.userId) throw new NotFoundException();
+    if (dto.userId !== examSession.userId)
+      throw new ExamSessionNotFoundException();
     return examSession;
   }
 
   async submitAnswer(dto: SubmitAnswerRequest): Promise<SubmitAnswerResponse> {
     const exam = await this.examRepository.getById(dto.sessionId);
     if (!exam || exam.userId !== dto.userId)
-      throw new NotFoundException('Exam not found.');
+      throw new ExamSessionNotFoundException();
 
     const currentQuestion = exam.questions.find(
       (q) => q.question?.id === dto.questionId,
@@ -100,15 +112,13 @@ export class ExamService {
     if (!currentQuestion) throw new NotFoundException('Question not found.');
 
     if (exam.currentQuestionId !== dto.questionId)
-      throw new BadRequestException(
-        'Cannot answer to this question right now.',
-      );
+      throw new CannotAnswerCurrentQuestionException();
 
     const isInvalidAnswerForBasicQuestion =
       currentQuestion.question?.questionType === 'basic' &&
       dto.selectedOption === 'c';
     if (isInvalidAnswerForBasicQuestion)
-      throw new BadRequestException("Invalid answer for 'basic' question.");
+      throw new InvalidAnswerForQuestionTypeException();
 
     const secondsRemaining =
       (Date.now() - new Date(exam.startedAt).getTime()) / 1000;
