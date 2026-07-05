@@ -5,20 +5,20 @@ import { Card, CardDescription, CardHeader, CardTitle } from '@/components/ui/ca
 import { ModeToggle } from '@/components/mode-toggle';
 import { PalletteDropdown } from '@/components/pallette-dropdown';
 import LanguageSwitch from '@/components/language-switch';
-import { Locale } from '../dictionaries';
+import { getDictionary, Locale } from '../dictionaries';
 
 export default async function SettingsPage({ params }: { params: Promise<{ lang: Locale }> }) {
-  const lang = (await params).lang;
+  const { lang } = await params;
+  const dict = await getDictionary(lang);
 
   return (
     <div className="mx-auto w-full max-w-2xl px-4 py-10 md:py-14">
       <div className="mb-8 space-y-1">
         <h1 className="text-2xl font-semibold tracking-tight text-foreground md:text-3xl">
-          Settings
+          {dict.settings.title}
         </h1>
-        <p className="text-sm text-muted-foreground">
-          Customize how Viatora looks and speaks to you.
-        </p>
+
+        <p className="text-sm text-muted-foreground">{dict.settings.description}</p>
       </div>
 
       <div className="space-y-6">
@@ -29,10 +29,8 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               <Languages className="h-4.5 w-4.5" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-base">Language</CardTitle>
-              <CardDescription>
-                Choose the language used across exam questions and the interface.
-              </CardDescription>
+              <CardTitle className="text-base">{dict.settings.language.title}</CardTitle>
+              <CardDescription>{dict.settings.language.description}</CardDescription>
             </div>
             <LanguageSwitch lang={lang} />
           </CardHeader>
@@ -45,10 +43,9 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               <SunMoon className="h-4.5 w-4.5" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-base">Theme</CardTitle>
-              <CardDescription>
-                Switch between light, dark, or system-matched appearance.
-              </CardDescription>
+              <CardTitle className="text-base">{dict.settings.theme.title}</CardTitle>
+
+              <CardDescription>{dict.settings.theme.description}</CardDescription>
             </div>
             <ModeToggle />
           </CardHeader>
@@ -61,10 +58,9 @@ export default async function SettingsPage({ params }: { params: Promise<{ lang:
               <Palette className="h-4.5 w-4.5" />
             </div>
             <div className="flex-1">
-              <CardTitle className="text-base">Color palette</CardTitle>
-              <CardDescription>
-                Set the accent color used for buttons, links, and highlights.
-              </CardDescription>
+              <CardTitle className="text-base">{dict.settings['color-palette'].title}</CardTitle>
+
+              <CardDescription>{dict.settings['color-palette'].description}</CardDescription>
             </div>
             <PalletteDropdown />
           </CardHeader>

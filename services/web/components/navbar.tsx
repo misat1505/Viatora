@@ -1,6 +1,5 @@
 'use client';
 
-import * as React from 'react';
 import { usePathname } from 'next/navigation';
 import { GraduationCap, Menu } from 'lucide-react';
 
@@ -11,18 +10,20 @@ import { Sheet, SheetContent, SheetTrigger } from '@/components/ui/sheet';
 import { LocalizedLink } from '@/components/localized-link';
 import { Locale } from '@/app/[lang]/dictionaries';
 import { ModeToggle } from './mode-toggle';
+import { TranslationPath, useLocaleContext } from '@/providers/locale-provider';
+import LocaleText from './locale-text';
 
 interface NavItem {
   href: string;
-  label: string;
+  label: TranslationPath;
 }
 
 const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'Dashboard' },
-  { href: '/exams', label: 'Exams' },
-  { href: '/questions', label: 'Question bank' },
-  { href: '/statistics', label: 'Statistics' },
-  { href: '/settings', label: 'Settings' },
+  { href: '/dashboard', label: 'navbar.dashboard' },
+  { href: '/exams', label: 'navbar.exams' },
+  { href: '/questions', label: 'navbar.question-bank' },
+  { href: '/statistics', label: 'navbar.statistics' },
+  { href: '/settings', label: 'navbar.settings' },
 ];
 
 function isActive(pathname: string, href: string, lang: string) {
@@ -43,6 +44,7 @@ interface NavbarProps {
 
 export function Navbar({ lang }: NavbarProps) {
   const pathname = usePathname();
+  const { t } = useLocaleContext();
 
   return (
     <header className="sticky top-0 z-50 w-full border-b border-border bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/60">
@@ -71,7 +73,7 @@ export function Navbar({ lang }: NavbarProps) {
                   active ? 'text-foreground' : 'text-muted-foreground',
                 )}
               >
-                {item.label}
+                <LocaleText k={item.label} />
                 {active && (
                   <span className="absolute inset-x-3 -bottom-px h-0.5 rounded-full bg-primary" />
                 )}
@@ -88,7 +90,7 @@ export function Navbar({ lang }: NavbarProps) {
             <SheetTrigger asChild>
               <button
                 className={cn(buttonVariants({ variant: 'ghost', size: 'icon' }), 'md:hidden')}
-                aria-label="Open menu"
+                aria-label={t('navbar.open-menu')}
               >
                 <Menu className="h-5 w-5" />
               </button>
@@ -108,7 +110,7 @@ export function Navbar({ lang }: NavbarProps) {
                         active ? 'bg-accent text-accent-foreground' : 'text-muted-foreground',
                       )}
                     >
-                      {item.label}
+                      <LocaleText k={item.label} />
                     </LocalizedLink>
                   );
                 })}

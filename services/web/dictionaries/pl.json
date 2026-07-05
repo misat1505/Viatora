@@ -4,5 +4,45 @@
   },
   "misc": {
     "change-language": "Zmień język na {{lang}}"
+  },
+  "navbar": {
+    "dashboard": "Panel",
+    "exams": "Egzaminy",
+    "question-bank": "Baza pytań",
+    "statistics": "Statystyki",
+    "settings": "Ustawienia",
+    "open-menu": "Otwórz menu"
+  },
+  "footer": {
+    "tagline": "Przygotuj się do egzaminu teoretycznego na prawo jazdy z pewnością siebie.",
+    "product": "Produkt",
+    "account": "Konto",
+    "legal": "Informacje prawne",
+    "exams": "Egzaminy",
+    "question-bank": "Baza pytań",
+    "statistics": "Statystyki",
+    "register": "Zarejestruj się",
+    "settings": "Ustawienia",
+    "privacy-policy": "Polityka prywatności",
+    "terms-of-use": "Warunki korzystania",
+    "contact": "Kontakt",
+    "copyright": "© {{year}} Viatora. Wszelkie prawa zastrzeżone.",
+    "made-for-learners": "Stworzone dla osób uczących się, a nie do stania w kolejce w urzędzie."
+  },
+  "settings": {
+    "title": "Ustawienia",
+    "description": "Dostosuj wygląd i język aplikacji Viatora.",
+    "language": {
+      "title": "Język",
+      "description": "Wybierz język używany w pytaniach egzaminacyjnych oraz interfejsie."
+    },
+    "theme": {
+      "title": "Motyw",
+      "description": "Przełączaj między jasnym, ciemnym i systemowym wyglądem."
+    },
+    "color-palette": {
+      "title": "Paleta kolorów",
+      "description": "Wybierz kolor akcentów używany przez przyciski, linki i wyróżnienia."
+    }
   }
 }

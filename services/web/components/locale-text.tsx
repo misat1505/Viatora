@@ -1,4 +1,3 @@
-// components/locale-text.tsx
 'use client';
 
 import { TranslationPath, useLocaleContext } from '@/providers/locale-provider';

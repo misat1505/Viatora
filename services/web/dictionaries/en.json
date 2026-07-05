@@ -4,5 +4,45 @@
   },
   "misc": {
     "change-language": "Change language to {{lang}}"
+  },
+  "navbar": {
+    "dashboard": "Dashboard",
+    "exams": "Exams",
+    "question-bank": "Question bank",
+    "statistics": "Statistics",
+    "settings": "Settings",
+    "open-menu": "Open menu"
+  },
+  "footer": {
+    "tagline": "Prepare for your driving theory exam with confidence.",
+    "product": "Product",
+    "account": "Account",
+    "legal": "Legal",
+    "exams": "Exams",
+    "question-bank": "Question bank",
+    "statistics": "Statistics",
+    "register": "Register",
+    "settings": "Settings",
+    "privacy-policy": "Privacy policy",
+    "terms-of-use": "Terms of use",
+    "contact": "Contact",
+    "copyright": "© {{year}} Viatora. All rights reserved.",
+    "made-for-learners": "Made for learners, not for the DMV queue."
+  },
+  "settings": {
+    "title": "Settings",
+    "description": "Customize how Viatora looks and speaks to you.",
+    "language": {
+      "title": "Language",
+      "description": "Choose the language used across exam questions and the interface."
+    },
+    "theme": {
+      "title": "Theme",
+      "description": "Switch between light, dark, or system-matched appearance."
+    },
+    "color-palette": {
+      "title": "Color palette",
+      "description": "Set the accent color used for buttons, links, and highlights."
+    }
   }
 }
