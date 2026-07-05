@@ -1,7 +1,7 @@
 import { notFound } from 'next/navigation';
 
-const QuestionsPage = () => {
+const CatchAllPage = () => {
   return notFound();
 };
 
-export default QuestionsPage;
+export default CatchAllPage;
