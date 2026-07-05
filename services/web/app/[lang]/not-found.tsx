@@ -5,7 +5,7 @@ import { Locale } from './dictionaries';
 import { getDictionary } from './dictionaries';
 import { buttonVariants } from '@/components/ui/button';
 import { cn } from '@/lib/utils';
-import Link from 'next/link';
+import { LocalizedLink } from '@/components/localized-link';
 
 export default async function NotFound() {
   const cookieStore = await cookies();
@@ -28,12 +28,12 @@ export default async function NotFound() {
       <p className="mt-3 max-w-sm text-sm text-muted-foreground md:text-base">{n.description}</p>
 
       <div className="mt-8 flex flex-wrap items-center justify-center gap-3">
-        <Link href={`/${lang}`} className={cn(buttonVariants(), 'gap-2')}>
+        <LocalizedLink href="/" className={cn(buttonVariants(), 'gap-2')}>
           {n.ctaHome}
-        </Link>
-        <Link href={`/${lang}/contact`} className={buttonVariants({ variant: 'outline' })}>
+        </LocalizedLink>
+        <LocalizedLink href="/contact" className={buttonVariants({ variant: 'outline' })}>
           {n.ctaContact}
-        </Link>
+        </LocalizedLink>
       </div>
     </div>
   );
