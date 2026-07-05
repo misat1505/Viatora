@@ -354,5 +354,12 @@
       "subtitle": "Załóż darmowe konto i rozwiąż swój pierwszy test już dziś.",
       "cta": "Zacznij za darmo"
     }
+  },
+  "notFound": {
+    "code": "BŁĄD 404",
+    "title": "Wygląda na to, że skręciłeś w złą stronę",
+    "description": "Nie znaleźliśmy strony, której szukasz. Sprawdź adres albo wróć na dobrą trasę.",
+    "ctaHome": "Wróć na stronę główną",
+    "ctaContact": "Zgłoś problem"
   }
 }

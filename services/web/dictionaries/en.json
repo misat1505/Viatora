@@ -354,5 +354,12 @@
       "subtitle": "Create a free account and take your first test today.",
       "cta": "Start for free"
     }
+  },
+  "notFound": {
+    "code": "ERROR 404",
+    "title": "Looks like you took a wrong turn",
+    "description": "We couldn't find the page you're looking for. Check the address or head back to the right route.",
+    "ctaHome": "Back to home",
+    "ctaContact": "Report a problem"
   }
 }
