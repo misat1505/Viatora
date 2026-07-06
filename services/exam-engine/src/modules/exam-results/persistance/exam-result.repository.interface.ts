@@ -7,4 +7,5 @@ export interface IExamResultRepository {
   ): Promise<ExamResultEntity | null>;
   create(data: Partial<ExamResultEntity>): ExamResultEntity;
   save(result: ExamResultEntity): Promise<ExamResultEntity>;
+  findByUserId(userId: string): Promise<ExamResultEntity[]>;
 }
