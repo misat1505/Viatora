@@ -2,12 +2,13 @@
 
 import { useState } from 'react';
 import Image from 'next/image';
-import { ImageOff } from 'lucide-react';
+import { ImageOff, CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
-import { Card, CardContent, CardFooter, CardHeader } from '@/components/ui/card';
+import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Label } from '@/components/ui/label';
+import { Progress } from '@/components/ui/progress';
 import { RadioGroup, RadioGroupItem } from '@/components/ui/radio-group';
 import type { Locale } from '@/app/[lang]/dictionaries';
 import { ExamQuestionDTO, ExamSessionDTO } from '@/generated/viatoraAPI.schemas';
@@ -30,27 +31,23 @@ interface QuestionViewProps {
 
 const dict = {
   pl: {
-    notAnswered: 'Nie odpowiedziano',
-    yourAnswer: 'Twoja odpowiedź',
-    correct: 'Poprawna odpowiedź!',
-    incorrect: 'Niepoprawna odpowiedź',
     confirm: 'Zatwierdź odpowiedź',
+    finish: 'Zakończ egzamin',
     yes: 'Tak',
     no: 'Nie',
     noImage: 'Brak zdjęcia do tego pytania',
+    question: 'Pytanie',
     pointsOne: 'punkt',
     pointsFew: 'punkty',
     pointsMany: 'punktów',
   },
   en: {
-    notAnswered: 'Not answered',
-    yourAnswer: 'Your answer',
-    correct: 'Correct answer!',
-    incorrect: 'Incorrect answer',
     confirm: 'Confirm answer',
+    finish: 'Finish exam',
     yes: 'Yes',
     no: 'No',
     noImage: 'No image for this question',
+    question: 'Question',
     pointsOne: 'point',
     pointsFew: 'points',
     pointsMany: 'points',
@@ -86,17 +83,20 @@ export function QuestionView({
 
   const t = dict[lang] ?? dict.en;
   const isBasic = question.questionType === 'basic';
+  const isLastQuestion = nextQuestionSlug === 'STOP';
   const options: AnswerKey[] = isBasic ? ['a', 'b'] : ['a', 'b', 'c'];
 
   const [selected, setSelected] = useState<AnswerKey | ''>((userAnswer as AnswerKey) || '');
   const [pending, setPending] = useState(false);
+
+  const progressPercent = (answeredQuestionsCount / totalQuestionsCount) * 100;
 
   async function handleSubmit() {
     if (!selected) return;
     setPending(true);
     try {
       await answerQuestion(examId, { questionId: question.id, userAnswer: selected });
-      if (nextQuestionSlug !== 'STOP') {
+      if (!isLastQuestion) {
         router.push(`/${lang}/exams/${examId}/q/${nextQuestionSlug}`);
       } else {
         await finishExam(examId);
@@ -113,70 +113,87 @@ export function QuestionView({
   }
 
   return (
-    <div className="flex min-h-svh w-full flex-col items-center justify-center bg-background p-4 sm:p-6">
-      <Card className="flex w-full max-w-2xl flex-col">
-        <CardHeader className="gap-4">
-          <div className="flex flex-wrap items-center justify-between gap-2">
-            <div className="flex flex-wrap gap-1.5">
-              <Badge variant="secondary">
-                {answeredQuestionsCount} / {totalQuestionsCount}
-              </Badge>
+    <div className="flex min-h-svh w-full items-center justify-center bg-background p-3 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-2xl overflow-hidden lg:max-w-4xl">
+        {/* Progress bar */}
+        <Progress value={progressPercent} className="h-1 rounded-none" />
+
+        {/* Media */}
+        <div className="relative h-48 w-full bg-muted sm:h-64 lg:h-96">
+          {question.media.type === 'image' && question.media.url ? (
+            <Image
+              src={sanityImageUrl(question.media.url)!}
+              alt={question.text[lang] || question.text.en}
+              fill
+              className="object-contain"
+              sizes="(max-width: 1024px) 100vw, 900px"
+              priority
+            />
+          ) : (
+            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
+              <ImageOff className="h-8 w-8" aria-hidden="true" />
+              <span className="text-xs">{t.noImage}</span>
             </div>
-            <Badge variant="secondary">{formatPoints(question.points, lang)}</Badge>
+          )}
+
+          <div className="absolute left-3 top-3 lg:left-4 lg:top-4">
+            <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
+              {t.question} {answeredQuestionsCount}/{totalQuestionsCount}
+            </Badge>
+          </div>
+          <div className="absolute right-3 top-3 lg:right-4 lg:top-4">
+            <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
+              {formatPoints(question.points, lang)}
+            </Badge>
+          </div>
+        </div>
+
+        {/* Content */}
+        <div className="p-5 sm:p-6 lg:p-8">
+          <div className="flex min-h-13 items-center sm:min-h-15 lg:min-h-18">
+            <h1 className="text-balance text-lg font-semibold leading-snug sm:text-xl lg:text-2xl">
+              {question.text[lang] || question.text.en}
+            </h1>
           </div>
 
-          <div className="relative aspect-video w-full overflow-hidden rounded-lg bg-muted">
-            {question.media.type === 'image' && question.media.url ? (
-              <Image
-                src={sanityImageUrl(question.media.url)!}
-                alt={question.text[lang] || question.text.en}
-                fill
-                className="object-contain"
-                sizes="(max-width: 640px) 100vw, 640px"
-              />
-            ) : (
-              <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
-                <ImageOff className="h-8 w-8" aria-hidden="true" />
-                <span className="text-xs">{t.noImage}</span>
-              </div>
-            )}
-          </div>
-
-          <h1 className="text-balance text-xl font-semibold leading-snug sm:text-2xl">
-            {question.text[lang] || question.text.en}
-          </h1>
-        </CardHeader>
-
-        <CardContent className="flex-1">
           <RadioGroup
             value={selected}
             onValueChange={(value) => setSelected(value as AnswerKey)}
             disabled={pending}
-            className={cn('grid gap-3', isBasic && 'sm:grid-cols-2')}
+            className={cn('mt-4 grid gap-3 lg:mt-6', isBasic && 'sm:grid-cols-2')}
           >
-            {options.map((key) => (
-              <Label
-                key={key}
-                htmlFor={`answer-${key}`}
-                className={cn(
-                  'flex cursor-pointer items-center gap-3 rounded-lg border p-4 text-sm transition-colors',
-                  selected === key
-                    ? 'border-primary bg-secondary text-secondary-foreground'
-                    : 'hover:bg-accent hover:text-accent-foreground',
-                )}
-              >
-                <RadioGroupItem value={key} id={`answer-${key}`} />
-                <span className="flex-1">{answerLabel(key)}</span>
-              </Label>
-            ))}
+            {options.map((key) => {
+              const isSelected = selected === key;
+              return (
+                <Label
+                  key={key}
+                  htmlFor={`answer-${key}`}
+                  className={cn(
+                    'flex cursor-pointer items-center gap-3 rounded-lg border p-4 text-sm transition-all lg:text-base',
+                    isSelected
+                      ? 'border-primary bg-primary/5 ring-1 ring-primary'
+                      : 'border-border hover:border-primary/40 hover:bg-accent hover:text-accent-foreground',
+                  )}
+                >
+                  <RadioGroupItem value={key} id={`answer-${key}`} />
+                  <span className="flex-1 leading-snug">{answerLabel(key)}</span>
+                  {isSelected && (
+                    <CheckCircle2 className="h-4 w-4 shrink-0 text-primary" aria-hidden="true" />
+                  )}
+                </Label>
+              );
+            })}
           </RadioGroup>
-        </CardContent>
 
-        <CardFooter className="flex flex-col items-stretch gap-3">
-          <Button onClick={handleSubmit} disabled={!selected || pending} className="w-full">
-            {pending ? '...' : t.confirm}
+          <Button
+            onClick={handleSubmit}
+            disabled={!selected || pending}
+            size="lg"
+            className="mt-5 w-full lg:mt-6"
+          >
+            {pending ? '...' : isLastQuestion ? t.finish : t.confirm}
           </Button>
-        </CardFooter>
+        </div>
       </Card>
     </div>
   );
