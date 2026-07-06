@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
+  DetailedExamQuestion,
   ExamQuestion,
   GetQuestionsRequest,
   GetQuestionsResponse,
@@ -85,7 +86,7 @@ export class QuestionsBankRepository
     return questions;
   }
 
-  async getQuestionBySlug(slug: string): Promise<ExamQuestion> {
+  async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion> {
     const query = `
       *[
         _type == "question" &&
@@ -101,7 +102,8 @@ export class QuestionsBankRepository
         tags,
         categories,
         questionType,
-        correctOption
+        correctOption,
+        explanation
       }
     `;
 
@@ -111,7 +113,7 @@ export class QuestionsBankRepository
       throw new Error(`Question with slug "${slug}" not found`);
     }
 
-    const question: ExamQuestion = {
+    const question: DetailedExamQuestion = {
       id: fetchedQuestion._id,
       categories: fetchedQuestion.categories,
       slug: fetchedQuestion.slug.current,
@@ -127,6 +129,7 @@ export class QuestionsBankRepository
       questionType: fetchedQuestion.questionType,
       tags: fetchedQuestion.tags,
       text: fetchedQuestion.text,
+      explanation: fetchedQuestion.explanation,
     };
 
     return question;

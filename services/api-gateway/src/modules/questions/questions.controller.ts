@@ -12,8 +12,8 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ContentServiceClient } from 'src/generated/content';
 import { QUESTIONS_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { ExamQuestionDTO } from '../exams/dto/start-exam.dto';
 import { firstValueFrom } from 'rxjs';
+import { DetailedExamQuestionDTO } from './dto/detailed-question.dto';
 
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
@@ -31,11 +31,10 @@ export class QuestionsController implements OnModuleInit {
   }
 
   @Get('/:slug')
-  @ApiOkResponse({ type: ExamQuestionDTO })
+  @ApiOkResponse({ type: DetailedExamQuestionDTO })
   async getQuestionBySlug(
     @Param('slug') slug: string,
-  ): Promise<ExamQuestionDTO> {
-    console.log(slug);
+  ): Promise<DetailedExamQuestionDTO> {
     const result = await firstValueFrom(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionBySlug(
