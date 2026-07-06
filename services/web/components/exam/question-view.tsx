@@ -14,6 +14,7 @@ import { ExamQuestionDTO, ExamSessionDTO } from '@/generated/viatoraAPI.schemas'
 import { answerQuestion } from '@/actions/exams/answer-question';
 import { useRouter } from 'next/navigation';
 import { sanityImageUrl } from '@/lib/sanity-image';
+import { finishExam } from '@/actions/exams/finish-exam';
 
 type AnswerKey = 'a' | 'b' | 'c';
 
@@ -98,7 +99,8 @@ export function QuestionView({
       if (nextQuestionSlug !== 'STOP') {
         router.push(`/${lang}/exams/${examId}/q/${nextQuestionSlug}`);
       } else {
-        console.log('Finished an exam.');
+        await finishExam(examId);
+        router.push(`/${lang}/exams/${examId}/summary`);
       }
     } finally {
       setPending(false);
