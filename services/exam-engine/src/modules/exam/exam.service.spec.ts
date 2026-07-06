@@ -18,6 +18,7 @@ import {
   ExamSessionNotFoundException,
   QuestionNotFoundException,
 } from 'src/common/exceptions/not-found.exception';
+import { ExamResultsService } from '../exam-results/exam-results.service';
 
 vi.mock('./utils/shuffle-questions', () => ({
   shuffleQuestions: (questions: ExamQuestion[]) => questions,
@@ -55,6 +56,10 @@ describe('ExamService', () => {
     },
   };
 
+  const examResultsServiceMock = {
+    markExam: vi.fn(),
+  };
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -70,6 +75,10 @@ describe('ExamService', () => {
         {
           provide: DEFAULT_EXAMS_CONFIGS_TOKEN,
           useValue: examsConfigurationsMock,
+        },
+        {
+          provide: ExamResultsService,
+          useValue: examResultsServiceMock,
         },
       ],
     }).compile();
@@ -382,5 +391,58 @@ describe('ExamService', () => {
         selectedOption: 'c',
       }),
     ).rejects.toBeInstanceOf(InvalidAnswerForQuestionTypeException);
+  });
+
+  it('should finish exam successfully', async () => {
+    vi.spyOn(service, 'getSessionById').mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      currentQuestionId: 'STOP',
+      questions: [],
+      totalQuestions: 32,
+      startedAt: '2026-07-06T08:45:00.000Z',
+      category: 'B',
+      status: 'in_progress',
+      timeLimitSeconds: 1500,
+    });
+
+    vi.spyOn(service as any, 'examResultsService', 'get').mockReturnValue({
+      markExam: vi.fn().mockResolvedValue({
+        sessionId: 'b5b3c3d2-4f18-4dcb-9b4e-f6cb7d34e53d',
+        userId: '2efbcb6a-7db7-4946-a40d-8b8f6eb5d6e7',
+        status: 'completed',
+        category: 'B',
+        totalQuestions: 32,
+        correctAnswers: 30,
+        earnedPoints: 70,
+        maxPoints: 74,
+        scorePercent: 94.59,
+        passed: true,
+        timeLimitSeconds: 1500,
+        startedAt: '2026-07-06T08:45:00.000Z',
+        completedAt: '2026-07-06T09:08:42.000Z',
+      }),
+    });
+
+    const result = await service.finishSession({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+    });
+
+    expect(result).toEqual({
+      sessionId: 'b5b3c3d2-4f18-4dcb-9b4e-f6cb7d34e53d',
+      userId: '2efbcb6a-7db7-4946-a40d-8b8f6eb5d6e7',
+      status: 'completed',
+      category: 'B',
+      totalQuestions: 32,
+      correctAnswers: 30,
+      earnedPoints: 70,
+      maxPoints: 74,
+      scorePercent: 94.59,
+      passed: true,
+      timeLimitSeconds: 1500,
+      startedAt: '2026-07-06T08:45:00.000Z',
+      completedAt: '2026-07-06T09:08:42.000Z',
+    });
   });
 });

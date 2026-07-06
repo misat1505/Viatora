@@ -16,9 +16,10 @@ import {
   DEFAULT_EXAMS_CONFIGS_TOKEN,
   EXAMS_CONFIG,
 } from './config/exams-config';
+import { ExamResultsModule } from '../exam-results/exam-results.module';
 
 @Module({
-  imports: [GrpcClientsModule],
+  imports: [GrpcClientsModule, ExamResultsModule],
   controllers: [ExamController],
   providers: [
     ExamService,
