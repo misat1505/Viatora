@@ -1,7 +1,7 @@
 'use client';
 
 import Link from 'next/link';
-import { Pie, PieChart, Cell, Bar, BarChart, XAxis, CartesianGrid } from 'recharts';
+import { Pie, PieChart, Cell, XAxis, CartesianGrid, AreaChart, Area } from 'recharts';
 import { CheckCircle2, XCircle, Trophy, Clock, Target, ListChecks } from 'lucide-react';
 
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
@@ -289,16 +289,46 @@ export function ExamResultView({ result, lang }: ExamResultViewProps) {
           </CardHeader>
           <CardContent>
             <ChartContainer config={timeChartConfig} className="max-h-64 w-full">
-              <BarChart data={timeChartData}>
+              <AreaChart data={timeChartData}>
+                <defs>
+                  <linearGradient id="fillSeconds" x1="0" y1="0" x2="0" y2="1">
+                    <stop offset="5%" stopColor="var(--color-seconds)" stopOpacity={0.8} />
+                    <stop offset="95%" stopColor="var(--color-seconds)" stopOpacity={0.1} />
+                  </linearGradient>
+                </defs>
                 <CartesianGrid vertical={false} />
                 <XAxis dataKey="question" tickLine={false} axisLine={false} />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="seconds" radius={4}>
-                  {timeChartData.map((entry, i) => (
-                    <Cell key={i} fill={entry.fill} />
-                  ))}
-                </Bar>
-              </BarChart>
+                <Area
+                  dataKey="seconds"
+                  type="monotone"
+                  fill="url(#fillSeconds)"
+                  stroke="var(--color-seconds)"
+                  strokeWidth={2}
+                  dot={({ cx, cy, payload }) => (
+                    <circle
+                      key={payload.question}
+                      cx={cx}
+                      cy={cy}
+                      r={4}
+                      fill={payload.fill}
+                      stroke="var(--background)"
+                      strokeWidth={1}
+                    />
+                  )}
+                  activeDot={({ cx, cy, payload }) => (
+                    <circle
+                      key={`active-dot-${payload.question}`}
+                      cx={cx}
+                      cy={cy}
+                      r={6}
+                      fill={payload.fill}
+                      stroke="var(--background)"
+                      strokeWidth={2}
+                    />
+                  )}
+                />
+              </AreaChart>
             </ChartContainer>
           </CardContent>
         </Card>

@@ -149,6 +149,7 @@ export class ExamResultsService {
         correct_option: q.question?.answers?.correctAnswer ?? '',
         is_correct: q.question?.answers?.correctAnswer === q.userAnswer,
         question_slug: q.question?.slug,
+        answered_at: new Date(q.answeredAt),
       }),
     );
   }
