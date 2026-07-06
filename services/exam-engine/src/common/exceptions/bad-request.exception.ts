@@ -27,3 +27,9 @@ export class InvalidAnswerForQuestionTypeException extends DomainBadRequestExcep
     super(message);
   }
 }
+
+export class CannotFinishExamException extends DomainBadRequestException {
+  constructor(message = 'Exam cannot be finished') {
+    super(message);
+  }
+}
