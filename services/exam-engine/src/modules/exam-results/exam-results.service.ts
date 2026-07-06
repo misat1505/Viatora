@@ -3,6 +3,8 @@ import {
   ExamQuestionWithAnswer,
   ExamSession,
   FinishSessionResponse,
+  GetResultRequest,
+  GetResultResponse,
 } from 'src/generated/exam';
 import { type IExamResultRepository } from './persistance/exam-result.repository.interface';
 import { type IExamAnswerRepository } from './persistance/exam-answer.repository.interface';
@@ -57,6 +59,49 @@ export class ExamResultsService {
       startedAt: resultEntity.started_at.toISOString(),
       completedAt: resultEntity.completed_at.toISOString(),
       answers: savedAnswers.map((a) => ({
+        id: a.id,
+        questionId: a.question_id,
+        selectedOption: a.selected_option,
+        correctOption: a.correct_option,
+        isCorrect: a.is_correct,
+        answeredAt: a.answered_at.toISOString(),
+      })),
+    };
+  }
+
+  async getExamResult(dto: GetResultRequest): Promise<GetResultResponse> {
+    const result = await this.resultRepo.findBySessionAndUser(
+      dto.sessionId,
+      dto.userId,
+    );
+
+    if (!result) {
+      throw new Error('Exam result not found');
+    }
+
+    const answers = await this.answerRepo.findBySession(dto.sessionId);
+
+    const scorePercent =
+      result.max_points > 0
+        ? Number(((result.earned_points / result.max_points) * 100).toFixed(2))
+        : 0;
+
+    return {
+      sessionId: result.id,
+      userId: result.user_id,
+      status: result.status,
+      category: result.category,
+      totalQuestions: result.total_questions,
+      correctAnswers: result.correct_answers,
+      earnedPoints: result.earned_points,
+      maxPoints: result.max_points,
+      scorePercent,
+      passed: result.passed,
+      timeLimitSeconds: result.time_limit_seconds,
+      startedAt: result.started_at.toISOString(),
+      completedAt: result.completed_at?.toISOString(),
+
+      answers: answers.map((a) => ({
         id: a.id,
         questionId: a.question_id,
         selectedOption: a.selected_option,

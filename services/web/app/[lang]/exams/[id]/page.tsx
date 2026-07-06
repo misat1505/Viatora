@@ -8,13 +8,7 @@ const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: Locale
 
   if (error) throw error;
 
-  if (exam.currentQuestionId === 'STOP')
-    return (
-      <div>
-        Already answered all questions. We will display a summary in here. Or redirect to /{lang}
-        /exams/{examId}/summary
-      </div>
-    );
+  if (exam.currentQuestionId === 'STOP') return redirect(`/${lang}/exams/${examId}/summary`);
 
   const currentQuestion = exam.questions.find((q) => q.question.id === exam.currentQuestionId);
   if (!currentQuestion) throw Error('Current question not found');

@@ -15,6 +15,15 @@ export class ExamResultRepository implements IExamResultRepository {
     private readonly repo: Repository<ExamResultEntity>,
   ) {}
 
+  async findBySessionAndUser(sessionId: string, userId: string) {
+    return this.repo.findOne({
+      where: {
+        id: sessionId,
+        user_id: userId,
+      },
+    });
+  }
+
   create(data: Partial<ExamResultEntity>) {
     return this.repo.create(data);
   }

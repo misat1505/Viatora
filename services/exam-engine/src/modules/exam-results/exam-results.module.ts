@@ -11,6 +11,7 @@ import {
   EXAM_ANSWER_REPOSITORY_TOKEN,
   ExamAnswerRepository,
 } from './persistance/exam-answer.repository';
+import { ExamResultsController } from './exam-results.controller';
 
 @Module({
   imports: [TypeOrmModule.forFeature([ExamResultEntity, ExamAnswerEntity])],
@@ -25,6 +26,7 @@ import {
       useClass: ExamAnswerRepository,
     },
   ],
+  controllers: [ExamResultsController],
   exports: [ExamResultsService],
 })
 export class ExamResultsModule {}

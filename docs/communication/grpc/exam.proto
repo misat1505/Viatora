@@ -141,8 +141,20 @@ message GetResultRequest {
 }
 
 message GetResultResponse {
-  SessionSummary          summary = 1;
-  repeated AnswerResult   answers = 2; // Includes explanation per question
+  string  session_id            = 1;
+  int32   earned_points         = 2;
+  int32   max_points            = 3; // Always 74
+  float   score_percent         = 4;
+  bool    passed                = 5; // threshold: 68 pts
+  int32   correct_answers       = 6;
+  int32   total_questions       = 7;
+  int32   time_limit_seconds    = 8;
+  string  completed_at          = 9;
+  string  user_id               = 10;
+  string  started_at            = 11;
+  string  status                = 12;
+  string  category              = 13;
+  repeated AnswerResult answers = 14;
 }
 
 // ── Shared types ──────────────────────────────────────────────────
