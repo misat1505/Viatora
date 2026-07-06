@@ -1,14 +1,17 @@
 import { ApiProperty, ApiPropertyOptional } from '@nestjs/swagger';
 import { Type } from 'class-transformer';
 import {
+  IsArray,
   IsBoolean,
   IsInt,
+  IsNumber,
   IsOptional,
   IsString,
   IsUUID,
   Length,
   Max,
   Min,
+  ValidateNested,
 } from 'class-validator';
 
 export enum ExamSessionStatus {
@@ -16,6 +19,54 @@ export enum ExamSessionStatus {
   COMPLETED = 'completed',
   ABANDONED = 'abandoned',
   TIMED_OUT = 'timed_out',
+}
+
+export class AnswerResultDTO {
+  @ApiProperty({
+    description: 'Answer unique identifier (UUID from DB)',
+    example: 'b6dce960-dee8-4c0d-949d-2c97e201a0f0',
+    format: 'uuid',
+  })
+  @IsString()
+  id!: string;
+
+  @ApiProperty({
+    description: 'Question identifier from Content Service (NOT UUID)',
+    example: 'F9XiJ53WKhENnUVd5CDjCj',
+  })
+  @IsString()
+  questionId!: string;
+
+  @ApiProperty({
+    description: 'Selected answer option',
+    example: 'a',
+    enum: ['a', 'b', 'c'],
+  })
+  @IsString()
+  selectedOption!: string;
+
+  @ApiProperty({
+    description: 'Correct answer option',
+    example: 'b',
+    enum: ['a', 'b', 'c'],
+  })
+  @IsString()
+  correctOption!: string;
+
+  @ApiProperty({
+    description: 'Whether user answer was correct',
+    example: true,
+  })
+  @IsBoolean()
+  isCorrect!: boolean;
+
+  @ApiProperty({
+    description: 'Timestamp when answer was submitted',
+    example: '2026-07-06T10:04:17.000Z',
+    format: 'date-time',
+  })
+  @IsString()
+  answeredAt!: string;
 }
 
 export class SubmitExamResponseDTO {
@@ -128,4 +179,20 @@ export class SubmitExamResponseDTO {
   })
   @IsString()
   completedAt!: string;
+
+  @ApiPropertyOptional({
+    description: 'Exam percentage score',
+    example: 69,
+  })
+  @IsNumber()
+  scorePercent!: number;
+
+  @ApiPropertyOptional({
+    description: 'List of all answers for the exam',
+    type: [AnswerResultDTO],
+  })
+  @IsOptional()
+  @IsArray()
+  @ValidateNested({ each: true })
+  answers!: AnswerResultDTO[];
 }

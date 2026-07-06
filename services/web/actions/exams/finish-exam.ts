@@ -15,5 +15,8 @@ export const finishExam = safeServerAction(async (sessionId: ExamSessionDTO['ses
   });
 
   console.log(ExamsControllerFinishSessionResponse.safeParse(response.data));
+  console.log(
+    JSON.stringify(ExamsControllerFinishSessionResponse.safeParse(response.data), null, 2),
+  );
   return ExamsControllerFinishSessionResponse.parse(response.data);
 });

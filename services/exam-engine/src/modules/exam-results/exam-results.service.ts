@@ -40,7 +40,7 @@ export class ExamResultsService {
     });
 
     await this.resultRepo.save(resultEntity);
-    await this.answerRepo.saveMany(answers);
+    const savedAnswers = await this.answerRepo.saveMany(answers);
 
     return {
       sessionId: resultEntity.id,
@@ -56,6 +56,14 @@ export class ExamResultsService {
       timeLimitSeconds: resultEntity.time_limit_seconds,
       startedAt: resultEntity.started_at.toISOString(),
       completedAt: resultEntity.completed_at.toISOString(),
+      answers: savedAnswers.map((a) => ({
+        id: a.id,
+        questionId: a.question_id,
+        selectedOption: a.selected_option,
+        correctOption: a.correct_option,
+        isCorrect: a.is_correct,
+        answeredAt: a.answered_at.toISOString(),
+      })),
     };
   }
 
