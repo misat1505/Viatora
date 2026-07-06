@@ -1,5 +1,6 @@
 import { getQuestionBySlug } from '@/actions/questions/get-question-by-slug';
 import { Locale } from '../../dictionaries';
+import { QuestionBrowseView } from '@/components/questions/question-browse-view';
 
 const QuestionPage = async ({
   params,
@@ -8,17 +9,13 @@ const QuestionPage = async ({
   params: Promise<{ slug: string; lang: Locale }>;
   searchParams: Promise<{ selected?: string }>;
 }) => {
-  const { slug } = await params;
+  const { slug, lang } = await params;
   const { selected } = await searchParams;
 
-  const question = await getQuestionBySlug(slug);
+  const [error, question] = await getQuestionBySlug(slug);
+  if (error) throw error;
 
-  return (
-    <div>
-      Will fetch and display question of slug {slug} with searchParams {selected}
-      {JSON.stringify(question, null, 2)}
-    </div>
-  );
+  return <QuestionBrowseView question={question} selected={selected} lang={lang} />;
 };
 
 export default QuestionPage;

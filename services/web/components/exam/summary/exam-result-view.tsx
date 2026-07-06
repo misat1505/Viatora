@@ -220,7 +220,7 @@ export function ExamResultView({ result, lang }: ExamResultViewProps) {
             {result!.answers!.map((answer, index) => (
               <Link
                 key={answer.id}
-                href={`/${lang}/q/${answer.questionSlug}`}
+                href={`/${lang}/q/${answer.questionSlug}?selected=${answer.selectedOption}`}
                 title={`${t.question} ${index + 1}`}
                 className={`flex aspect-square items-center justify-center rounded-md text-sm font-semibold text-primary-foreground transition-transform hover:scale-105 ${
                   answer.isCorrect
