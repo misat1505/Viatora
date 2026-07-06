@@ -12,6 +12,5 @@ export const getExamsResults = safeServerAction(async () => {
   const response = await examsApiClient.examsControllerGetExamsResults({
     headers: { Authorization: `Bearer ${accessToken}` },
   });
-
-  return ExamsControllerGetExamsResultsResponse.parse(response.data);
+  return ExamsControllerGetExamsResultsResponse.shape.exams.parse(response.data.exams);
 });
