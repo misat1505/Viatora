@@ -113,11 +113,8 @@ export function QuestionView({
   }
 
   return (
-    <div className="flex min-h-svh w-full items-center justify-center bg-background p-3 sm:p-6 lg:p-8">
-      <Card className="w-full max-w-2xl overflow-hidden lg:max-w-4xl">
-        {/* Progress bar */}
-        <Progress value={progressPercent} className="h-1 rounded-none" />
-
+    <div className="flex min-h-[calc(100svh-4rem)] w-full items-center justify-center bg-background p-3 sm:p-6 lg:p-8">
+      <Card className="w-full max-w-2xl overflow-hidden lg:max-w-4xl pt-0 gap-y-0 relative">
         {/* Media */}
         <div className="relative h-48 w-full bg-muted sm:h-64 lg:h-96">
           {question.media.type === 'image' && question.media.url ? (
@@ -136,22 +133,27 @@ export function QuestionView({
             </div>
           )}
 
-          <div className="absolute left-3 top-3 lg:left-4 lg:top-4">
+          <div className="absolute left-3 top-3">
             <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
               {t.question} {answeredQuestionsCount}/{totalQuestionsCount}
             </Badge>
           </div>
-          <div className="absolute right-3 top-3 lg:right-4 lg:top-4">
+          <div className="absolute right-3 top-3">
             <Badge className="bg-background/80 text-foreground backdrop-blur-sm">
               {formatPoints(question.points, lang)}
             </Badge>
           </div>
         </div>
 
+        {/* Progress bar */}
+        <div className="absolute bottom-0 left-0 w-full">
+          <Progress value={progressPercent} className="h-1 rounded-none" />
+        </div>
+
         {/* Content */}
         <div className="p-5 sm:p-6 lg:p-8">
-          <div className="flex min-h-13 items-center sm:min-h-15 lg:min-h-18">
-            <h1 className="text-balance text-lg font-semibold leading-snug sm:text-xl lg:text-2xl">
+          <div className="flex min-h-13 items-center sm:min-h-15">
+            <h1 className="text-lg font-semibold leading-snug sm:text-xl">
               {question.text[lang] || question.text.en}
             </h1>
           </div>

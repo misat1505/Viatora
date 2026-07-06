@@ -22,7 +22,7 @@ interface NavItem {
 const navItems: NavItem[] = [
   { href: '/dashboard', label: 'navbar.dashboard' },
   { href: '/exams', label: 'navbar.exams' },
-  { href: '/questions', label: 'navbar.question-bank' },
+  { href: '/q', label: 'navbar.question-bank' },
   { href: '/statistics', label: 'navbar.statistics' },
   { href: '/settings', label: 'navbar.settings' },
 ];
