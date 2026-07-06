@@ -14,5 +14,6 @@ export const finishExam = safeServerAction(async (sessionId: ExamSessionDTO['ses
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
+  console.log(ExamsControllerFinishSessionResponse.safeParse(response.data));
   return ExamsControllerFinishSessionResponse.parse(response.data);
 });

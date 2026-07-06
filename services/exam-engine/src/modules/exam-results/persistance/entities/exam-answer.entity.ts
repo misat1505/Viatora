@@ -22,7 +22,7 @@ export class ExamAnswerEntity {
   @JoinColumn({ name: 'session_id' })
   session!: ExamResultEntity;
 
-  @Column({ type: 'uuid' })
+  @Column({ type: 'text' })
   question_id!: string;
 
   @Column({ type: 'smallint' })
