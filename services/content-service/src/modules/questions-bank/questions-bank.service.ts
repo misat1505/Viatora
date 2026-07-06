@@ -6,6 +6,7 @@ import {
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
+import { QuestionNotFoundException } from 'src/common/exceptions/not-found.exception';
 
 @Injectable()
 export class QuestionsBankService {
@@ -25,6 +26,11 @@ export class QuestionsBankService {
   async getQuestionBySlug(
     dto: GetQuestionBySlugRequest,
   ): Promise<GetQuestionBySlugRequest> {
-    return this.questionBankRepository.getQuestionBySlug(dto.slug);
+    const question = await this.questionBankRepository.getQuestionBySlug(
+      dto.slug,
+    );
+    if (!question) throw new QuestionNotFoundException();
+
+    return question;
   }
 }

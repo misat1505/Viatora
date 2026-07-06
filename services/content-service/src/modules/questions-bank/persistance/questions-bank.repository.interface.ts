@@ -8,5 +8,5 @@ export interface IQuestionsBankRepository {
   getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']>;
-  getQuestionBySlug(slug: string): Promise<ExamQuestion>;
+  getQuestionBySlug(slug: string): Promise<ExamQuestion | null>;
 }

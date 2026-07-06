@@ -361,5 +361,12 @@
     "description": "We couldn't find the page you're looking for. Check the address or head back to the right route.",
     "ctaHome": "Back to home",
     "ctaContact": "Report a problem"
+  },
+  "questionNotFound": {
+    "code": "404",
+    "title": "Question not found",
+    "description": "The question you're looking for doesn't exist or has been removed from the database.",
+    "ctaQuestions": "Browse questions",
+    "ctaHome": "Home"
   }
 }

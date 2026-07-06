@@ -86,7 +86,8 @@ export class QuestionsBankRepository
     return questions;
   }
 
-  async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion> {
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null> {
     const query = `
       *[
         _type == "question" &&
@@ -110,7 +111,7 @@ export class QuestionsBankRepository
     const fetchedQuestion = await this.sanityClient.fetch(query, { slug });
 
     if (!fetchedQuestion) {
-      throw new Error(`Question with slug "${slug}" not found`);
+      return null;
     }
 
     const question: DetailedExamQuestion = {
