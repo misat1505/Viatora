@@ -68,7 +68,11 @@ export class ExamService {
     const shuffledQuestions = shuffleQuestions(flattenedQuestions);
 
     const questionsWithAnswers: ExamQuestionWithAnswer[] =
-      shuffledQuestions.map((question) => ({ question, userAnswer: '' }));
+      shuffledQuestions.map((question) => ({
+        question,
+        userAnswer: '',
+        answeredAt: '',
+      }));
 
     const examSessionDTO: Omit<ExamSession, 'sessionId'> = {
       userId,
@@ -121,6 +125,7 @@ export class ExamService {
     // if (secondsRemaining < 0) throw new BadRequestException('Time has elapsed');
 
     currentQuestion.userAnswer = dto.selectedOption;
+    currentQuestion.answeredAt = new Date().toISOString();
     const currentQuestionAbsoluteId = exam.questions.findIndex(
       (q) => q.question?.id === dto.questionId,
     );

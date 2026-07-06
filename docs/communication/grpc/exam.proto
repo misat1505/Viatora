@@ -47,6 +47,7 @@ message StartSessionRequest {
 message ExamQuestionWithAnswer {
   Viatora.content.ExamQuestion question = 1;
   string user_answer = 2;
+  string answered_at = 3;
 }
 
 message ExamSession {

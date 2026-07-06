@@ -183,6 +183,13 @@ export class ExamQuestionWithAnswerDTO {
     example: 'a',
   })
   userAnswer!: string;
+
+  @IsString()
+  @ApiProperty({
+    description: 'Answer timestamp (ISO 8601)',
+    example: '2026-07-01T12:00:00.000Z',
+  })
+  answeredAt!: string;
 }
 
 // ── StartSessionResponse ─────────────────────────────────────────

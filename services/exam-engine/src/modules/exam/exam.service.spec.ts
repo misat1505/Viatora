@@ -161,6 +161,7 @@ describe('ExamService', () => {
     expect(capturedDTO.questions[0]).toEqual({
       question: { id: 'q1' },
       userAnswer: '',
+      answeredAt: '',
     });
   });
 
