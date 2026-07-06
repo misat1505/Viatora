@@ -168,6 +168,7 @@ message AnswerResult {
   string correct_option  = 4;
   bool is_correct        = 5;
   string answered_at     = 6;
+  string question_slug   = 7;
 }
 
 message SessionSummary {

@@ -25,6 +25,9 @@ export class ExamAnswerEntity {
   @Column({ type: 'text' })
   question_id!: string;
 
+  @Column({ type: 'text' })
+  question_slug!: string;
+
   @Column({ type: 'smallint' })
   question_points!: number;
 

@@ -61,6 +61,7 @@ export class ExamResultsService {
       answers: savedAnswers.map((a) => ({
         id: a.id,
         questionId: a.question_id,
+        questionSlug: a.question_slug,
         selectedOption: a.selected_option,
         correctOption: a.correct_option,
         isCorrect: a.is_correct,
@@ -104,6 +105,7 @@ export class ExamResultsService {
       answers: answers.map((a) => ({
         id: a.id,
         questionId: a.question_id,
+        questionSlug: a.question_slug,
         selectedOption: a.selected_option,
         correctOption: a.correct_option,
         isCorrect: a.is_correct,
@@ -146,6 +148,7 @@ export class ExamResultsService {
         selected_option: q.userAnswer,
         correct_option: q.question?.answers?.correctAnswer ?? '',
         is_correct: q.question?.answers?.correctAnswer === q.userAnswer,
+        question_slug: q.question?.slug,
       }),
     );
   }

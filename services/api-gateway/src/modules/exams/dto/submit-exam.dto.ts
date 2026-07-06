@@ -38,6 +38,13 @@ export class AnswerResultDTO {
   questionId!: string;
 
   @ApiProperty({
+    description: 'Question slug',
+    example: 'czy-mozna-na-rondzie',
+  })
+  @IsString()
+  questionSlug!: string;
+
+  @ApiProperty({
     description: 'Selected answer option',
     example: 'a',
     enum: ['a', 'b', 'c'],
