@@ -1,5 +1,5 @@
 import {
-  ExamQuestion,
+  DetailedExamQuestion,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
@@ -8,5 +8,6 @@ export interface IQuestionsBankRepository {
   getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']>;
-  getQuestionBySlug(slug: string): Promise<ExamQuestion | null>;
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null>;
 }

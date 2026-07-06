@@ -103,4 +103,30 @@ describe('ExamAnswerRepository', () => {
 
     expect(result).toEqual(answers);
   });
+
+  it('should handle empty array in saveMany', async () => {
+    typeormRepoMock.save.mockResolvedValue([]);
+
+    const result = await repository.saveMany([]);
+
+    expect(typeormRepoMock.save).toHaveBeenCalledWith([]);
+    expect(result).toEqual([]);
+  });
+
+  it('should propagate error from saveMany', async () => {
+    typeormRepoMock.save.mockRejectedValue(new Error('db error'));
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    await expect(repository.saveMany([{ id: 'a1' } as any])).rejects.toThrow(
+      'db error',
+    );
+  });
+
+  it('should propagate error from findBySession', async () => {
+    typeormRepoMock.find.mockRejectedValue(new Error('db error'));
+
+    await expect(repository.findBySession('sess_1')).rejects.toThrow(
+      'db error',
+    );
+  });
 });

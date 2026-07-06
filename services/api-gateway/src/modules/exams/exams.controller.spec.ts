@@ -20,6 +20,7 @@ describe('ExamsController', () => {
     submitAnswer: vi.fn(),
     finishSession: vi.fn(),
     getResult: vi.fn(),
+    listResults: vi.fn(),
   };
 
   const grpcMetadataServiceMock = {
@@ -247,6 +248,46 @@ describe('ExamsController', () => {
 
     await expect(
       controller.getExamResult('sess_1', { userId: 'user-1' } as UserProfile),
+    ).rejects.toThrow('grpc failed');
+  });
+
+  it('should call gRPC listResults with correct payload', async () => {
+    const user = { userId: 'user-1' };
+
+    const grpcResponse = {
+      results: [
+        {
+          sessionId: 'sess_1',
+          score: 8,
+        },
+        {
+          sessionId: 'sess_2',
+          score: 10,
+        },
+      ],
+    };
+
+    examServiceMock.listResults.mockReturnValue(of(grpcResponse));
+
+    const result = await controller.getExamsResults(user as UserProfile);
+
+    expect(examServiceMock.listResults).toHaveBeenCalledWith(
+      {
+        userId: 'user-1',
+      },
+      grpcMetadataServiceMock.authMeta,
+    );
+
+    expect(result).toEqual(grpcResponse);
+  });
+
+  it('should propagate gRPC error for listResults', async () => {
+    examServiceMock.listResults.mockReturnValue(
+      throwError(() => new Error('grpc failed')),
+    );
+
+    await expect(
+      controller.getExamsResults({ userId: 'user-1' } as UserProfile),
     ).rejects.toThrow('grpc failed');
   });
 });

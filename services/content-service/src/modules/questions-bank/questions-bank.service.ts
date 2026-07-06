@@ -2,6 +2,7 @@ import { Inject, Injectable } from '@nestjs/common';
 import { QUESTIONS_BANK_REPOSITORY_TOKEN } from './persistance/questions-bank.repository';
 import { type IQuestionsBankRepository } from './persistance/questions-bank.repository.interface';
 import {
+  DetailedExamQuestion,
   GetQuestionBySlugRequest,
   GetQuestionsRequest,
   GetQuestionsResponse,
@@ -25,7 +26,7 @@ export class QuestionsBankService {
 
   async getQuestionBySlug(
     dto: GetQuestionBySlugRequest,
-  ): Promise<GetQuestionBySlugRequest> {
+  ): Promise<DetailedExamQuestion> {
     const question = await this.questionBankRepository.getQuestionBySlug(
       dto.slug,
     );

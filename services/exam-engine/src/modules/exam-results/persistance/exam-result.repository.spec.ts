@@ -11,6 +11,7 @@ describe('ExamResultRepository', () => {
     findOne: vi.fn(),
     create: vi.fn(),
     save: vi.fn(),
+    find: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -95,5 +96,26 @@ describe('ExamResultRepository', () => {
 
     expect(typeormRepoMock.save).toHaveBeenCalledWith(entity);
     expect(result).toEqual(saved);
+  });
+
+  it('should call repo.find with correct user_id and ordering', async () => {
+    const entities = [
+      { id: 'sess_1', user_id: 'user-1', completed_at: new Date() },
+    ];
+
+    typeormRepoMock.find.mockResolvedValue(entities);
+
+    const result = await repository.findByUserId('user-1');
+
+    expect(typeormRepoMock.find).toHaveBeenCalledWith({
+      where: {
+        user_id: 'user-1',
+      },
+      order: {
+        completed_at: 'DESC',
+      },
+    });
+
+    expect(result).toEqual(entities);
   });
 });

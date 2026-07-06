@@ -11,6 +11,7 @@ describe('ExamResultsService', () => {
     create: vi.fn(),
     save: vi.fn(),
     findBySessionAndUser: vi.fn(),
+    findByUserId: vi.fn(),
   };
 
   const answerRepoMock = {
@@ -199,5 +200,42 @@ describe('ExamResultsService', () => {
     });
 
     expect(result.scorePercent).toBe(0);
+  });
+
+  it('should return exams list for user', async () => {
+    resultRepoMock.findByUserId = vi.fn();
+
+    resultRepoMock.findByUserId.mockResolvedValue([
+      {
+        id: 'sess_1',
+        user_id: 'user-1',
+        status: 'COMPLETED',
+        category: 'B',
+        total_questions: 10,
+        correct_answers: 8,
+        earned_points: 80,
+        max_points: 100,
+        passed: true,
+        time_limit_seconds: 1000,
+        started_at: new Date('2026-07-06T10:00:00.000Z'),
+        completed_at: new Date('2026-07-06T10:30:00.000Z'),
+      },
+    ]);
+
+    const result = await service.getExamsResults({
+      userId: 'user-1',
+    });
+
+    expect(resultRepoMock.findByUserId).toHaveBeenCalledWith('user-1');
+
+    expect(result.exams).toHaveLength(1);
+    expect(result.exams[0]).toEqual(
+      expect.objectContaining({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+        scorePercent: 80,
+        passed: true,
+      }),
+    );
   });
 });

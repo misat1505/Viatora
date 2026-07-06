@@ -21,3 +21,9 @@ export class QuestionNotFoundException extends DomainNotFoundException {
     super(message);
   }
 }
+
+export class ExamResultNotFoundException extends DomainNotFoundException {
+  constructor(message = 'Exam result not found') {
+    super(message);
+  }
+}

@@ -13,6 +13,7 @@ import { type IExamAnswerRepository } from './persistance/exam-answer.repository
 import { EXAM_RESULT_REPOSITORY_TOKEN } from './persistance/exam-result.repository';
 import { EXAM_ANSWER_REPOSITORY_TOKEN } from './persistance/exam-answer.repository';
 import { ExamStatus } from './persistance/entities/exam-status';
+import { ExamResultNotFoundException } from 'src/common/exceptions/not-found.exception';
 
 @Injectable()
 export class ExamResultsService {
@@ -78,9 +79,7 @@ export class ExamResultsService {
       dto.userId,
     );
 
-    if (!result) {
-      throw new Error('Exam result not found');
-    }
+    if (!result) throw new ExamResultNotFoundException();
 
     const answers = await this.answerRepo.findBySession(dto.sessionId);
 
