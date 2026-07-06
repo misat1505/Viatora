@@ -35,6 +35,7 @@ export class QuestionsController implements OnModuleInit {
   async getQuestionBySlug(
     @Param('slug') slug: string,
   ): Promise<ExamQuestionDTO> {
+    console.log(slug);
     const result = await firstValueFrom(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionBySlug(

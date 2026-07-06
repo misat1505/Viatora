@@ -29,6 +29,7 @@ export class QuestionsBankRepository
       useCdn: false,
     });
   }
+
   async getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']> {
@@ -82,5 +83,52 @@ export class QuestionsBankRepository
     });
 
     return questions;
+  }
+
+  async getQuestionBySlug(slug: string): Promise<ExamQuestion> {
+    const query = `
+      *[
+        _type == "question" &&
+        !(_id in path("drafts.**")) &&
+        slug.current == $slug
+      ][0]{
+        _id,
+        text,
+        slug,
+        points,
+        options,
+        media,
+        tags,
+        categories,
+        questionType,
+        correctOption
+      }
+    `;
+
+    const fetchedQuestion = await this.sanityClient.fetch(query, { slug });
+
+    if (!fetchedQuestion) {
+      throw new Error(`Question with slug "${slug}" not found`);
+    }
+
+    const question: ExamQuestion = {
+      id: fetchedQuestion._id,
+      categories: fetchedQuestion.categories,
+      slug: fetchedQuestion.slug.current,
+      points: fetchedQuestion.points,
+      media: {
+        type: fetchedQuestion.media.type,
+        url: fetchedQuestion.media?.image?.asset?._ref ?? '',
+      },
+      answers: {
+        ...fetchedQuestion.options,
+        correctAnswer: fetchedQuestion.correctOption,
+      },
+      questionType: fetchedQuestion.questionType,
+      tags: fetchedQuestion.tags,
+      text: fetchedQuestion.text,
+    };
+
+    return question;
   }
 }

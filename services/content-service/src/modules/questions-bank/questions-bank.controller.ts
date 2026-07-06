@@ -2,6 +2,7 @@ import { Body, Controller } from '@nestjs/common';
 import { GrpcMethod } from '@nestjs/microservices';
 import { QuestionsBankService } from './questions-bank.service';
 import {
+  GetQuestionBySlugRequest,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
@@ -15,5 +16,12 @@ export class QuestionsBankController {
     @Body() dto: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse> {
     return this.questionsBankService.getQuestionsByCategory(dto);
+  }
+
+  @GrpcMethod('ContentService', 'GetQuestionBySlug')
+  getQuestionBySlug(
+    @Body() dto: GetQuestionBySlugRequest,
+  ): Promise<GetQuestionBySlugRequest> {
+    return this.questionsBankService.getQuestionBySlug(dto);
   }
 }
