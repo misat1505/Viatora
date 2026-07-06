@@ -394,7 +394,7 @@ describe('ExamService', () => {
   });
 
   it('should finish exam successfully', async () => {
-    vi.spyOn(service, 'getSessionById').mockResolvedValue({
+    examRepositoryMock.getById.mockResolvedValue({
       sessionId: 'sess_1',
       userId: 'user-1',
       currentQuestionId: 'STOP',
@@ -402,36 +402,13 @@ describe('ExamService', () => {
       totalQuestions: 32,
       startedAt: '2026-07-06T08:45:00.000Z',
       category: 'B',
-      status: 'in_progress',
+      status: 'IN_PROGRESS',
       timeLimitSeconds: 1500,
     });
 
-    vi.spyOn(service as any, 'examResultsService', 'get').mockReturnValue({
-      markExam: vi.fn().mockResolvedValue({
-        sessionId: 'b5b3c3d2-4f18-4dcb-9b4e-f6cb7d34e53d',
-        userId: '2efbcb6a-7db7-4946-a40d-8b8f6eb5d6e7',
-        status: 'completed',
-        category: 'B',
-        totalQuestions: 32,
-        correctAnswers: 30,
-        earnedPoints: 70,
-        maxPoints: 74,
-        scorePercent: 94.59,
-        passed: true,
-        timeLimitSeconds: 1500,
-        startedAt: '2026-07-06T08:45:00.000Z',
-        completedAt: '2026-07-06T09:08:42.000Z',
-      }),
-    });
-
-    const result = await service.finishSession({
+    const resultMock = {
       sessionId: 'sess_1',
       userId: 'user-1',
-    });
-
-    expect(result).toEqual({
-      sessionId: 'b5b3c3d2-4f18-4dcb-9b4e-f6cb7d34e53d',
-      userId: '2efbcb6a-7db7-4946-a40d-8b8f6eb5d6e7',
       status: 'completed',
       category: 'B',
       totalQuestions: 32,
@@ -443,6 +420,65 @@ describe('ExamService', () => {
       timeLimitSeconds: 1500,
       startedAt: '2026-07-06T08:45:00.000Z',
       completedAt: '2026-07-06T09:08:42.000Z',
+    };
+
+    examResultsServiceMock.markExam.mockResolvedValue(resultMock);
+
+    const result = await service.finishSession({
+      sessionId: 'sess_1',
+      userId: 'user-1',
     });
+
+    expect(examRepositoryMock.getById).toHaveBeenCalledWith('sess_1');
+    expect(examResultsServiceMock.markExam).toHaveBeenCalled();
+
+    expect(result).toEqual(resultMock);
+  });
+
+  it('should throw CannotFinishExamException when exam is not completed', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-1',
+      currentQuestionId: 'q2',
+      questions: [],
+      totalQuestions: 2,
+      startedAt: '2026-07-06T08:45:00.000Z',
+      category: 'B',
+      status: 'IN_PROGRESS',
+      timeLimitSeconds: 1500,
+    });
+
+    await expect(
+      service.finishSession({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow('Not all questions have been answered to');
+  });
+
+  it('should throw ExamSessionNotFoundException when session does not exist in finishSession', async () => {
+    examRepositoryMock.getById.mockResolvedValue(null);
+
+    await expect(
+      service.finishSession({
+        sessionId: 'sess_404',
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
+  });
+
+  it('should throw ExamSessionNotFoundException when user does not own session in finishSession', async () => {
+    examRepositoryMock.getById.mockResolvedValue({
+      sessionId: 'sess_1',
+      userId: 'user-2',
+      currentQuestionId: 'STOP',
+    });
+
+    await expect(
+      service.finishSession({
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      }),
+    ).rejects.toBeInstanceOf(ExamSessionNotFoundException);
   });
 });
