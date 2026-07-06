@@ -123,4 +123,24 @@ export class ExamsController implements OnModuleInit {
 
     return result;
   }
+
+  @Get('/exams/results/:id')
+  @ApiOkResponse({ type: SubmitExamResponseDTO })
+  async getExamResult(
+    @Param('id') sessionId: string,
+    @CurrentUser() user: UserProfile,
+  ): Promise<SubmitExamResponseDTO> {
+    const result = await firstValueFrom(
+      this.examService.getResult(
+        {
+          sessionId,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
+  }
 }

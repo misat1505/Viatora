@@ -34,7 +34,7 @@ service ExamService {
   rpc ListResults (ListResultsRequest) returns (ListResultsResponse);
 
   // Full result detail: score + per-question breakdown with explanations.
-  rpc GetResult (GetResultRequest) returns (GetResultResponse);
+  rpc GetResult (GetResultRequest) returns (FinishSessionResponse);
 }
 
 // ── StartSession ─────────────────────────────────────────────────
