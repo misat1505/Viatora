@@ -18,6 +18,8 @@ describe('ExamsController', () => {
     startSession: vi.fn(),
     getSession: vi.fn(),
     submitAnswer: vi.fn(),
+    finishSession: vi.fn(),
+    getResult: vi.fn(),
   };
 
   const grpcMetadataServiceMock = {
@@ -173,6 +175,78 @@ describe('ExamsController', () => {
         },
         { userId: 'user-1' } as UserProfile,
       ),
+    ).rejects.toThrow('grpc failed');
+  });
+
+  it('should call gRPC finishSession with correct payload', async () => {
+    const user = { userId: 'user-1' };
+
+    const grpcResponse = {
+      score: 10,
+      finished: true,
+    };
+
+    examServiceMock.finishSession.mockReturnValue(of(grpcResponse));
+
+    const result = await controller.finishSession(
+      'sess_1',
+      user as UserProfile,
+    );
+
+    expect(examServiceMock.finishSession).toHaveBeenCalledWith(
+      {
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      },
+      grpcMetadataServiceMock.authMeta,
+    );
+
+    expect(result).toEqual(grpcResponse);
+  });
+
+  it('should propagate gRPC error for finishSession', async () => {
+    examServiceMock.finishSession.mockReturnValue(
+      throwError(() => new Error('grpc failed')),
+    );
+
+    await expect(
+      controller.finishSession('sess_1', { userId: 'user-1' } as UserProfile),
+    ).rejects.toThrow('grpc failed');
+  });
+
+  it('should call gRPC getResult with correct payload', async () => {
+    const user = { userId: 'user-1' };
+
+    const grpcResponse = {
+      sessionId: 'sess_1',
+      score: 8,
+    };
+
+    examServiceMock.getResult.mockReturnValue(of(grpcResponse));
+
+    const result = await controller.getExamResult(
+      'sess_1',
+      user as UserProfile,
+    );
+
+    expect(examServiceMock.getResult).toHaveBeenCalledWith(
+      {
+        sessionId: 'sess_1',
+        userId: 'user-1',
+      },
+      grpcMetadataServiceMock.authMeta,
+    );
+
+    expect(result).toEqual(grpcResponse);
+  });
+
+  it('should propagate gRPC error for getResult', async () => {
+    examServiceMock.getResult.mockReturnValue(
+      throwError(() => new Error('grpc failed')),
+    );
+
+    await expect(
+      controller.getExamResult('sess_1', { userId: 'user-1' } as UserProfile),
     ).rejects.toThrow('grpc failed');
   });
 });

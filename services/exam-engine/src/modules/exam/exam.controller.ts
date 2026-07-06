@@ -7,6 +7,8 @@ import {
   GetSessionRequest,
   SubmitAnswerRequest,
   SubmitAnswerResponse,
+  FinishSessionRequest,
+  FinishSessionResponse,
 } from 'src/generated/exam';
 
 @Controller()
@@ -28,5 +30,12 @@ export class ExamController {
     @Body() dto: SubmitAnswerRequest,
   ): Promise<SubmitAnswerResponse> {
     return this.examService.submitAnswer(dto);
+  }
+
+  @GrpcMethod('ExamService', 'FinishSession')
+  finishSession(
+    @Body() dto: FinishSessionRequest,
+  ): Promise<FinishSessionResponse> {
+    return this.examService.finishSession(dto);
   }
 }

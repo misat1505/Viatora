@@ -34,7 +34,7 @@ service ExamService {
   rpc ListResults (ListResultsRequest) returns (ListResultsResponse);
 
   // Full result detail: score + per-question breakdown with explanations.
-  rpc GetResult (GetResultRequest) returns (GetResultResponse);
+  rpc GetResult (GetResultRequest) returns (FinishSessionResponse);
 }
 
 // ── StartSession ─────────────────────────────────────────────────
@@ -102,16 +102,20 @@ message FinishSessionRequest {
 }
 
 message FinishSessionResponse {
-  string  session_id     = 1;
-  int32   earned_points  = 2;
-  int32   max_points     = 3; // Always 74
-  float   score_percent  = 4;
-  bool    passed         = 5; // threshold: 68 pts
-  int32   correct_answers = 6;
-  int32   total_questions = 7;
-  int32   duration_seconds = 8;
-  string  completed_at   = 9;
-  repeated AnswerResult answers = 10; // Full per-question result with correct option
+  string  session_id            = 1;
+  int32   earned_points         = 2;
+  int32   max_points            = 3; // Always 74
+  float   score_percent         = 4;
+  bool    passed                = 5; // threshold: 68 pts
+  int32   correct_answers       = 6;
+  int32   total_questions       = 7;
+  int32   time_limit_seconds    = 8;
+  string  completed_at          = 9;
+  string  user_id               = 10;
+  string  started_at            = 11;
+  string  status                = 12;
+  string  category              = 13;
+  repeated AnswerResult answers = 14;
 }
 
 // ── ListResults ───────────────────────────────────────────────────
@@ -137,8 +141,20 @@ message GetResultRequest {
 }
 
 message GetResultResponse {
-  SessionSummary          summary = 1;
-  repeated AnswerResult   answers = 2; // Includes explanation per question
+  string  session_id            = 1;
+  int32   earned_points         = 2;
+  int32   max_points            = 3; // Always 74
+  float   score_percent         = 4;
+  bool    passed                = 5; // threshold: 68 pts
+  int32   correct_answers       = 6;
+  int32   total_questions       = 7;
+  int32   time_limit_seconds    = 8;
+  string  completed_at          = 9;
+  string  user_id               = 10;
+  string  started_at            = 11;
+  string  status                = 12;
+  string  category              = 13;
+  repeated AnswerResult answers = 14;
 }
 
 // ── Shared types ──────────────────────────────────────────────────
@@ -146,14 +162,13 @@ message GetResultResponse {
 
 // Per-question result revealed after session finish
 message AnswerResult {
-  string question_id      = 1;
-  string question_text    = 2;
-  string selected_option  = 3;
-  string correct_option   = 4;
-  bool   is_correct       = 5;
-  int32  points_earned    = 6;
-  int32  points_available = 7;
-  string explanation      = 8; // From Content Service
+  string id              = 1;
+  string question_id     = 2;
+  string selected_option = 3;
+  string correct_option  = 4;
+  bool is_correct        = 5;
+  string answered_at     = 6;
+  string question_slug   = 7;
 }
 
 message SessionSummary {

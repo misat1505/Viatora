@@ -8,6 +8,8 @@ import {
 import {
   ExamQuestionWithAnswer,
   ExamSession,
+  FinishSessionRequest,
+  FinishSessionResponse,
   GetSessionRequest,
   StartSessionRequest,
   SubmitAnswerRequest,
@@ -23,10 +25,12 @@ import {
 } from 'src/common/exceptions/not-found.exception';
 import {
   CannotAnswerCurrentQuestionException,
+  CannotFinishExamException,
   ExamCategoryNotSupportedException,
   InvalidAnswerForQuestionTypeException,
 } from 'src/common/exceptions/bad-request.exception';
 import { ExamInitializationException } from 'src/common/exceptions/internal.exception';
+import { ExamResultsService } from '../exam-results/exam-results.service';
 
 @Injectable()
 export class ExamService {
@@ -37,6 +41,7 @@ export class ExamService {
     private readonly examRepository: IExamRepository,
     @Inject(DEFAULT_EXAMS_CONFIGS_TOKEN)
     private readonly examsConfigurations: ExamsConfigurations,
+    private readonly examResultsService: ExamResultsService,
   ) {}
 
   async startExamSession(dto: StartSessionRequest): Promise<ExamSession> {
@@ -146,5 +151,20 @@ export class ExamService {
       totalQuestions: exam.totalQuestions,
       secondsRemaining,
     };
+  }
+
+  async finishSession(
+    dto: FinishSessionRequest,
+  ): Promise<FinishSessionResponse> {
+    const exam = await this.getSessionById(dto);
+
+    if (exam.currentQuestionId !== 'STOP')
+      throw new CannotFinishExamException(
+        'Not all questions have been answered to',
+      );
+
+    const examResult = await this.examResultsService.markExam(exam);
+
+    return examResult;
   }
 }

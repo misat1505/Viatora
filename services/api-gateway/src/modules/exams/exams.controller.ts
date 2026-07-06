@@ -22,6 +22,7 @@ import {
   AnswerQuestionDTO,
   AnswerQuestionResponseDTO,
 } from './dto/answer-question.dto';
+import { SubmitExamResponseDTO } from './dto/submit-exam.dto';
 
 @Controller('/exams')
 @UseGuards(JwtAuthGuard)
@@ -93,6 +94,46 @@ export class ExamsController implements OnModuleInit {
           sessionId,
           questionId: dto.questionId,
           selectedOption: dto.userAnswer,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
+  }
+
+  @Post('/sessions/:id/submit')
+  @ApiOkResponse({ type: SubmitExamResponseDTO })
+  async finishSession(
+    @Param('id') sessionId: string,
+    @CurrentUser() user: UserProfile,
+  ): Promise<SubmitExamResponseDTO> {
+    const result = await firstValueFrom(
+      this.examService.finishSession(
+        {
+          sessionId,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
+  }
+
+  @Get('/exams/results/:id')
+  @ApiOkResponse({ type: SubmitExamResponseDTO })
+  async getExamResult(
+    @Param('id') sessionId: string,
+    @CurrentUser() user: UserProfile,
+  ): Promise<SubmitExamResponseDTO> {
+    const result = await firstValueFrom(
+      this.examService.getResult(
+        {
+          sessionId,
           userId: user.userId,
         },
         // @ts-expect-error metadata not in generated types
