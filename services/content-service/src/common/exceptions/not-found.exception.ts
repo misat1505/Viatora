@@ -10,20 +10,8 @@ export class DomainNotFoundException extends RpcException {
   }
 }
 
-export class ExamSessionNotFoundException extends DomainNotFoundException {
-  constructor(message = 'Exam session not found') {
-    super(message);
-  }
-}
-
 export class QuestionNotFoundException extends DomainNotFoundException {
   constructor(message = 'Question not found') {
-    super(message);
-  }
-}
-
-export class ExamResultNotFoundException extends DomainNotFoundException {
-  constructor(message = 'Exam result not found') {
     super(message);
   }
 }

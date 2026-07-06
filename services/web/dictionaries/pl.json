@@ -361,5 +361,12 @@
     "description": "Nie znaleźliśmy strony, której szukasz. Sprawdź adres albo wróć na dobrą trasę.",
     "ctaHome": "Wróć na stronę główną",
     "ctaContact": "Zgłoś problem"
+  },
+  "questionNotFound": {
+    "code": "404",
+    "title": "Nie znaleziono pytania",
+    "description": "Pytanie, którego szukasz, nie istnieje lub zostało usunięte z bazy.",
+    "ctaQuestions": "Przeglądaj pytania",
+    "ctaHome": "Strona główna"
   }
 }

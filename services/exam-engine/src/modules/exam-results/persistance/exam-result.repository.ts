@@ -31,4 +31,15 @@ export class ExamResultRepository implements IExamResultRepository {
   async save(result: ExamResultEntity) {
     return this.repo.save(result);
   }
+
+  async findByUserId(userId: string) {
+    return this.repo.find({
+      where: {
+        user_id: userId,
+      },
+      order: {
+        completed_at: 'DESC',
+      },
+    });
+  }
 }

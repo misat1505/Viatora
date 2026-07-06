@@ -20,6 +20,7 @@ service ContentService {
   // Fetches a single question with correct_option and explanation.
   // Used after exam completion for result breakdown.
   rpc GetQuestionById (GetQuestionByIdRequest) returns (ExamQuestion);
+  rpc GetQuestionBySlug (GetQuestionBySlugRequest) returns (DetailedExamQuestion);
 }
 
 // ── GetQuestions ─────────────────────────────────────────────────
@@ -40,6 +41,10 @@ message GetQuestionsResponse {
 
 message GetQuestionByIdRequest {
   string id = 1; // Sanity document _id
+}
+
+message GetQuestionBySlugRequest {
+  string slug = 1; // slug
 }
 
 // ── Shared types ─────────────────────────────────────────────────
@@ -72,4 +77,18 @@ message ExamQuestion {
   int32 points               = 7;
   repeated string tags       = 8;
   Media media                = 9;
+}
+
+message DetailedExamQuestion {
+  string id                  = 1;
+  string slug                = 2;
+  repeated string categories = 3;
+  string question_type       = 4; // "basic" | "specialist"
+
+  Locale text                = 5;
+  Answers answers            = 6;
+  int32 points               = 7;
+  repeated string tags       = 8;
+  Media media                = 9;
+  Locale explanation         = 10;
 }

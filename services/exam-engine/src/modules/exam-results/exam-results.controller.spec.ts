@@ -8,6 +8,7 @@ describe('ExamResultsController', () => {
 
   const examResultsServiceMock = {
     getExamResult: vi.fn(),
+    getExamsResults: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -27,8 +28,9 @@ describe('ExamResultsController', () => {
   });
 
   // ─────────────────────────────────────────────
-  // 1. HAPPY PATH
+  // GetExamResult
   // ─────────────────────────────────────────────
+
   it('should call ExamResultsService.getExamResult and return result', async () => {
     const dto = {
       sessionId: 'sess_1',
@@ -50,10 +52,7 @@ describe('ExamResultsController', () => {
     expect(result).toEqual(serviceResponse);
   });
 
-  // ─────────────────────────────────────────────
-  // 2. ERROR PROPAGATION
-  // ─────────────────────────────────────────────
-  it('should propagate error from service', async () => {
+  it('should propagate error from getExamResult service', async () => {
     examResultsServiceMock.getExamResult.mockRejectedValue(
       new Error('service failed'),
     );
@@ -66,10 +65,7 @@ describe('ExamResultsController', () => {
     ).rejects.toThrow('service failed');
   });
 
-  // ─────────────────────────────────────────────
-  // 3. ENSURE PASS THROUGH DTO (no mutation)
-  // ─────────────────────────────────────────────
-  it('should pass DTO without modification', async () => {
+  it('should pass DTO without modification (getExamResult)', async () => {
     const dto = {
       sessionId: 'sess_123',
       userId: 'user-999',
@@ -79,7 +75,56 @@ describe('ExamResultsController', () => {
 
     await controller.getExamResult(dto);
 
-    expect(examResultsServiceMock.getExamResult).toHaveBeenCalledTimes(1);
     expect(examResultsServiceMock.getExamResult).toHaveBeenCalledWith(dto);
+  });
+
+  // ─────────────────────────────────────────────
+  // ListResults
+  // ─────────────────────────────────────────────
+
+  it('should call ExamResultsService.getExamsResults and return result', async () => {
+    const dto = {
+      userId: 'user-1',
+    };
+
+    const serviceResponse = {
+      exams: [
+        {
+          sessionId: 'sess_1',
+          scorePercent: 80,
+        },
+      ],
+    };
+
+    examResultsServiceMock.getExamsResults.mockResolvedValue(serviceResponse);
+
+    const result = await controller.getExamsResults(dto);
+
+    expect(examResultsServiceMock.getExamsResults).toHaveBeenCalledWith(dto);
+    expect(result).toEqual(serviceResponse);
+  });
+
+  it('should propagate error from getExamsResults service', async () => {
+    examResultsServiceMock.getExamsResults.mockRejectedValue(
+      new Error('list failed'),
+    );
+
+    await expect(
+      controller.getExamsResults({
+        userId: 'user-1',
+      }),
+    ).rejects.toThrow('list failed');
+  });
+
+  it('should pass DTO without modification (getExamsResults)', async () => {
+    const dto = {
+      userId: 'user-999',
+    };
+
+    examResultsServiceMock.getExamsResults.mockResolvedValue({});
+
+    await controller.getExamsResults(dto);
+
+    expect(examResultsServiceMock.getExamsResults).toHaveBeenCalledWith(dto);
   });
 });

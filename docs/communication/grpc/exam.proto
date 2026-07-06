@@ -122,15 +122,16 @@ message FinishSessionResponse {
 
 message ListResultsRequest {
   string user_id  = 1;
-  string category = 2; // Optional filter
-  int32  page     = 3;
-  int32  limit    = 4; // Max 50
+  // TODO: for now without pagination
+  // string category = 2; // Optional filter
+  // int32  page     = 3;
+  // int32  limit    = 4; // Max 50
 }
 
 message ListResultsResponse {
-  repeated SessionSummary sessions = 1;
-  int32 total_items = 2;
-  int32 total_pages = 3;
+  repeated FinishSessionResponse exams = 1;
+  // int32 total_items = 2;
+  // int32 total_pages = 3;
 }
 
 // ── GetResult ─────────────────────────────────────────────────────

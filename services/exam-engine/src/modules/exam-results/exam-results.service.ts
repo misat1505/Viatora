@@ -5,12 +5,15 @@ import {
   FinishSessionResponse,
   GetResultRequest,
   GetResultResponse,
+  ListResultsRequest,
+  ListResultsResponse,
 } from 'src/generated/exam';
 import { type IExamResultRepository } from './persistance/exam-result.repository.interface';
 import { type IExamAnswerRepository } from './persistance/exam-answer.repository.interface';
 import { EXAM_RESULT_REPOSITORY_TOKEN } from './persistance/exam-result.repository';
 import { EXAM_ANSWER_REPOSITORY_TOKEN } from './persistance/exam-answer.repository';
 import { ExamStatus } from './persistance/entities/exam-status';
+import { ExamResultNotFoundException } from 'src/common/exceptions/not-found.exception';
 
 @Injectable()
 export class ExamResultsService {
@@ -76,9 +79,7 @@ export class ExamResultsService {
       dto.userId,
     );
 
-    if (!result) {
-      throw new Error('Exam result not found');
-    }
+    if (!result) throw new ExamResultNotFoundException();
 
     const answers = await this.answerRepo.findBySession(dto.sessionId);
 
@@ -110,6 +111,34 @@ export class ExamResultsService {
         correctOption: a.correct_option,
         isCorrect: a.is_correct,
         answeredAt: a.answered_at.toISOString(),
+      })),
+    };
+  }
+
+  async getExamsResults(dto: ListResultsRequest): Promise<ListResultsResponse> {
+    const results = await this.resultRepo.findByUserId(dto.userId);
+
+    return {
+      exams: results.map((result) => ({
+        sessionId: result.id,
+        userId: result.user_id,
+        status: result.status,
+        category: result.category,
+        totalQuestions: result.total_questions,
+        correctAnswers: result.correct_answers,
+        earnedPoints: result.earned_points,
+        maxPoints: result.max_points,
+        scorePercent:
+          result.max_points > 0
+            ? Number(
+                ((result.earned_points / result.max_points) * 100).toFixed(2),
+              )
+            : 0,
+        passed: result.passed,
+        timeLimitSeconds: result.time_limit_seconds,
+        startedAt: result.started_at.toISOString(),
+        completedAt: result.completed_at?.toISOString(),
+        answers: [],
       })),
     };
   }

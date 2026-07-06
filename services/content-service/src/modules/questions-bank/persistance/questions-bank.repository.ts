@@ -1,6 +1,7 @@
 import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
+  DetailedExamQuestion,
   ExamQuestion,
   GetQuestionsRequest,
   GetQuestionsResponse,
@@ -29,6 +30,7 @@ export class QuestionsBankRepository
       useCdn: false,
     });
   }
+
   async getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse['questions']> {
@@ -82,5 +84,55 @@ export class QuestionsBankRepository
     });
 
     return questions;
+  }
+
+  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
+  async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null> {
+    const query = `
+      *[
+        _type == "question" &&
+        !(_id in path("drafts.**")) &&
+        slug.current == $slug
+      ][0]{
+        _id,
+        text,
+        slug,
+        points,
+        options,
+        media,
+        tags,
+        categories,
+        questionType,
+        correctOption,
+        explanation
+      }
+    `;
+
+    const fetchedQuestion = await this.sanityClient.fetch(query, { slug });
+
+    if (!fetchedQuestion) {
+      return null;
+    }
+
+    const question: DetailedExamQuestion = {
+      id: fetchedQuestion._id,
+      categories: fetchedQuestion.categories,
+      slug: fetchedQuestion.slug.current,
+      points: fetchedQuestion.points,
+      media: {
+        type: fetchedQuestion.media.type,
+        url: fetchedQuestion.media?.image?.asset?._ref ?? '',
+      },
+      answers: {
+        ...fetchedQuestion.options,
+        correctAnswer: fetchedQuestion.correctOption,
+      },
+      questionType: fetchedQuestion.questionType,
+      tags: fetchedQuestion.tags,
+      text: fetchedQuestion.text,
+      explanation: fetchedQuestion.explanation,
+    };
+
+    return question;
   }
 }
