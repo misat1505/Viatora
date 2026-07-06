@@ -6,6 +6,7 @@ import { GrpcMetadataService } from './grpc-metadata.service';
 
 export const AUTH_PACKAGE = 'AUTH_PACKAGE';
 export const EXAMS_PACKAGE = 'EXAMS_PACKAGE';
+export const QUESTIONS_PACKAGE = 'QUESTIONS_PACKAGE';
 
 @Module({
   imports: [
@@ -33,6 +34,19 @@ export const EXAMS_PACKAGE = 'EXAMS_PACKAGE';
             package: 'Viatora.exam',
             protoPath: PROTO_PATHS.exam,
             url: config.getOrThrow('EXAM_SERVICE_GRPC_URL'),
+          },
+        }),
+      },
+      {
+        name: QUESTIONS_PACKAGE,
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'Viatora.content',
+            protoPath: PROTO_PATHS.content,
+            url: config.getOrThrow('CONTENT_SERVICE_GRPC_URL'),
           },
         }),
       },

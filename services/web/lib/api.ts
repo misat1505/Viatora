@@ -1,5 +1,6 @@
 import { getAuth } from '@/generated/auth/auth';
 import { getExams } from '@/generated/exams/exams';
+import { getQuestions } from '@/generated/questions/questions';
 import axios from 'axios';
 
 const axiosBase = axios.create({
@@ -8,3 +9,4 @@ const axiosBase = axios.create({
 
 export const authApiClient = getAuth(axiosBase);
 export const examsApiClient = getExams(axiosBase);
+export const questionsApiClient = getQuestions(axiosBase);
