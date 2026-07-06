@@ -23,6 +23,7 @@ import {
   AnswerQuestionResponseDTO,
 } from './dto/answer-question.dto';
 import { SubmitExamResponseDTO } from './dto/submit-exam.dto';
+import { GetExamsResultsResponseDTO } from './dto/get-exams-results.dto';
 
 @Controller('/exams')
 @UseGuards(JwtAuthGuard)
@@ -134,6 +135,24 @@ export class ExamsController implements OnModuleInit {
       this.examService.getResult(
         {
           sessionId,
+          userId: user.userId,
+        },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
+  }
+
+  @Get('/exams/results')
+  @ApiOkResponse({ type: GetExamsResultsResponseDTO })
+  async getExamsResults(
+    @CurrentUser() user: UserProfile,
+  ): Promise<GetExamsResultsResponseDTO> {
+    const result = await firstValueFrom(
+      this.examService.listResults(
+        {
           userId: user.userId,
         },
         // @ts-expect-error metadata not in generated types
