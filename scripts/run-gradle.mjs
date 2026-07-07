@@ -3,7 +3,7 @@ import { spawnSync } from "node:child_process";
 import { platform } from "node:process";
 
 const args = process.argv.slice(2);
-const cmd = platform === "win32" ? "mvnw.cmd" : "./mvnw";
+const cmd = platform === "win32" ? "gradlew.bat" : "./gradlew";
 
 const result = spawnSync(cmd, args, {
   stdio: "inherit",
