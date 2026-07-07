@@ -128,24 +128,29 @@ Full message definitions: see [`notification.proto`](../communication/grpc/notif
 ```java
 @KafkaListener(topics = "user.registered", groupId = "notification-service")
 public void onUserRegistered(UserRegisteredEvent e) {
-    preferenceService.createDefaults(e);
-    emailService.sendWelcome(e.getEmail(), e.getDisplayName());
+  preferenceService.createDefaults(e);
+  emailService.sendWelcome(e.getEmail(), e.getDisplayName());
 }
 
 @KafkaListener(topics = "exam.completed", groupId = "notification-service")
 public void onExamCompleted(ExamCompletedEvent e) {
-    var prefs = preferenceService.get(e.getUserId());
-    if (prefs.isEmailEnabled() && prefs.isNotifyExamResult())
-        emailService.sendExamResult(prefs.getEmail(), e);
-    if (prefs.isPushEnabled() && prefs.isNotifyExamResult() && prefs.getFcmToken() != null)
-        pushService.sendExamResult(prefs.getFcmToken(), e);
+  var prefs = preferenceService.get(e.getUserId());
+  if (prefs.isEmailEnabled() && prefs.isNotifyExamResult()) emailService.sendExamResult(
+    prefs.getEmail(),
+    e
+  );
+  if (
+    prefs.isPushEnabled() && prefs.isNotifyExamResult() && prefs.getFcmToken() != null
+  ) pushService.sendExamResult(prefs.getFcmToken(), e);
 }
 
 @KafkaListener(topics = "payment.confirmed", groupId = "notification-service")
 public void onPaymentConfirmed(PaymentConfirmedEvent e) {
-    var prefs = preferenceService.get(e.getUserId());
-    if (prefs.isEmailEnabled() && prefs.isNotifyPayment())
-        emailService.sendPaymentReceipt(prefs.getEmail(), e);
+  var prefs = preferenceService.get(e.getUserId());
+  if (prefs.isEmailEnabled() && prefs.isNotifyPayment()) emailService.sendPaymentReceipt(
+    prefs.getEmail(),
+    e
+  );
 }
 ```
 
