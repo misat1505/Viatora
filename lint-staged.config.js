@@ -28,7 +28,7 @@ export default {
   // =========================
   // Java / Kotlin (Spring)
   // =========================
-  '**/*.{java,kt}': [() => './gradlew spotlessApply'],
+  '**/*.java': [prettierWrite],
 
   // =========================
   // Config / Docs
