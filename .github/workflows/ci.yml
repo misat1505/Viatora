@@ -16,6 +16,12 @@ jobs:
       - name: Ensure mvnw is executable
         run: chmod +x services/payment-service/mvnw
 
+      - name: Setup Java
+        uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: '21'
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
