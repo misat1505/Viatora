@@ -1,21 +1,11 @@
-import {
-  Controller,
-  Get,
-  Inject,
-  OnModuleInit,
-  UseGuards,
-} from '@nestjs/common';
+import { Controller, Get, Inject, OnModuleInit } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
-import { ApiOkResponse } from '@nestjs/swagger';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { PAYMENTS_PACKAGE, QUESTIONS_PACKAGE } from 'src/grpc/clients.module';
+import { PAYMENTS_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
-import { DetailedExamQuestionDTO } from './dto/detailed-question.dto';
 import { PaymentServiceClient } from 'src/generated/payment';
 
 @Controller('/payments')
-// @UseGuards(JwtAuthGuard)
 export class PaymentsController implements OnModuleInit {
   private paymentsService!: PaymentServiceClient;
 
@@ -30,7 +20,6 @@ export class PaymentsController implements OnModuleInit {
   }
 
   @Get('/checkout')
-  // @ApiOkResponse({ type: DetailedExamQuestionDTO })
   async createCheckout() {
     const result = await firstValueFrom(
       this.paymentsService.createCheckout(
