@@ -11,17 +11,17 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
 
     @Override
     public void createCheckout(
-        CreateCheckoutRequest request,
-        StreamObserver<CreateCheckoutResponse> responseObserver) {
+            CreateCheckoutRequest request,
+            StreamObserver<CreateCheckoutResponse> responseObserver) {
         System.out.println(request.getUserId());
         System.out.println(request.getPlan());
 
         // TODO: właściwa logika tworzenia checkoutu (np. integracja ze Stripe)
-        CreateCheckoutResponse response =
-            CreateCheckoutResponse.newBuilder()
-                .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs_")
-                .setSessionId("cs_")
-                .build();
+        CreateCheckoutResponse response
+                = CreateCheckoutResponse.newBuilder()
+                        .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs")
+                        .setSessionId("cs_")
+                        .build();
 
         responseObserver.onNext(response);
         responseObserver.onCompleted();
