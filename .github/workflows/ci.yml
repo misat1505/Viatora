@@ -13,6 +13,9 @@ jobs:
       - name: Checkout
         uses: actions/checkout@v4
 
+      - name: Ensure mvnw is executable
+        run: chmod +x services/payment-service/mvnw
+
       - name: Setup Node.js
         uses: actions/setup-node@v4
         with:
