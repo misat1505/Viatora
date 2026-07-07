@@ -13,6 +13,8 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
     public void createCheckout(
         CreateCheckoutRequest request,
         StreamObserver<CreateCheckoutResponse> responseObserver) {
+        System.out.println(request.getUserId());
+        System.out.println(request.getPlan());
 
         // TODO: właściwa logika tworzenia checkoutu (np. integracja ze Stripe)
         CreateCheckoutResponse response =
