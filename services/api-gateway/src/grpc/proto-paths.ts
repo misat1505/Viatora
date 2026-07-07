@@ -7,4 +7,8 @@ export const PROTO_PATHS = {
     __dirname,
     '../../../../../docs/communication/grpc/content.proto',
   ),
+  payment: join(
+    __dirname,
+    '../../../../../docs/communication/grpc/payment.proto',
+  ),
 };

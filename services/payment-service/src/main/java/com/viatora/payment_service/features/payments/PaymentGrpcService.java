@@ -2,22 +2,23 @@ package com.viatora.payment_service.features.payments;
 
 import io.grpc.stub.StreamObserver;
 import net.devh.boot.grpc.server.service.GrpcService;
-import pl.Viatora.grpc.payment.CheckSubscriptionRequest;
-import pl.Viatora.grpc.payment.CheckSubscriptionResponse;
+import pl.Viatora.grpc.payment.CreateCheckoutRequest;
+import pl.Viatora.grpc.payment.CreateCheckoutResponse;
 import pl.Viatora.grpc.payment.PaymentServiceGrpc;
 
 @GrpcService
 public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBase {
 
     @Override
-    public void checkSubscription(
-        CheckSubscriptionRequest request,
-        StreamObserver<CheckSubscriptionResponse> responseObserver) {
+    public void createCheckout(
+        CreateCheckoutRequest request,
+        StreamObserver<CreateCheckoutResponse> responseObserver) {
 
-        CheckSubscriptionResponse response =
-            CheckSubscriptionResponse.newBuilder()
-                .setActive(false)
-                .setStatus("none")
+        // TODO: właściwa logika tworzenia checkoutu (np. integracja ze Stripe)
+        CreateCheckoutResponse response =
+            CreateCheckoutResponse.newBuilder()
+                .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs_")
+                .setSessionId("cs_")
                 .build();
 
         responseObserver.onNext(response);

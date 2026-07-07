@@ -5,6 +5,7 @@ import { CacheModule } from '@nestjs/cache-manager';
 import KeyvRedis from '@keyv/redis';
 import { ExamsModule } from './modules/exams/exams.module';
 import { QuestionsModule } from './modules/questions/questions.module';
+import { PaymentsModule } from './modules/payments/payments.module';
 
 @Module({
   imports: [
@@ -23,6 +24,7 @@ import { QuestionsModule } from './modules/questions/questions.module';
     AuthModule,
     ExamsModule,
     QuestionsModule,
+    PaymentsModule,
   ],
 })
 export class AppModule {}
