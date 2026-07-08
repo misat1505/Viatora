@@ -30,4 +30,4 @@ logging:
     org.springframework.boot.autoconfigure.flyway: DEBUG
 
 stripe:
-  secret-key: sk_test_
+  secret-key: ${STRIPE_SECRET_KEY}

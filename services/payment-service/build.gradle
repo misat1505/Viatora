@@ -21,6 +21,8 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
+    implementation 'me.paulschwarz:spring-dotenv:4.0.0'
+
     implementation 'com.stripe:stripe-java:28.1.0'
 
     compileOnly 'org.projectlombok:lombok'
@@ -87,6 +89,22 @@ tasks.withType(Javadoc) {
 
 tasks.register('buildWatch') {
     dependsOn classes
+}
+def envFile = layout.projectDirectory.file('.env').asFile
+tasks.named('bootRun') {
+    doFirst {
+        if (envFile.exists()) {
+            envFile.readLines().each { line ->
+                line = line.trim()
+                if (line && !line.startsWith('#')) {
+                    def (key, value) = line.split('=', 2)
+                    environment(key.trim(), value.trim())
+                }
+            }
+        } else {
+            println "UWAGA: brak pliku .env w ${envFile.absolutePath}"
+        }
+    }
 }
 
 test {
