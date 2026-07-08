@@ -26,6 +26,25 @@ service PaymentService {
   // Cancels the subscription at the end of the current billing period.
   // Access remains active until current_period_end.
   rpc CancelSubscription (CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
+
+  rpc GetAllAvailablePlans(GetAllAvailablePlansRequest) returns (GetAllAvailablePlansResponse);
+}
+
+message GetAllAvailablePlansRequest {}
+
+
+message Plan {
+  int32 id = 1;
+  string category = 2;
+  int32 price1Month = 3;
+  int32 price3Months = 4;
+  int32 price6Months = 5;
+  string currency = 6;
+}
+
+
+message GetAllAvailablePlansResponse {
+  repeated Plan plans = 1;
 }
 
 // ── CheckSubscription ────────────────────────────────────────────

@@ -4,6 +4,8 @@ import { PAYMENTS_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
 import { PaymentServiceClient } from 'src/generated/payment';
+import { ApiOkResponse } from '@nestjs/swagger';
+import { GetAllAvailablePlansDTO } from './dto/plan.dto';
 
 @Controller('/payments')
 export class PaymentsController implements OnModuleInit {
@@ -24,6 +26,20 @@ export class PaymentsController implements OnModuleInit {
     const result = await firstValueFrom(
       this.paymentsService.createCheckout(
         { userId: '123', plan: 'ijsaiu' },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
+
+    return result;
+  }
+
+  @Get('/plans')
+  @ApiOkResponse({ type: GetAllAvailablePlansDTO })
+  async getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
+    const result = await firstValueFrom(
+      this.paymentsService.getAllAvailablePlans(
+        {},
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),
