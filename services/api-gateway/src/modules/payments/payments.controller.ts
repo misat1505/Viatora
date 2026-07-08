@@ -2,9 +2,12 @@ import {
   Body,
   Controller,
   Get,
+  Headers,
   Inject,
   OnModuleInit,
   Post,
+  type RawBodyRequest,
+  Req,
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -53,6 +56,25 @@ export class PaymentsController implements OnModuleInit {
     );
 
     return result;
+  }
+
+  @Post('/stripe/webhook')
+  stripeWebhook(
+    @Req() req: RawBodyRequest<Request>,
+    @Headers('stripe-signature') signature: string,
+  ) {
+    console.log('Stripe webhook received');
+    console.log(signature);
+    console.log(req.rawBody);
+
+    // tutaj później:
+    // const event = stripe.webhooks.constructEvent(
+    //   req.body,
+    //   signature,
+    //   process.env.STRIPE_WEBHOOK_SECRET,
+    // );
+
+    return { received: true };
   }
 
   @Get('/plans')
