@@ -59,22 +59,19 @@ export class PaymentsController implements OnModuleInit {
   }
 
   @Post('/stripe/webhook')
-  stripeWebhook(
+  async stripeWebhook(
     @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {
-    console.log('Stripe webhook received');
-    console.log(signature);
-    console.log(req.rawBody);
+    const result = await firstValueFrom(
+      this.paymentsService.handleStripeWebhook(
+        { payload: req.rawBody!, stripeSignature: signature },
+        // @ts-expect-error metadata not in generated types
+        this.grpcMetadataService.authMeta,
+      ),
+    );
 
-    // tutaj później:
-    // const event = stripe.webhooks.constructEvent(
-    //   req.body,
-    //   signature,
-    //   process.env.STRIPE_WEBHOOK_SECRET,
-    // );
-
-    return { received: true };
+    return result;
   }
 
   @Get('/plans')
@@ -98,7 +95,6 @@ export class PaymentsController implements OnModuleInit {
     @CurrentUser() user: UserProfile,
   ): Promise<GetUserSubscriptionsDTO> {
     const result = await firstValueFrom(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.paymentsService.getUserSubscriptions(
         {
           userId: user.userId,

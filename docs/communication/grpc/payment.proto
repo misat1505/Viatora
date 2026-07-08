@@ -30,6 +30,17 @@ service PaymentService {
   rpc GetAllAvailablePlans(GetAllAvailablePlansRequest) returns (GetAllAvailablePlansResponse);
 
   rpc GetUserSubscriptions(GetUserSubscriptionsRequest) returns (GetUserSubscriptionsResponse);
+
+  rpc HandleStripeWebhook(HandleStripeWebhookRequest) returns (HandleStripeWebhookResponse);
+}
+
+message HandleStripeWebhookRequest {
+  bytes payload = 1;
+  string stripe_signature = 2;
+}
+
+message HandleStripeWebhookResponse {
+  bool success = 1;
 }
 
 message GetAllAvailablePlansRequest {}
