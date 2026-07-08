@@ -24,7 +24,8 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
         StreamObserver<CreateCheckoutResponse> responseObserver
     ) {
         System.out.println(request.getUserId());
-        System.out.println(request.getPlan());
+        System.out.println(request.getCategory());
+        System.out.println(request.getMonths());
         this.categoryRepository.findAll().forEach(category -> {
             System.out.println(category.toString());
         });

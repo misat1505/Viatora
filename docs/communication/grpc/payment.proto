@@ -82,8 +82,9 @@ message CheckSubscriptionResponse {
 // ── CreateCheckout ───────────────────────────────────────────────
 
 message CreateCheckoutRequest {
-  string user_id = 1;
-  string plan    = 2; // "monthly" | "quarterly" | "annual"
+  string user_id  = 1;
+  string category = 2;
+  int32 months    = 3;
 }
 
 message CreateCheckoutResponse {

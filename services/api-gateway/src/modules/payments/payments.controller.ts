@@ -1,8 +1,10 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   OnModuleInit,
+  Post,
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -16,6 +18,10 @@ import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { UserProfile } from 'src/generated/auth';
 import { GetUserSubscriptionsDTO } from './dto/get-user-subscriptions.dto';
+import {
+  CreateCheckoutDTO,
+  CreateCheckoutResponseDTO,
+} from './dto/create-checkout.dto';
 
 @Controller('/payments')
 export class PaymentsController implements OnModuleInit {
@@ -31,11 +37,16 @@ export class PaymentsController implements OnModuleInit {
       this.grpcClient.getService<PaymentServiceClient>('PaymentService');
   }
 
-  @Get('/checkout')
-  async createCheckout() {
+  @Post('/checkout')
+  @UseGuards(JwtAuthGuard)
+  @ApiOkResponse({ type: CreateCheckoutResponseDTO })
+  async createCheckout(
+    @Body() dto: CreateCheckoutDTO,
+    @CurrentUser() user: UserProfile,
+  ): Promise<CreateCheckoutResponseDTO> {
     const result = await firstValueFrom(
       this.paymentsService.createCheckout(
-        { userId: '123', plan: 'ijsaiu' },
+        { userId: user.userId, ...dto },
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),
@@ -75,7 +86,6 @@ export class PaymentsController implements OnModuleInit {
       ),
     );
 
-    console.log(result);
     // @ts-expect-error make this error go away
     return result;
   }
