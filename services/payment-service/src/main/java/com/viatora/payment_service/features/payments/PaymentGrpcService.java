@@ -19,7 +19,7 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
 
         // TODO: właściwa logika tworzenia checkoutu (np. integracja ze Stripe)
         CreateCheckoutResponse response = CreateCheckoutResponse.newBuilder()
-            .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs")
+            .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs_")
             .setSessionId("cs_")
             .build();
 
