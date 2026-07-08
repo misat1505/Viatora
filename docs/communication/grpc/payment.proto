@@ -82,9 +82,10 @@ message CheckSubscriptionResponse {
 // ── CreateCheckout ───────────────────────────────────────────────
 
 message CreateCheckoutRequest {
-  string user_id  = 1;
-  string category = 2;
-  int32 months    = 3;
+  string user_id    = 1;
+  string category   = 2;
+  int32 months      = 3;
+  string user_email = 4;
 }
 
 message CreateCheckoutResponse {

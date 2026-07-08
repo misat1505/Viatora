@@ -2,10 +2,16 @@ package com.viatora.payment_service.features.payments.persistance.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDateTime;
+import lombok.*;
 import org.hibernate.annotations.CreationTimestamp;
 
 @Entity
 @Table(name = "orders")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Order {
 
     @Id

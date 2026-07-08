@@ -1,14 +1,26 @@
 package com.viatora.payment_service.features.payments;
 
+import com.stripe.model.checkout.Session;
+import com.stripe.param.checkout.SessionCreateParams;
 import com.viatora.payment_service.features.payments.persistance.entities.Category;
+import com.viatora.payment_service.features.payments.persistance.entities.Order;
+import com.viatora.payment_service.features.payments.persistance.entities.OrderStatus;
 import com.viatora.payment_service.features.payments.persistance.repositories.CategoryRepository;
+import com.viatora.payment_service.features.payments.persistance.repositories.OrderRepository;
 import com.viatora.payment_service.features.payments.persistance.repositories.SubscriptionRepository;
 import com.viatora.payment_service.features.payments.utils.SubscriptionMapper;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
 import net.devh.boot.grpc.server.service.GrpcService;
-import pl.Viatora.grpc.payment.*;
+import pl.Viatora.grpc.payment.CreateCheckoutRequest;
+import pl.Viatora.grpc.payment.CreateCheckoutResponse;
+import pl.Viatora.grpc.payment.GetAllAvailablePlansRequest;
+import pl.Viatora.grpc.payment.GetAllAvailablePlansResponse;
+import pl.Viatora.grpc.payment.GetUserSubscriptionsRequest;
+import pl.Viatora.grpc.payment.GetUserSubscriptionsResponse;
+import pl.Viatora.grpc.payment.PaymentServiceGrpc;
+import pl.Viatora.grpc.payment.Plan;
 
 @GrpcService
 @RequiredArgsConstructor
@@ -16,6 +28,7 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
 
     private final CategoryRepository categoryRepository;
     private final SubscriptionRepository subscriptionRepository;
+    private final OrderRepository orderRepository;
     private final SubscriptionMapper subscriptionMapper;
 
     @Override
@@ -23,21 +36,74 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
         CreateCheckoutRequest request,
         StreamObserver<CreateCheckoutResponse> responseObserver
     ) {
-        System.out.println(request.getUserId());
-        System.out.println(request.getCategory());
-        System.out.println(request.getMonths());
-        this.categoryRepository.findAll().forEach(category -> {
-            System.out.println(category.toString());
-        });
+        try {
+            Category category = categoryRepository
+                .findByName(request.getCategory())
+                .orElseThrow(() -> new RuntimeException("Category not found"));
 
-        // TODO: właściwa logika tworzenia checkoutu (np. integracja ze Stripe)
-        CreateCheckoutResponse response = CreateCheckoutResponse.newBuilder()
-            .setCheckoutUrl("https://checkout.stripe.com/c/pay/cs_")
-            .setSessionId("cs_")
-            .build();
+            int price = switch (request.getMonths()) {
+                case 1 -> category.getPrice1Month();
+                case 3 -> category.getPrice3Months();
+                case 6 -> category.getPrice6Months();
+                default -> throw new RuntimeException("Invalid months");
+            };
 
-        responseObserver.onNext(response);
-        responseObserver.onCompleted();
+            Order order = new Order();
+            order.setCategory(category);
+            order.setUser_id(request.getUserId());
+            order.setDurationMonths(request.getMonths());
+            order.setPrice(price);
+            order.setStatus(OrderStatus.PENDING);
+
+            order = orderRepository.save(order);
+
+            SessionCreateParams params = SessionCreateParams.builder()
+                .setMode(SessionCreateParams.Mode.PAYMENT)
+                .setCustomerEmail(request.getUserEmail())
+
+                .setSuccessUrl("http://localhost:3000/payment/success")
+
+                .setCancelUrl("http://localhost:3000/payment/cancel")
+
+                .addLineItem(
+                    SessionCreateParams.LineItem.builder()
+                        .setQuantity(1L)
+                        .setPriceData(
+                            SessionCreateParams.LineItem.PriceData.builder()
+                                .setCurrency(category.getCurrency().toLowerCase())
+                                .setUnitAmount((long) price)
+                                .setProductData(
+                                    SessionCreateParams.LineItem.PriceData.ProductData.builder()
+                                        .setName(
+                                            "Dostęp do kursu kategorii " +
+                                                category.getName() +
+                                                " na okres " +
+                                                request.getMonths() +
+                                                " miesięcy"
+                                        )
+                                        .build()
+                                )
+                                .build()
+                        )
+                        .build()
+                )
+
+                .putMetadata("order_id", order.getId().toString())
+
+                .build();
+
+            Session session = Session.create(params);
+
+            CreateCheckoutResponse response = CreateCheckoutResponse.newBuilder()
+                .setCheckoutUrl(session.getUrl())
+                .setSessionId(session.getId())
+                .build();
+
+            responseObserver.onNext(response);
+            responseObserver.onCompleted();
+        } catch (Exception e) {
+            responseObserver.onError(e);
+        }
     }
 
     @Override

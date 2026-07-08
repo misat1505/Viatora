@@ -28,3 +28,6 @@ logging:
   level:
     org.flywaydb: DEBUG
     org.springframework.boot.autoconfigure.flyway: DEBUG
+
+stripe:
+  secret-key: sk_test_

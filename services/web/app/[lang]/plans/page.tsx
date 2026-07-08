@@ -6,8 +6,10 @@ import { CreateCheckoutDTO } from '@/generated/viatoraAPI.schemas';
 
 const PlanPage = () => {
   async function handleClick(dto: CreateCheckoutDTO) {
-    const response = await checkoutPlan(dto);
-    console.log(response);
+    const [error, result] = await checkoutPlan(dto);
+    if (error) throw error;
+
+    window.location.href = result.checkoutUrl;
   }
 
   return (

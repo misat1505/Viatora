@@ -46,7 +46,7 @@ export class PaymentsController implements OnModuleInit {
   ): Promise<CreateCheckoutResponseDTO> {
     const result = await firstValueFrom(
       this.paymentsService.createCheckout(
-        { userId: user.userId, ...dto },
+        { userId: user.userId, userEmail: user.email, ...dto },
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),
