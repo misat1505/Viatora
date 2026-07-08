@@ -1,7 +1,6 @@
 package com.viatora.payment_service.features.payments.persistance.entities;
 
 import jakarta.persistence.*;
-import java.math.BigDecimal;
 import java.time.LocalDateTime;
 import org.hibernate.annotations.CreationTimestamp;
 
@@ -24,7 +23,7 @@ public class Order {
     private Integer durationMonths;
 
     @Column(nullable = false)
-    private BigDecimal price;
+    private Integer price;
 
     @Enumerated(EnumType.STRING)
     @Column(nullable = false)
