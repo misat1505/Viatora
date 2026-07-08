@@ -2,9 +2,15 @@ package com.viatora.payment_service.features.payments.persistance.entities;
 
 import jakarta.persistence.*;
 import java.time.LocalDate;
+import lombok.*;
 
 @Entity
 @Table(name = "subscriptions")
+@Getter
+@Setter
+@NoArgsConstructor
+@AllArgsConstructor
+@ToString
 public class Subscription {
 
     @Id
@@ -12,7 +18,7 @@ public class Subscription {
     private Long id;
 
     @Column(nullable = false)
-    private String user_id;
+    private String userId;
 
     @ManyToOne(optional = false)
     @JoinColumn(name = "category_id")

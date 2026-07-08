@@ -2,6 +2,8 @@ package com.viatora.payment_service.features.payments;
 
 import com.viatora.payment_service.features.payments.persistance.entities.Category;
 import com.viatora.payment_service.features.payments.persistance.repositories.CategoryRepository;
+import com.viatora.payment_service.features.payments.persistance.repositories.SubscriptionRepository;
+import com.viatora.payment_service.features.payments.utils.SubscriptionMapper;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
 import lombok.RequiredArgsConstructor;
@@ -13,6 +15,8 @@ import pl.Viatora.grpc.payment.*;
 public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBase {
 
     private final CategoryRepository categoryRepository;
+    private final SubscriptionRepository subscriptionRepository;
+    private final SubscriptionMapper subscriptionMapper;
 
     @Override
     public void createCheckout(
@@ -57,6 +61,27 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
 
         GetAllAvailablePlansResponse response = GetAllAvailablePlansResponse.newBuilder()
             .addAllPlans(plans)
+            .build();
+
+        responseObserver.onNext(response);
+        responseObserver.onCompleted();
+    }
+
+    @Override
+    public void getUserSubscriptions(
+        GetUserSubscriptionsRequest request,
+        StreamObserver<GetUserSubscriptionsResponse> responseObserver
+    ) {
+        List<com.viatora.payment_service.features.payments.persistance.entities.Subscription> subscriptions =
+            subscriptionRepository.findAllByUserId(request.getUserId());
+
+        List<pl.Viatora.grpc.payment.Subscription> grpcSubscriptions = subscriptions
+            .stream()
+            .map(subscriptionMapper::toGrpc)
+            .toList();
+
+        GetUserSubscriptionsResponse response = GetUserSubscriptionsResponse.newBuilder()
+            .addAllSubscriptions(grpcSubscriptions)
             .build();
 
         responseObserver.onNext(response);

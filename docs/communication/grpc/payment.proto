@@ -28,6 +28,8 @@ service PaymentService {
   rpc CancelSubscription (CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
 
   rpc GetAllAvailablePlans(GetAllAvailablePlansRequest) returns (GetAllAvailablePlansResponse);
+
+  rpc GetUserSubscriptions(GetUserSubscriptionsRequest) returns (GetUserSubscriptionsResponse);
 }
 
 message GetAllAvailablePlansRequest {}
@@ -45,6 +47,23 @@ message Plan {
 
 message GetAllAvailablePlansResponse {
   repeated Plan plans = 1;
+}
+
+message GetUserSubscriptionsRequest {
+  string user_id = 1;
+}
+
+
+message GetUserSubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+}
+
+message Subscription {
+  int32 id = 1;
+  string user_id = 2;
+  Plan category = 3;
+  string starts_at = 4;
+  string expires_at = 5;
 }
 
 // ── CheckSubscription ────────────────────────────────────────────
