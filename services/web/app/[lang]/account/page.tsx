@@ -2,26 +2,15 @@ import { getCurrentUser } from '@/actions/get-current-user';
 import { getUserSubscriptions } from '@/actions/payments/get-user-subscriptions';
 import { LoginRequired } from '@/components/login-required';
 import LogoutButton from '@/components/logout-button';
-import StartExamSessionButton from '@/components/start-exam-session-button';
 import { LocalizedLink } from '@/components/localized-link';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { Separator } from '@/components/ui/separator';
 import { UnauthorizedError } from '@/utils/error';
-import { cn } from '@/lib/utils';
-import { categoryIcons, categoryIds } from '@/utils/driving-categories';
 import { getDictionary, Locale } from '../dictionaries';
-import {
-  BarChart3,
-  BookOpen,
-  CheckCircle2,
-  ChevronRight,
-  ClipboardList,
-  Lock,
-  Settings,
-  Tag,
-} from 'lucide-react';
+import { BarChart3, BookOpen, ChevronRight, ClipboardList, Settings, Tag } from 'lucide-react';
+import { StartExamTiles } from '@/components/exam/start-exam-tiles';
 
 export const dynamic = 'force-dynamic';
 
@@ -115,60 +104,17 @@ const AccountPage = async ({ params }: { params: Promise<{ lang: Locale }> }) =>
         </CardContent>
       </Card>
 
-      <section className="space-y-4">
-        <div>
-          <h2 className="text-lg font-semibold tracking-tight">{t.categoriesTitle}</h2>
-          <p className="text-muted-foreground text-sm">{t.categoriesSubtitle}</p>
-        </div>
-
-        <div className="grid grid-cols-2 gap-3 sm:grid-cols-4 lg:grid-cols-8">
-          {categoryIds.map((id) => {
-            const Icon = categoryIcons[id];
-            const expiresAt = subscriptionsByCategory.get(id);
-            const isValid = !!expiresAt && new Date(expiresAt) > new Date();
-
-            return (
-              <div
-                key={id}
-                className={cn(
-                  'relative flex flex-col items-center gap-2 rounded-lg border-2 p-3 text-center transition-colors',
-                  isValid
-                    ? 'border-primary bg-primary/5'
-                    : 'border-muted-foreground/30 border-dashed opacity-70',
-                )}
-              >
-                {isValid ? (
-                  <CheckCircle2 className="text-primary absolute top-1.5 right-1.5 h-3.5 w-3.5" />
-                ) : (
-                  <Lock className="text-muted-foreground absolute top-1.5 right-1.5 h-3 w-3" />
-                )}
-
-                <Icon className="h-5 w-5" />
-                <p className="font-mono text-lg font-bold tracking-widest">{id}</p>
-
-                {isValid ? (
-                  <p className="text-muted-foreground font-mono text-[10px]">
-                    {t.validUntil.replace('{date}', dateFormatter.format(new Date(expiresAt!)))}
-                  </p>
-                ) : (
-                  <p className="text-muted-foreground text-[10px]">{t.locked}</p>
-                )}
-
-                {isValid ? (
-                  <StartExamSessionButton category={id} />
-                ) : (
-                  <LocalizedLink
-                    href={`/pricing/plans?category=${id}`}
-                    className="text-primary text-[10px] font-medium underline underline-offset-2"
-                  >
-                    {t.unlock}
-                  </LocalizedLink>
-                )}
-              </div>
-            );
-          })}
-        </div>
-      </section>
+      <StartExamTiles
+        t={{
+          categoriesTitle: t.categoriesTitle,
+          categoriesSubtitle: t.categoriesSubtitle,
+          validUntil: t.validUntil,
+          locked: t.locked,
+          unlock: t.unlock,
+        }}
+        subscriptionsByCategory={subscriptionsByCategory}
+        dateFormatter={dateFormatter}
+      />
 
       <Separator />
 
