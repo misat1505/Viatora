@@ -35,6 +35,7 @@
     "question-bank": "Question bank",
     "statistics": "Statistics",
     "settings": "Settings",
+    "pricing": "Pricing",
     "open-menu": "Open menu"
   },
   "footer": {
@@ -370,6 +371,13 @@
     "ctaHome": "Home"
   },
   "pricing": {
+    "notFound": {
+      "code": "404 · CATEGORY",
+      "title": "No plans found for this category",
+      "description": "It looks like we don't offer a course for the selected driving licence category yet. Check the available categories or get in touch with us.",
+      "ctaDefaultCategory": "See plans",
+      "ctaContact": "Contact us"
+    },
     "title": "Course Pricing",
     "subtitle": "Get ready for your theory exam for the category you've chosen.",
     "mostPopular": "Most popular",

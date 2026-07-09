@@ -1,4 +1,4 @@
-import { getDictionary } from '@/app/[lang]/dictionaries';
+import { getDictionary, Locale } from '@/app/[lang]/dictionaries';
 import { PricingPlan } from '@/components/pricing/pricing-table';
 import { GetAllAvailablePlansDTO } from '@/generated/viatoraAPI.schemas';
 
@@ -6,11 +6,17 @@ export function getPricingTablePlans(
   plans: GetAllAvailablePlansDTO['plans'],
   category: string,
   dict: Awaited<ReturnType<typeof getDictionary>>,
+  locale: Locale,
 ): PricingPlan[] | null {
   const currentPlans = plans.find((p) => p.category === category);
   if (!currentPlans) return null;
 
-  const formatter = new Intl.NumberFormat(undefined, {
+  const localeMap: Record<Locale, string> = {
+    pl: 'pl-PL',
+    en: 'en-US',
+  };
+
+  const formatter = new Intl.NumberFormat(localeMap[locale], {
     style: 'currency',
     currency: currentPlans.currency,
   });

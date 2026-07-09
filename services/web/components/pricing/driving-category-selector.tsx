@@ -80,7 +80,7 @@ export default function DrivingCategorySelector({
       </div>
 
       {activeSubscription && (
-        <Card className="border-green-500 bg-green-50 dark:bg-green-950">
+        <Card className="border border-primary">
           <CardContent className="flex items-center gap-3 p-5">
             <CheckCircle2 className="h-6 w-6 text-green-600" />
 

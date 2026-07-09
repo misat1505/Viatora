@@ -35,6 +35,7 @@
     "question-bank": "Baza pytań",
     "statistics": "Statystyki",
     "settings": "Ustawienia",
+    "pricing": "Cennik",
     "open-menu": "Otwórz menu"
   },
   "footer": {
@@ -370,6 +371,13 @@
     "ctaHome": "Strona główna"
   },
   "pricing": {
+    "notFound": {
+      "code": "404 · KATEGORIA",
+      "title": "Nie znaleziono planów dla tej kategorii",
+      "description": "Wygląda na to, że nie oferujemy jeszcze kursu dla wybranej kategorii prawa jazdy. Sprawdź dostępne kategorie lub napisz do nas.",
+      "ctaDefaultCategory": "Zobacz plany",
+      "ctaContact": "Kontakt"
+    },
     "title": "Cennik kursów",
     "subtitle": "Przygotuj się do egzaminu teoretycznego dla wybranej kategorii.",
     "mostPopular": "Najpopularniejszy",

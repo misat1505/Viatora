@@ -16,13 +16,13 @@ const PlanPage = async ({
   const { lang } = await params;
   const dict = await getDictionary(lang);
   const [allPlansError, allPlans] = await getAllAvailablePlans();
-  const [userSubscriptionsError, userSubscriptions] = await getUserSubscriptions();
+  const [, userSubscriptions] = await getUserSubscriptions();
 
   if (allPlansError) throw allPlansError;
 
   const resolvedCategory = category ?? 'B';
 
-  const plans = getPricingTablePlans(allPlans, resolvedCategory, dict);
+  const plans = getPricingTablePlans(allPlans, resolvedCategory, dict, lang);
   if (!plans) return notFound();
 
   return (

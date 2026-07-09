@@ -25,6 +25,7 @@ const navItems: NavItem[] = [
   { href: '/q', label: 'navbar.question-bank' },
   { href: '/statistics', label: 'navbar.statistics' },
   { href: '/settings', label: 'navbar.settings' },
+  { href: '/pricing/plans', label: 'navbar.pricing' },
 ];
 
 function isActive(pathname: string, href: string, lang: string) {
