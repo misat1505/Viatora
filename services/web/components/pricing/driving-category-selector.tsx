@@ -66,7 +66,7 @@ export default function DrivingCategorySelector({
             <LocalizedLink key={id} href={`/plans?category=${id}`}>
               <Card
                 className={cn(
-                  'relative cursor-pointer transition-all hover:border-primary hover:shadow-md',
+                  'relative cursor-pointer transition-all hover:border-primary hover:shadow-md h-full',
                   isActive && 'border-primary bg-primary/5 ring-2 ring-primary',
                 )}
               >
