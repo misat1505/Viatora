@@ -3,10 +3,11 @@
 import { startExamSession } from '@/actions/exams/start-exam-session';
 import { Button } from './ui/button';
 import { useParams, useRouter } from 'next/navigation';
+import { PropsWithChildren } from 'react';
 
-type StartExamSessionButtonProps = { category: string };
+type StartExamSessionButtonProps = PropsWithChildren & { category: string; className?: string };
 
-const StartExamSessionButton = ({ category }: StartExamSessionButtonProps) => {
+const StartExamSessionButton = ({ category, children, className }: StartExamSessionButtonProps) => {
   const { lang } = useParams();
   const router = useRouter();
 
@@ -15,7 +16,11 @@ const StartExamSessionButton = ({ category }: StartExamSessionButtonProps) => {
     router.push(`/${lang}/exams/${exam.sessionId}`);
   }
 
-  return <Button onClick={handleClick}>Start</Button>;
+  return (
+    <Button onClick={handleClick} className={className}>
+      {children}
+    </Button>
+  );
 };
 
 export default StartExamSessionButton;

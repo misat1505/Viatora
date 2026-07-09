@@ -16,6 +16,7 @@ import {
 } from '@/components/ui/chart';
 import { Locale } from '@/app/[lang]/dictionaries';
 import { SubmitExamResponseDTO } from '@/generated/viatoraAPI.schemas';
+import StartExamSessionButton from '@/components/start-exam-session-button';
 
 interface ExamResultViewProps {
   result: SubmitExamResponseDTO;
@@ -41,6 +42,7 @@ const dict = {
     question: 'Pytanie',
     seconds: 's',
     clickToReview: 'Kliknij, aby przejrzeć pytanie',
+    retake: 'Rozpocznij ponownie',
   },
   en: {
     title: 'Exam result',
@@ -60,6 +62,7 @@ const dict = {
     question: 'Question',
     seconds: 's',
     clickToReview: 'Click to review the question',
+    retake: 'Retry Exam',
   },
 } as const;
 
@@ -132,21 +135,26 @@ export function ExamResultView({ result, lang }: ExamResultViewProps) {
       <div className="flex flex-col gap-2 sm:flex-row sm:items-center sm:justify-between">
         <div>
           <h1 className="text-2xl font-bold tracking-tight md:text-3xl">{t.title}</h1>
-          <p className="text-muted-foreground">
-            {t.category} {result.category}
-          </p>
+          <div className="flex space-x-2 items-center mt-2">
+            <p className="text-muted-foreground">
+              {t.category} {result.category}
+            </p>
+            <Badge
+              className="w-fit px-3 py-1 text-sm"
+              variant={result.passed ? 'default' : 'destructive'}
+            >
+              {result.passed ? (
+                <CheckCircle2 className="mr-1 size-4" />
+              ) : (
+                <XCircle className="mr-1 size-4" />
+              )}
+              {result.passed ? t.passed : t.failed}
+            </Badge>
+          </div>
         </div>
-        <Badge
-          className="w-fit px-3 py-1 text-sm"
-          variant={result.passed ? 'default' : 'destructive'}
-        >
-          {result.passed ? (
-            <CheckCircle2 className="mr-1 size-4" />
-          ) : (
-            <XCircle className="mr-1 size-4" />
-          )}
-          {result.passed ? t.passed : t.failed}
-        </Badge>
+        <StartExamSessionButton category={result.category} className="p-6">
+          {t.retake}
+        </StartExamSessionButton>
       </div>
 
       {/* Stat cards */}

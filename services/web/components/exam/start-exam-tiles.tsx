@@ -58,7 +58,7 @@ export function StartExamTiles({ t, subscriptionsByCategory, dateFormatter }: St
               )}
 
               {isValid ? (
-                <StartExamSessionButton category={id} />
+                <StartExamSessionButton category={id}>Start</StartExamSessionButton>
               ) : (
                 <LocalizedLink
                   href={`/pricing/plans?category=${id}`}
