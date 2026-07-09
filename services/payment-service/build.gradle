@@ -21,6 +21,8 @@ ext {
 dependencies {
     implementation 'org.springframework.boot:spring-boot-starter'
 
+    testImplementation 'org.mockito:mockito-junit-jupiter'
+
     implementation 'me.paulschwarz:spring-dotenv:4.0.0'
 
     implementation 'com.stripe:stripe-java:28.1.0'
