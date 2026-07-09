@@ -30,7 +30,7 @@
     "change-language": "Change language to {{lang}}"
   },
   "navbar": {
-    "dashboard": "Dashboard",
+    "account": "Account",
     "exams": "Exams",
     "question-bank": "Question bank",
     "statistics": "Statistics",
@@ -463,6 +463,42 @@
           "New questions as they are released",
           "Priority customer support"
         ]
+      }
+    }
+  },
+  "account": {
+    "greeting": "Hi, {name}",
+    "statusActive": "Active account",
+    "statusInactive": "Inactive account",
+    "memberSince": "Joined {date}",
+    "lastLogin": "Last login: {date}",
+    "logout": "Log out",
+    "categoriesTitle": "Your licence categories",
+    "categoriesSubtitle": "Categories you have active access to — start a mock exam with one click.",
+    "validUntil": "until {date}",
+    "locked": "No access",
+    "unlock": "Unlock",
+    "quickLinksTitle": "Shortcuts",
+    "links": {
+      "exams": {
+        "title": "Exams",
+        "description": "History and results of your mock exams."
+      },
+      "questions": {
+        "title": "Question bank",
+        "description": "Browse and practice exam questions."
+      },
+      "stats": {
+        "title": "Statistics",
+        "description": "Check your progress and weak spots."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Manage your account data and preferences."
+      },
+      "pricing": {
+        "title": "Pricing",
+        "description": "See plans and unlock more categories."
       }
     }
   }

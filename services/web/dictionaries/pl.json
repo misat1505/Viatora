@@ -30,7 +30,7 @@
     "change-language": "Zmień język na {{lang}}"
   },
   "navbar": {
-    "dashboard": "Panel",
+    "account": "Moje konto",
     "exams": "Egzaminy",
     "question-bank": "Baza pytań",
     "statistics": "Statystyki",
@@ -465,6 +465,42 @@
           "Nowe pytania po ich publikacji",
           "Priorytetowa obsługa klienta"
         ]
+      }
+    }
+  },
+  "account": {
+    "greeting": "Cześć, {name}",
+    "statusActive": "Konto aktywne",
+    "statusInactive": "Konto nieaktywne",
+    "memberSince": "Dołączył(a) {date}",
+    "lastLogin": "Ostatnie logowanie: {date}",
+    "logout": "Wyloguj się",
+    "categoriesTitle": "Twoje uprawnienia",
+    "categoriesSubtitle": "Kategorie, do których masz aktywny dostęp — rozpocznij egzamin próbny jednym kliknięciem.",
+    "validUntil": "do {date}",
+    "locked": "Brak dostępu",
+    "unlock": "Wykup",
+    "quickLinksTitle": "Skróty",
+    "links": {
+      "exams": {
+        "title": "Egzaminy",
+        "description": "Historia i wyniki Twoich egzaminów próbnych."
+      },
+      "questions": {
+        "title": "Baza pytań",
+        "description": "Przeglądaj i ćwicz pytania egzaminacyjne."
+      },
+      "stats": {
+        "title": "Statystyki",
+        "description": "Sprawdź swoje postępy i słabe punkty."
+      },
+      "settings": {
+        "title": "Ustawienia",
+        "description": "Zarządzaj danymi konta i preferencjami."
+      },
+      "pricing": {
+        "title": "Cennik",
+        "description": "Sprawdź plany i odblokuj kolejne kategorie."
       }
     }
   }

@@ -6,7 +6,7 @@ export async function GET(request: NextRequest) {
   const redirect = request.nextUrl.searchParams.get('redirect');
 
   const response = NextResponse.redirect(
-    new URL(redirect ? decodeURIComponent(redirect) : '/dashboard', request.nextUrl.origin),
+    new URL(redirect ? decodeURIComponent(redirect) : '/account', request.nextUrl.origin),
   );
 
   response.cookies.set('token', token!, {

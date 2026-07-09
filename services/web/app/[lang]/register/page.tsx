@@ -25,7 +25,7 @@ export default async function RegisterPage({ params }: { params: Promise<{ lang:
 
         <Card>
           <CardContent className="space-y-6 pt-6">
-            <GoogleOAuthLink redirect="/dashboard">{r.googleButton}</GoogleOAuthLink>
+            <GoogleOAuthLink redirect="/account">{r.googleButton}</GoogleOAuthLink>
 
             <div className="flex items-center gap-3">
               <Separator className="flex-1" />

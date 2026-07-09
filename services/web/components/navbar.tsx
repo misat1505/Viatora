@@ -20,12 +20,12 @@ interface NavItem {
 }
 
 const navItems: NavItem[] = [
-  { href: '/dashboard', label: 'navbar.dashboard' },
+  { href: '/account', label: 'navbar.account' },
   { href: '/exams', label: 'navbar.exams' },
   { href: '/q', label: 'navbar.question-bank' },
   { href: '/statistics', label: 'navbar.statistics' },
-  { href: '/settings', label: 'navbar.settings' },
   { href: '/pricing/plans', label: 'navbar.pricing' },
+  { href: '/settings', label: 'navbar.settings' },
 ];
 
 function isActive(pathname: string, href: string, lang: string) {
