@@ -370,14 +370,52 @@
     "ctaHome": "Home"
   },
   "pricing": {
-    "title": "Choose your plan",
-    "subtitle": "Prepare for your driving theory exam with the plan that best suits your needs.",
-    "mostPopular": "Most Popular",
-    "perMonth": "/ month",
-    "cta": "Get Started",
+    "title": "Course Pricing",
+    "subtitle": "Get ready for your theory exam for the category you've chosen.",
+    "mostPopular": "Most popular",
+    "perMonth": "/mo",
+    "cta": "Choose plan",
+    "categorySelector": {
+      "activeTitle": "You have active access to category {category}",
+      "activeUntil": "Access valid until {date}"
+    },
+    "categories": {
+      "AM": {
+        "label": "AM",
+        "description": "Moped"
+      },
+      "A1": {
+        "label": "A1",
+        "description": "Motorcycle up to 125 cc"
+      },
+      "A2": {
+        "label": "A2",
+        "description": "Motorcycle up to 35 kW"
+      },
+      "A": {
+        "label": "A",
+        "description": "Motorcycle without restrictions"
+      },
+      "B1": {
+        "label": "B1",
+        "description": "Light vehicles"
+      },
+      "B": {
+        "label": "B",
+        "description": "Passenger car"
+      },
+      "C": {
+        "label": "C",
+        "description": "Truck"
+      },
+      "D": {
+        "label": "D",
+        "description": "Bus"
+      }
+    },
     "contact": {
-      "title": "Not sure which plan is right for you?",
-      "description": "Our team can help you choose the best subscription for your learning goals.",
+      "title": "Have questions?",
+      "description": "Get in touch with us — we're happy to help.",
       "button": "Contact us"
     },
     "plans": {

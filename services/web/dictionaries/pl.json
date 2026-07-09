@@ -370,15 +370,53 @@
     "ctaHome": "Strona główna"
   },
   "pricing": {
-    "title": "Wybierz odpowiedni plan",
-    "subtitle": "Przygotuj się do egzaminu teoretycznego na prawo jazdy z planem dopasowanym do Twoich potrzeb.",
-    "mostPopular": "Najczęściej wybierany",
-    "perMonth": "/ miesiąc",
-    "cta": "Kup dostęp",
+    "title": "Cennik kursów",
+    "subtitle": "Przygotuj się do egzaminu teoretycznego dla wybranej kategorii.",
+    "mostPopular": "Najpopularniejszy",
+    "perMonth": "/mies.",
+    "cta": "Wybierz plan",
+    "categorySelector": {
+      "activeTitle": "Masz aktywny dostęp do kategorii {category}",
+      "activeUntil": "Dostęp ważny do {date}"
+    },
+    "categories": {
+      "AM": {
+        "label": "AM",
+        "description": "Motorower"
+      },
+      "A1": {
+        "label": "A1",
+        "description": "Motocykl do 125 cm³"
+      },
+      "A2": {
+        "label": "A2",
+        "description": "Motocykl do 35 kW"
+      },
+      "A": {
+        "label": "A",
+        "description": "Motocykl bez ograniczeń"
+      },
+      "B1": {
+        "label": "B1",
+        "description": "Pojazdy lekkie"
+      },
+      "B": {
+        "label": "B",
+        "description": "Samochód osobowy"
+      },
+      "C": {
+        "label": "C",
+        "description": "Samochód ciężarowy"
+      },
+      "D": {
+        "label": "D",
+        "description": "Autobus"
+      }
+    },
     "contact": {
-      "title": "Nie wiesz, który plan wybrać?",
-      "description": "Pomożemy Ci dobrać abonament najlepiej dopasowany do Twojego sposobu nauki.",
-      "button": "Skontaktuj się z nami"
+      "title": "Masz pytania?",
+      "description": "Skontaktuj się z nami, chętnie pomożemy.",
+      "button": "Kontakt"
     },
     "plans": {
       "basic": {

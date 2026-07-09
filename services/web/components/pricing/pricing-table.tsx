@@ -4,6 +4,7 @@ import { CheckIcon } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { LocalizedLink } from '../localized-link';
 import CheckoutButton from './checkout-button';
+import DrivingCategorySelector from './driving-category-selector';
 import { getDictionary } from '@/app/[lang]/dictionaries';
 
 export type PricingPlan = {
@@ -16,30 +17,43 @@ export type PricingPlan = {
   popular?: boolean;
 };
 
+type Dict = Awaited<ReturnType<typeof getDictionary>>;
+
 export default function PricingTable({
   plans,
   category,
   dict,
+  userSubscriptions,
 }: {
   plans: PricingPlan[];
   category: string;
-  dict: Awaited<ReturnType<typeof getDictionary>>;
+  dict: Dict;
+  userSubscriptions: {
+    category: { category: string };
+    expiresAt: string;
+  }[];
 }) {
   return (
     <section className="bg-muted/30 w-full py-12 md:py-24 lg:py-32">
-      <div className="container mx-auto px-4 md:px-6 2xl:max-w-350">
+      <div className="container mx-auto px-4 md:px-6 2xl:max-w-350 space-y-12">
         <div className="flex flex-col items-center justify-center space-y-4 text-center">
           <div className="space-y-2">
-            <h2 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
+            <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
               {dict.pricing.title}
-            </h2>
+            </h1>
             <p className="text-muted-foreground mx-auto max-w-175 md:text-xl/relaxed">
               {dict.pricing.subtitle}
             </p>
           </div>
         </div>
 
-        <div className="mx-auto mt-12 grid max-w-6xl gap-8 md:grid-cols-3">
+        <DrivingCategorySelector
+          resolvedCategory={category}
+          userSubscriptions={userSubscriptions}
+          dict={dict}
+        />
+
+        <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
           {plans.map((plan) => (
             <div key={plan.name} className="flex flex-col gap-8">
               <Card
@@ -93,7 +107,7 @@ export default function PricingTable({
           ))}
         </div>
 
-        <div className="bg-card mx-auto mt-16 max-w-3xl rounded-lg border p-8 text-center">
+        <div className="bg-card mx-auto max-w-3xl rounded-lg border p-8 text-center">
           <h3 className="text-xl font-medium">{dict.pricing.contact.title}</h3>
           <p className="text-muted-foreground mt-2">{dict.pricing.contact.description}</p>
           <Button className="mt-6" asChild>

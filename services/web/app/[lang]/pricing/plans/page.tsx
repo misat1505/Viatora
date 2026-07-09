@@ -1,6 +1,6 @@
 import { getAllAvailablePlans } from '@/actions/payments/get-all-available-plans';
 import { getUserSubscriptions } from '@/actions/payments/get-user-subscriptions';
-import PricingTable, { PricingPlan } from '@/components/pricing/pricing-table';
+import PricingTable from '@/components/pricing/pricing-table';
 import { getDictionary, Locale } from '../../dictionaries';
 import { notFound } from 'next/navigation';
 import { getPricingTablePlans } from '@/utils/payments/get-pricing-table-plans';
@@ -25,7 +25,14 @@ const PlanPage = async ({
   const plans = getPricingTablePlans(allPlans, resolvedCategory, dict);
   if (!plans) return notFound();
 
-  return <PricingTable category={resolvedCategory} plans={plans} dict={dict} />;
+  return (
+    <PricingTable
+      category={resolvedCategory}
+      plans={plans}
+      dict={dict}
+      userSubscriptions={userSubscriptions ?? []}
+    />
+  );
 };
 
 export default PlanPage;
