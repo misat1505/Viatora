@@ -371,6 +371,12 @@
     "ctaHome": "Strona główna"
   },
   "pricing": {
+    "duration": {
+      "one": "{months} miesiąc dostępu",
+      "few": "{months} miesiące dostępu",
+      "many": "{months} miesięcy dostępu",
+      "other": "{months} miesięcy dostępu"
+    },
     "notFound": {
       "code": "404 · KATEGORIA",
       "title": "Nie znaleziono planów dla tej kategorii",
@@ -385,7 +391,8 @@
     "cta": "Wybierz plan",
     "categorySelector": {
       "activeTitle": "Masz aktywny dostęp do kategorii {category}",
-      "activeUntil": "Dostęp ważny do {date}"
+      "activeUntil": "Dostęp ważny do {date}",
+      "canExtend": "W każdej chwili możesz przedłużyć dostęp, wybierając nowy plan poniżej."
     },
     "categories": {
       "AM": {

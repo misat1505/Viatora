@@ -385,7 +385,12 @@
     "cta": "Choose plan",
     "categorySelector": {
       "activeTitle": "You have active access to category {category}",
-      "activeUntil": "Access valid until {date}"
+      "activeUntil": "Access valid until {date}",
+      "canExtend": "You can extend your access anytime by choosing a new plan below."
+    },
+    "duration": {
+      "one": "{months} month of access",
+      "other": "{months} months of access"
     },
     "categories": {
       "AM": {

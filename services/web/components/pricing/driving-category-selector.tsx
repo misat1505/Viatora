@@ -2,8 +2,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { cn } from '@/lib/utils';
 import { LocalizedLink } from '../localized-link';
 import { Bike, Bus, Car, CheckCircle2, Truck } from 'lucide-react';
-import { format } from 'date-fns';
-import { getDictionary } from '@/app/[lang]/dictionaries';
+import { getDictionary, Locale } from '@/app/[lang]/dictionaries';
 
 const categoryIcons: Record<string, typeof Bike> = {
   AM: Bike,
@@ -29,14 +28,16 @@ type Props = {
     expiresAt: string;
   }[];
   dict: Dict;
+  locale: Locale;
 };
 
-type DrivingCategory = keyof Dict['pricing']['categories'];
+type Category = keyof Dict['pricing']['categories'];
 
 export default function DrivingCategorySelector({
   resolvedCategory,
   userSubscriptions,
   dict,
+  locale,
 }: Props) {
   const activeSubscription = userSubscriptions.find(
     (subscription) => subscription.category.category === resolvedCategory,
@@ -44,20 +45,28 @@ export default function DrivingCategorySelector({
 
   const t = dict.pricing.categorySelector;
 
+  const formattedDate = activeSubscription
+    ? new Intl.DateTimeFormat(locale, {
+        day: '2-digit',
+        month: '2-digit',
+        year: 'numeric',
+      }).format(new Date(activeSubscription.expiresAt))
+    : null;
+
   return (
     <div className="space-y-6">
       <div className="grid grid-cols-2 gap-4 sm:grid-cols-4 lg:grid-cols-8">
         {categoryIds.map((id) => {
           const Icon = categoryIcons[id];
           const isActive = id === resolvedCategory;
-          const label = dict.pricing.categories[id as DrivingCategory]?.label ?? id;
-          const description = dict.pricing.categories[id as DrivingCategory]?.description ?? '';
+          const label = dict.pricing.categories[id as Category]?.label ?? id;
+          const description = dict.pricing.categories[id as Category]?.description ?? '';
 
           return (
-            <LocalizedLink key={id} href={`/pricing/plans?category=${id}`}>
+            <LocalizedLink key={id} href={`/plans?category=${id}`}>
               <Card
                 className={cn(
-                  'relative cursor-pointer transition-all hover:border-primary hover:shadow-md h-full',
+                  'relative cursor-pointer transition-all hover:border-primary hover:shadow-md',
                   isActive && 'border-primary bg-primary/5 ring-2 ring-primary',
                 )}
               >
@@ -89,11 +98,9 @@ export default function DrivingCategorySelector({
                 {t.activeTitle.replace('{category}', resolvedCategory)}
               </p>
               <p className="text-muted-foreground text-sm">
-                {t.activeUntil.replace(
-                  '{date}',
-                  format(new Date(activeSubscription.expiresAt), 'dd.MM.yyyy'),
-                )}
+                {t.activeUntil.replace('{date}', formattedDate ?? '')}
               </p>
+              <p className="text-muted-foreground mt-1 text-sm">{t.canExtend}</p>
             </div>
           </CardContent>
         </Card>

@@ -5,7 +5,8 @@ import { cn } from '@/lib/utils';
 import { LocalizedLink } from '../localized-link';
 import CheckoutButton from './checkout-button';
 import DrivingCategorySelector from './driving-category-selector';
-import { getDictionary } from '@/app/[lang]/dictionaries';
+import { getDictionary, Locale } from '@/app/[lang]/dictionaries';
+import { formatDuration } from '@/utils/payments/format-duration';
 
 export type PricingPlan = {
   name: string;
@@ -24,6 +25,7 @@ export default function PricingTable({
   category,
   dict,
   userSubscriptions,
+  locale,
 }: {
   plans: PricingPlan[];
   category: string;
@@ -32,6 +34,7 @@ export default function PricingTable({
     category: { category: string };
     expiresAt: string;
   }[];
+  locale: Locale;
 }) {
   return (
     <section className="bg-muted/30 w-full py-12 md:py-24 lg:py-32">
@@ -51,6 +54,7 @@ export default function PricingTable({
           resolvedCategory={category}
           userSubscriptions={userSubscriptions}
           dict={dict}
+          locale={locale}
         />
 
         <div className="mx-auto grid max-w-6xl gap-8 md:grid-cols-3">
@@ -82,6 +86,10 @@ export default function PricingTable({
                   </div>
 
                   <p className="text-muted-foreground mt-4 text-sm">{plan.description}</p>
+
+                  <p className="text-primary mt-2 text-sm font-medium">
+                    {formatDuration(plan.months, dict, locale)}
+                  </p>
                 </CardHeader>
                 <CardContent className="flex-1">
                   <ul className="space-y-2 text-sm">

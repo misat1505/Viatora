@@ -31,6 +31,7 @@ const PlanPage = async ({
       plans={plans}
       dict={dict}
       userSubscriptions={userSubscriptions ?? []}
+      locale={lang}
     />
   );
 };
