@@ -30,11 +30,12 @@
     "change-language": "Zmień język na {{lang}}"
   },
   "navbar": {
-    "dashboard": "Panel",
+    "account": "Moje konto",
     "exams": "Egzaminy",
     "question-bank": "Baza pytań",
     "statistics": "Statystyki",
     "settings": "Ustawienia",
+    "pricing": "Cennik",
     "open-menu": "Otwórz menu"
   },
   "footer": {
@@ -368,5 +369,139 @@
     "description": "Pytanie, którego szukasz, nie istnieje lub zostało usunięte z bazy.",
     "ctaQuestions": "Przeglądaj pytania",
     "ctaHome": "Strona główna"
+  },
+  "pricing": {
+    "duration": {
+      "one": "{months} miesiąc dostępu",
+      "few": "{months} miesiące dostępu",
+      "many": "{months} miesięcy dostępu",
+      "other": "{months} miesięcy dostępu"
+    },
+    "notFound": {
+      "code": "404 · KATEGORIA",
+      "title": "Nie znaleziono planów dla tej kategorii",
+      "description": "Wygląda na to, że nie oferujemy jeszcze kursu dla wybranej kategorii prawa jazdy. Sprawdź dostępne kategorie lub napisz do nas.",
+      "ctaDefaultCategory": "Zobacz plany",
+      "ctaContact": "Kontakt"
+    },
+    "title": "Cennik kursów",
+    "subtitle": "Przygotuj się do egzaminu teoretycznego dla wybranej kategorii.",
+    "mostPopular": "Najpopularniejszy",
+    "perMonth": "/mies.",
+    "cta": "Wybierz plan",
+    "categorySelector": {
+      "activeTitle": "Masz aktywny dostęp do kategorii {category}",
+      "activeUntil": "Dostęp ważny do {date}",
+      "canExtend": "W każdej chwili możesz przedłużyć dostęp, wybierając nowy plan poniżej."
+    },
+    "categories": {
+      "AM": {
+        "label": "AM",
+        "description": "Motorower"
+      },
+      "A1": {
+        "label": "A1",
+        "description": "Motocykl do 125 cm³"
+      },
+      "A2": {
+        "label": "A2",
+        "description": "Motocykl do 35 kW"
+      },
+      "A": {
+        "label": "A",
+        "description": "Motocykl bez ograniczeń"
+      },
+      "B1": {
+        "label": "B1",
+        "description": "Pojazdy lekkie"
+      },
+      "B": {
+        "label": "B",
+        "description": "Samochód osobowy"
+      },
+      "C": {
+        "label": "C",
+        "description": "Samochód ciężarowy"
+      },
+      "D": {
+        "label": "D",
+        "description": "Autobus"
+      }
+    },
+    "contact": {
+      "title": "Masz pytania?",
+      "description": "Skontaktuj się z nami, chętnie pomożemy.",
+      "button": "Kontakt"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Idealny do przygotowania się do egzaminu teoretycznego na prawo jazdy.",
+        "features": [
+          "Dostęp do wszystkich oficjalnych pytań",
+          "Nielimitowane testy treningowe",
+          "Śledzenie postępów",
+          "Wsparcie e-mail"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Najlepszy wybór do regularnej nauki i szybszych postępów.",
+        "features": [
+          "Wszystko z planu Basic",
+          "Tryb symulacji egzaminu",
+          "Szczegółowe wyjaśnienia odpowiedzi",
+          "Statystyki wyników",
+          "Priorytetowe wsparcie"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Kompletne przygotowanie do zdania egzaminu teoretycznego na prawo jazdy.",
+        "features": [
+          "Wszystko z planu Pro",
+          "Nielimitowane symulacje egzaminu",
+          "Zaawansowane statystyki nauki",
+          "Nowe pytania po ich publikacji",
+          "Priorytetowa obsługa klienta"
+        ]
+      }
+    }
+  },
+  "account": {
+    "greeting": "Cześć, {name}",
+    "statusActive": "Konto aktywne",
+    "statusInactive": "Konto nieaktywne",
+    "memberSince": "Dołączył(a) {date}",
+    "lastLogin": "Ostatnie logowanie: {date}",
+    "logout": "Wyloguj się",
+    "categoriesTitle": "Twoje uprawnienia",
+    "categoriesSubtitle": "Kategorie, do których masz aktywny dostęp — rozpocznij egzamin próbny jednym kliknięciem.",
+    "validUntil": "do {date}",
+    "locked": "Brak dostępu",
+    "unlock": "Wykup",
+    "quickLinksTitle": "Skróty",
+    "links": {
+      "exams": {
+        "title": "Egzaminy",
+        "description": "Historia i wyniki Twoich egzaminów próbnych."
+      },
+      "questions": {
+        "title": "Baza pytań",
+        "description": "Przeglądaj i ćwicz pytania egzaminacyjne."
+      },
+      "stats": {
+        "title": "Statystyki",
+        "description": "Sprawdź swoje postępy i słabe punkty."
+      },
+      "settings": {
+        "title": "Ustawienia",
+        "description": "Zarządzaj danymi konta i preferencjami."
+      },
+      "pricing": {
+        "title": "Cennik",
+        "description": "Sprawdź plany i odblokuj kolejne kategorie."
+      }
+    }
   }
 }

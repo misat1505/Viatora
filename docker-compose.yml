@@ -41,6 +41,17 @@ services:
       retries: 5
       start_period: 10s
 
+  stripe-cli:
+    image: stripe/stripe-cli:latest
+    container_name: stripe-cli
+    restart: unless-stopped
+    env_file:
+      - .env
+    command: >
+      listen
+      --api-key ${STRIPE_SECRET_KEY}
+      --forward-to http://host.docker.internal:5000/payments/stripe/webhook
+
 volumes:
   database-data:
   redis_data:

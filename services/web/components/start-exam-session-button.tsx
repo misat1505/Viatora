@@ -15,7 +15,7 @@ const StartExamSessionButton = ({ category }: StartExamSessionButtonProps) => {
     router.push(`/${lang}/exams/${exam.sessionId}`);
   }
 
-  return <Button onClick={handleClick}>Rozpocznij egzamin na kategorie {category}</Button>;
+  return <Button onClick={handleClick}>Start</Button>;
 };
 
 export default StartExamSessionButton;

@@ -35,6 +35,9 @@ export const PAYMENTS_PACKAGE = 'PAYMENTS_PACKAGE';
             package: 'Viatora.exam',
             protoPath: PROTO_PATHS.exam,
             url: config.getOrThrow('EXAM_SERVICE_GRPC_URL'),
+            loader: {
+              arrays: true,
+            },
           },
         }),
       },

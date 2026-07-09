@@ -16,6 +16,9 @@ async function bootstrap() {
           '../../../../docs/communication/grpc/exam.proto',
         ),
         url: '0.0.0.0:50052',
+        loader: {
+          arrays: true,
+        },
       },
     },
   );

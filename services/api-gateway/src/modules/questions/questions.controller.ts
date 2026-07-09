@@ -36,7 +36,6 @@ export class QuestionsController implements OnModuleInit {
     @Param('slug') slug: string,
   ): Promise<DetailedExamQuestionDTO> {
     const result = await firstValueFrom(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionBySlug(
         { slug },
         // @ts-expect-error metadata not in generated types

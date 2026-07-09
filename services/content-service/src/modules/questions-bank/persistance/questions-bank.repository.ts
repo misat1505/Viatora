@@ -86,7 +86,6 @@ export class QuestionsBankRepository
     return questions;
   }
 
-  // eslint-disable-next-line @typescript-eslint/no-redundant-type-constituents
   async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null> {
     const query = `
       *[

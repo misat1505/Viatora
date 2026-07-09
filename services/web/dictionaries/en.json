@@ -30,11 +30,12 @@
     "change-language": "Change language to {{lang}}"
   },
   "navbar": {
-    "dashboard": "Dashboard",
+    "account": "Account",
     "exams": "Exams",
     "question-bank": "Question bank",
     "statistics": "Statistics",
     "settings": "Settings",
+    "pricing": "Pricing",
     "open-menu": "Open menu"
   },
   "footer": {
@@ -368,5 +369,137 @@
     "description": "The question you're looking for doesn't exist or has been removed from the database.",
     "ctaQuestions": "Browse questions",
     "ctaHome": "Home"
+  },
+  "pricing": {
+    "notFound": {
+      "code": "404 · CATEGORY",
+      "title": "No plans found for this category",
+      "description": "It looks like we don't offer a course for the selected driving licence category yet. Check the available categories or get in touch with us.",
+      "ctaDefaultCategory": "See plans",
+      "ctaContact": "Contact us"
+    },
+    "title": "Course Pricing",
+    "subtitle": "Get ready for your theory exam for the category you've chosen.",
+    "mostPopular": "Most popular",
+    "perMonth": "/mo",
+    "cta": "Choose plan",
+    "categorySelector": {
+      "activeTitle": "You have active access to category {category}",
+      "activeUntil": "Access valid until {date}",
+      "canExtend": "You can extend your access anytime by choosing a new plan below."
+    },
+    "duration": {
+      "one": "{months} month of access",
+      "other": "{months} months of access"
+    },
+    "categories": {
+      "AM": {
+        "label": "AM",
+        "description": "Moped"
+      },
+      "A1": {
+        "label": "A1",
+        "description": "Motorcycle up to 125 cc"
+      },
+      "A2": {
+        "label": "A2",
+        "description": "Motorcycle up to 35 kW"
+      },
+      "A": {
+        "label": "A",
+        "description": "Motorcycle without restrictions"
+      },
+      "B1": {
+        "label": "B1",
+        "description": "Light vehicles"
+      },
+      "B": {
+        "label": "B",
+        "description": "Passenger car"
+      },
+      "C": {
+        "label": "C",
+        "description": "Truck"
+      },
+      "D": {
+        "label": "D",
+        "description": "Bus"
+      }
+    },
+    "contact": {
+      "title": "Have questions?",
+      "description": "Get in touch with us — we're happy to help.",
+      "button": "Contact us"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Perfect for preparing for your driving theory exam.",
+        "features": [
+          "Access to all official questions",
+          "Unlimited practice tests",
+          "Progress tracking",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "The best choice for regular learning and faster progress.",
+        "features": [
+          "Everything in Basic",
+          "Exam simulation mode",
+          "Detailed answer explanations",
+          "Performance statistics",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Complete preparation for passing your driving theory exam.",
+        "features": [
+          "Everything in Pro",
+          "Unlimited exam simulations",
+          "Advanced learning statistics",
+          "New questions as they are released",
+          "Priority customer support"
+        ]
+      }
+    }
+  },
+  "account": {
+    "greeting": "Hi, {name}",
+    "statusActive": "Active account",
+    "statusInactive": "Inactive account",
+    "memberSince": "Joined {date}",
+    "lastLogin": "Last login: {date}",
+    "logout": "Log out",
+    "categoriesTitle": "Your licence categories",
+    "categoriesSubtitle": "Categories you have active access to — start a mock exam with one click.",
+    "validUntil": "until {date}",
+    "locked": "No access",
+    "unlock": "Unlock",
+    "quickLinksTitle": "Shortcuts",
+    "links": {
+      "exams": {
+        "title": "Exams",
+        "description": "History and results of your mock exams."
+      },
+      "questions": {
+        "title": "Question bank",
+        "description": "Browse and practice exam questions."
+      },
+      "stats": {
+        "title": "Statistics",
+        "description": "Check your progress and weak spots."
+      },
+      "settings": {
+        "title": "Settings",
+        "description": "Manage your account data and preferences."
+      },
+      "pricing": {
+        "title": "Pricing",
+        "description": "See plans and unlock more categories."
+      }
+    }
   }
 }

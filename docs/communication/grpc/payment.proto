@@ -26,6 +26,55 @@ service PaymentService {
   // Cancels the subscription at the end of the current billing period.
   // Access remains active until current_period_end.
   rpc CancelSubscription (CancelSubscriptionRequest) returns (CancelSubscriptionResponse);
+
+  rpc GetAllAvailablePlans(GetAllAvailablePlansRequest) returns (GetAllAvailablePlansResponse);
+
+  rpc GetUserSubscriptions(GetUserSubscriptionsRequest) returns (GetUserSubscriptionsResponse);
+
+  rpc HandleStripeWebhook(HandleStripeWebhookRequest) returns (HandleStripeWebhookResponse);
+}
+
+message HandleStripeWebhookRequest {
+  bytes payload = 1;
+  string stripe_signature = 2;
+}
+
+message HandleStripeWebhookResponse {
+  bool success = 1;
+}
+
+message GetAllAvailablePlansRequest {}
+
+
+message Plan {
+  int32 id = 1;
+  string category = 2;
+  int32 price1Month = 3;
+  int32 price3Months = 4;
+  int32 price6Months = 5;
+  string currency = 6;
+}
+
+
+message GetAllAvailablePlansResponse {
+  repeated Plan plans = 1;
+}
+
+message GetUserSubscriptionsRequest {
+  string user_id = 1;
+}
+
+
+message GetUserSubscriptionsResponse {
+  repeated Subscription subscriptions = 1;
+}
+
+message Subscription {
+  int32 id = 1;
+  string user_id = 2;
+  Plan category = 3;
+  string starts_at = 4;
+  string expires_at = 5;
 }
 
 // ── CheckSubscription ────────────────────────────────────────────
@@ -44,8 +93,10 @@ message CheckSubscriptionResponse {
 // ── CreateCheckout ───────────────────────────────────────────────
 
 message CreateCheckoutRequest {
-  string user_id = 1;
-  string plan    = 2; // "monthly" | "quarterly" | "annual"
+  string user_id    = 1;
+  string category   = 2;
+  int32 months      = 3;
+  string user_email = 4;
 }
 
 message CreateCheckoutResponse {
