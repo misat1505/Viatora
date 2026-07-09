@@ -7,6 +7,8 @@ import { Badge } from '@/components/ui/badge';
 import type { Locale } from '@/app/[lang]/dictionaries';
 import { DetailedExamQuestionDTO } from '@/generated/viatoraAPI.schemas';
 import { sanityImageUrl } from '@/lib/sanity-image';
+import ChatGPTLogo from '@/assets/chatGPT-logo.webp';
+import { buttonVariants } from '../ui/button';
 
 type AnswerKey = 'a' | 'b' | 'c';
 
@@ -163,12 +165,23 @@ export function QuestionBrowseView({ question, lang, selected }: QuestionBrowseV
           </div>
 
           {explanationText && (
-            <div className="mt-4 flex gap-2.5 rounded-lg border border-border bg-muted/50 p-4 text-sm lg:mt-6">
+            <div className="mt-4 flex gap-2.5 rounded-lg border border-border bg-muted/50 p-4 text-sm lg:mt-6 relative">
               <Info className="mt-0.5 h-4 w-4 shrink-0 text-muted-foreground" aria-hidden="true" />
               <div>
                 <p className="mb-1 font-medium text-foreground">{t.explanation}</p>
                 <p className="leading-relaxed text-muted-foreground">{explanationText}</p>
               </div>
+              <a
+                href={`https://chatgpt.com/?prompt=${encodeURIComponent(question.text[lang])}`}
+                target="_blank"
+                rel="noopener noreferrer"
+                className={buttonVariants({
+                  variant: 'default',
+                  className: 'absolute right-4 top-1/2 -translate-y-1/2',
+                })}
+              >
+                <Image src={ChatGPTLogo} alt="ChatGPT" width={20} height={20} className="h-5 w-5" />
+              </a>
             </div>
           )}
 

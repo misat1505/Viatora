@@ -63,7 +63,7 @@ export default function DrivingCategorySelector({
           const description = dict.pricing.categories[id as Category]?.description ?? '';
 
           return (
-            <LocalizedLink key={id} href={`/plans?category=${id}`}>
+            <LocalizedLink key={id} href={`/pricing/plans?category=${id}`}>
               <Card
                 className={cn(
                   'relative cursor-pointer transition-all hover:border-primary hover:shadow-md h-full',
