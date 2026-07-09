@@ -368,5 +368,51 @@
     "description": "Pytanie, którego szukasz, nie istnieje lub zostało usunięte z bazy.",
     "ctaQuestions": "Przeglądaj pytania",
     "ctaHome": "Strona główna"
+  },
+  "pricing": {
+    "title": "Wybierz odpowiedni plan",
+    "subtitle": "Przygotuj się do egzaminu teoretycznego na prawo jazdy z planem dopasowanym do Twoich potrzeb.",
+    "mostPopular": "Najczęściej wybierany",
+    "perMonth": "/ miesiąc",
+    "cta": "Kup dostęp",
+    "contact": {
+      "title": "Nie wiesz, który plan wybrać?",
+      "description": "Pomożemy Ci dobrać abonament najlepiej dopasowany do Twojego sposobu nauki.",
+      "button": "Skontaktuj się z nami"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Idealny do przygotowania się do egzaminu teoretycznego na prawo jazdy.",
+        "features": [
+          "Dostęp do wszystkich oficjalnych pytań",
+          "Nielimitowane testy treningowe",
+          "Śledzenie postępów",
+          "Wsparcie e-mail"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "Najlepszy wybór do regularnej nauki i szybszych postępów.",
+        "features": [
+          "Wszystko z planu Basic",
+          "Tryb symulacji egzaminu",
+          "Szczegółowe wyjaśnienia odpowiedzi",
+          "Statystyki wyników",
+          "Priorytetowe wsparcie"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Kompletne przygotowanie do zdania egzaminu teoretycznego na prawo jazdy.",
+        "features": [
+          "Wszystko z planu Pro",
+          "Nielimitowane symulacje egzaminu",
+          "Zaawansowane statystyki nauki",
+          "Nowe pytania po ich publikacji",
+          "Priorytetowa obsługa klienta"
+        ]
+      }
+    }
   }
 }

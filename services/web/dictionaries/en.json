@@ -368,5 +368,51 @@
     "description": "The question you're looking for doesn't exist or has been removed from the database.",
     "ctaQuestions": "Browse questions",
     "ctaHome": "Home"
+  },
+  "pricing": {
+    "title": "Choose your plan",
+    "subtitle": "Prepare for your driving theory exam with the plan that best suits your needs.",
+    "mostPopular": "Most Popular",
+    "perMonth": "/ month",
+    "cta": "Get Started",
+    "contact": {
+      "title": "Not sure which plan is right for you?",
+      "description": "Our team can help you choose the best subscription for your learning goals.",
+      "button": "Contact us"
+    },
+    "plans": {
+      "basic": {
+        "name": "Basic",
+        "description": "Perfect for preparing for your driving theory exam.",
+        "features": [
+          "Access to all official questions",
+          "Unlimited practice tests",
+          "Progress tracking",
+          "Email support"
+        ]
+      },
+      "pro": {
+        "name": "Pro",
+        "description": "The best choice for regular learning and faster progress.",
+        "features": [
+          "Everything in Basic",
+          "Exam simulation mode",
+          "Detailed answer explanations",
+          "Performance statistics",
+          "Priority support"
+        ]
+      },
+      "premium": {
+        "name": "Premium",
+        "description": "Complete preparation for passing your driving theory exam.",
+        "features": [
+          "Everything in Pro",
+          "Unlimited exam simulations",
+          "Advanced learning statistics",
+          "New questions as they are released",
+          "Priority customer support"
+        ]
+      }
+    }
   }
 }
