@@ -8,6 +8,7 @@ export const AUTH_PACKAGE = 'AUTH_PACKAGE';
 export const EXAMS_PACKAGE = 'EXAMS_PACKAGE';
 export const QUESTIONS_PACKAGE = 'QUESTIONS_PACKAGE';
 export const PAYMENTS_PACKAGE = 'PAYMENTS_PACKAGE';
+export const ASSISTANT_PACKAGE = 'ASSISTANT_PACKAGE';
 
 @Module({
   imports: [
@@ -64,6 +65,19 @@ export const PAYMENTS_PACKAGE = 'PAYMENTS_PACKAGE';
             package: 'Viatora.payment',
             protoPath: PROTO_PATHS.payment,
             url: config.getOrThrow('PAYMENT_SERVICE_GRPC_URL'),
+          },
+        }),
+      },
+      {
+        name: ASSISTANT_PACKAGE,
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'Viatora.assistant',
+            protoPath: PROTO_PATHS.assistant,
+            url: config.getOrThrow('ASSISTANT_SERVICE_GRPC_URL'),
           },
         }),
       },
