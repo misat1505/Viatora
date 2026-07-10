@@ -2,13 +2,13 @@ import concurrently from 'concurrently';
 import { allServices, getActiveServices } from './config.js';
 
 export const commands = {
-  'api-gateway': 'pnpm start:prod',
-  'auth-service': 'uv run ./main.py',
-  web: 'pnpm start',
-  'content-service': 'pnpm start:prod',
-  'exam-engine': 'pnpm start:prod',
-  'payment-service': 'java -jar build/libs/payment-service.jar --spring.profiles.active=local',
-  'ai-assistant': 'pnpm start:prod',
+  'api-gateway': 'pnpm start:dev',
+  'auth-service': 'uv run ./dev.py',
+  web: 'pnpm dev',
+  'content-service': 'pnpm start:dev',
+  'exam-engine': 'pnpm start:dev',
+  'payment-service': 'pnpm payment-service:dev',
+  'ai-assistant': 'pnpm start:dev',
 };
 
 const services = getActiveServices();

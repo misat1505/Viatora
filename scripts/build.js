@@ -2,13 +2,12 @@ import concurrently from 'concurrently';
 import { allServices, getActiveServices } from './config.js';
 
 export const commands = {
-  'api-gateway': 'pnpm start:prod',
-  'auth-service': 'uv run ./main.py',
-  web: 'pnpm start',
-  'content-service': 'pnpm start:prod',
-  'exam-engine': 'pnpm start:prod',
-  'payment-service': 'java -jar build/libs/payment-service.jar --spring.profiles.active=local',
-  'ai-assistant': 'pnpm start:prod',
+  'api-gateway': 'pnpm build',
+  web: 'pnpm build',
+  'content-service': 'pnpm build',
+  'exam-engine': 'pnpm build',
+  'payment-service': 'node ./scripts/run-gradle.mjs --console=plain --quiet clean build',
+  'ai-assistant': 'pnpm build',
 };
 
 const services = getActiveServices();
@@ -19,7 +18,7 @@ concurrently(
     .map(([name, config]) => ({
       command: commands[name],
       name,
-      cwd: config.cwd,
+      cwd: name === 'payment-service' ? process.cwd() : config.cwd,
       prefixColor: config.color,
     })),
   {
