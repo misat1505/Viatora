@@ -184,4 +184,53 @@ describe('QuestionsBankRepository', () => {
       explanation: 'Because...',
     });
   });
+
+  it('should return null when question not found by id', async () => {
+    sanityFetchMock.mockResolvedValue(null);
+
+    const result = await repository.getQuestionById('missing-id');
+
+    expect(result).toBeNull();
+  });
+
+  it('should map getQuestionById result correctly', async () => {
+    sanityFetchMock.mockResolvedValue({
+      _id: 'q1',
+      text: 'Question detail',
+      slug: { current: 'question-detail' },
+      points: 5,
+      options: { a: 'A', b: 'B' },
+      media: {
+        type: 'image',
+        image: { asset: { _ref: 'img-ref-2' } },
+      },
+      tags: ['tag2'],
+      categories: ['B'],
+      questionType: 'advanced',
+      correctOption: 'b',
+      explanation: 'Because...',
+    });
+
+    const result = await repository.getQuestionById('q1');
+
+    expect(result).toEqual({
+      id: 'q1',
+      categories: ['B'],
+      slug: 'question-detail',
+      points: 5,
+      media: {
+        type: 'image',
+        url: 'img-ref-2',
+      },
+      answers: {
+        a: 'A',
+        b: 'B',
+        correctAnswer: 'b',
+      },
+      questionType: 'advanced',
+      tags: ['tag2'],
+      text: 'Question detail',
+      explanation: 'Because...',
+    });
+  });
 });

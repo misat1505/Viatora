@@ -11,6 +11,7 @@ describe('QuestionsBankService', () => {
   const repositoryMock = {
     getQuestionsByCategory: vi.fn(),
     getQuestionBySlug: vi.fn(),
+    getQuestionById: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -70,11 +71,36 @@ describe('QuestionsBankService', () => {
     expect(result).toEqual(question);
   });
 
-  it('should throw QuestionNotFoundException when question not found', async () => {
-    repositoryMock.getQuestionBySlug.mockResolvedValue(null);
+  it('should throw QuestionNotFoundException when question not found by id', async () => {
+    repositoryMock.getQuestionById.mockResolvedValue(null);
 
     await expect(
-      service.getQuestionBySlug({ slug: 'missing' }),
+      service.getQuestionById({ id: 'missing' }),
+    ).rejects.toBeInstanceOf(QuestionNotFoundException);
+  });
+
+  it('should return question by id', async () => {
+    const question = {
+      id: 'q1',
+      slug: 'sample-question',
+    };
+
+    repositoryMock.getQuestionById.mockResolvedValue(question);
+
+    const result = await service.getQuestionById({
+      id: 'q1',
+    });
+
+    expect(repositoryMock.getQuestionById).toHaveBeenCalledWith('q1');
+
+    expect(result).toEqual(question);
+  });
+
+  it('should throw QuestionNotFoundException when question not found', async () => {
+    repositoryMock.getQuestionById.mockResolvedValue(null);
+
+    await expect(
+      service.getQuestionById({ id: 'missing' }),
     ).rejects.toBeInstanceOf(QuestionNotFoundException);
   });
 });
