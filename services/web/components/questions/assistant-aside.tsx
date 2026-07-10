@@ -1,7 +1,10 @@
+// src/components/assistant/assistant-aside.tsx
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
 import { Bot, Loader2, Send, User, X } from 'lucide-react';
+import ReactMarkdown from 'react-markdown';
+import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
 import type { Locale } from '@/app/[lang]/dictionaries';
@@ -43,6 +46,15 @@ const dict = {
   },
 } as const;
 
+// Renders assistant markdown with sizing/colors that match the chat bubble
+function MarkdownContent({ content }: { content: string }) {
+  return (
+    <div className="prose prose-sm max-w-none wrap-break-words prose-p:my-1.5 prose-headings:my-2 prose-ul:my-1.5 prose-ol:my-1.5 prose-li:my-0 prose-pre:my-2 prose-pre:bg-background prose-code:text-foreground prose-strong:text-foreground prose-headings:text-foreground prose-p:text-foreground prose-li:text-foreground prose-a:text-primary">
+      <ReactMarkdown remarkPlugins={[remarkGfm]}>{content}</ReactMarkdown>
+    </div>
+  );
+}
+
 export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
   const t = dict[lang] ?? dict.en;
   const [isOpen, setIsOpen] = useState(false);
@@ -52,8 +64,8 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
   const [errorMessage, setErrorMessage] = useState<string | null>(null);
   const [isPending, startTransition] = useTransition();
   const scrollRef = useRef<HTMLDivElement>(null);
+  const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Load history lazily, only the first time the panel is opened
   useEffect(() => {
     if (!isOpen || hasLoadedHistory) return;
 
@@ -66,12 +78,10 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
     });
   }, [isOpen, hasLoadedHistory, questionId]);
 
-  // Auto-scroll to the newest message
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isPending]);
 
-  // Close on Escape
   useEffect(() => {
     function onKeyDown(e: KeyboardEvent) {
       if (e.key === 'Escape') setIsOpen(false);
@@ -80,8 +90,15 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
     return () => document.removeEventListener('keydown', onKeyDown);
   }, []);
 
-  function handleSubmit(e: React.FormEvent) {
-    e.preventDefault();
+  // Auto-resize the textarea as the user types
+  useEffect(() => {
+    const el = textareaRef.current;
+    if (!el) return;
+    el.style.height = 'auto';
+    el.style.height = `${Math.min(el.scrollHeight, 160)}px`;
+  }, [input]);
+
+  function submitMessage() {
     const trimmed = input.trim();
     if (!trimmed || isPending) return;
 
@@ -120,21 +137,32 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
     });
   }
 
+  function handleSubmit(e: React.FormEvent) {
+    e.preventDefault();
+    submitMessage();
+  }
+
+  // Enter sends, Shift+Enter adds a new line
+  function handleKeyDown(e: React.KeyboardEvent<HTMLTextAreaElement>) {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      submitMessage();
+    }
+  }
+
   return (
     <>
-      {/* Tab to reopen, visible only when closed */}
       {!isOpen && (
         <button
           onClick={() => setIsOpen(true)}
           aria-label={t.openLabel}
-          className="fixed right-0 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-l-lg bg-primary px-2.5 py-4 text-primary-foreground shadow-md transition-colors hover:bg-primary/90"
+          className="fixed right-0 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-l-lg bg-primary px-2.5 py-4 text-primary-foreground shadow-md transition-colors hover:cursor-pointer hover:bg-primary/90"
         >
           <Bot className="h-5 w-5" aria-hidden="true" />
           <span className="text-xs font-medium [writing-mode:vertical-rl]">{t.openLabel}</span>
         </button>
       )}
 
-      {/* Overlay, mobile only */}
       {isOpen && (
         <div
           className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm lg:hidden"
@@ -143,7 +171,6 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
         />
       )}
 
-      {/* Panel */}
       <aside
         className={cn(
           'fixed right-0 top-0 z-50 flex h-svh w-full flex-col border-l border-border bg-card text-card-foreground shadow-xl transition-transform duration-300 ease-in-out sm:w-96',
@@ -165,7 +192,10 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
           </Button>
         </div>
 
-        <div ref={scrollRef} className="flex-1 overflow-y-auto p-4">
+        <div
+          ref={scrollRef}
+          className="flex-1 overflow-y-auto p-4 scrollbar-none [&::-webkit-scrollbar]:hidden"
+        >
           {messages.length === 0 && !isPending ? (
             <p className="mt-8 text-center text-sm text-muted-foreground">{t.empty}</p>
           ) : (
@@ -200,7 +230,11 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
                           : 'bg-muted text-foreground',
                       )}
                     >
-                      {message.content}
+                      {isUser ? (
+                        <span className="whitespace-pre-wrap">{message.content}</span>
+                      ) : (
+                        <MarkdownContent content={message.content} />
+                      )}
                     </div>
                   </div>
                 );
@@ -223,22 +257,23 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
 
         {errorMessage && <p className="px-4 pb-1 text-xs text-destructive">{errorMessage}</p>}
 
-        <form
-          onSubmit={handleSubmit}
-          className="flex items-center gap-2 border-t border-border p-3"
-        >
-          <input
+        <form onSubmit={handleSubmit} className="flex items-end gap-2 border-t border-border p-3">
+          <textarea
+            ref={textareaRef}
             value={input}
             onChange={(e) => setInput(e.target.value)}
+            onKeyDown={handleKeyDown}
             placeholder={t.placeholder}
             disabled={isPending}
-            className="flex-1 rounded-md border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring"
+            rows={1}
+            className="max-h-40 flex-1 resize-none rounded-md border border-input bg-background px-3 py-2 text-sm outline-none placeholder:text-muted-foreground focus-visible:ring-2 focus-visible:ring-ring scrollbar-none [&::-webkit-scrollbar]:hidden"
           />
           <Button
             type="submit"
             size="icon"
             disabled={isPending || !input.trim()}
             aria-label={t.send}
+            className="shrink-0"
           >
             <Send className="h-4 w-4" aria-hidden="true" />
           </Button>
