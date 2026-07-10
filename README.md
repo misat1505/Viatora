@@ -27,6 +27,8 @@ Viatora includes a dedicated AI assistant service that uses an LLM-backed experi
 
 ## Architecture at a glance
 
+![Viatora architecture](./docs/diagram-creator/microservices_architecture.png)
+
 The platform is organized as a set of focused services:
 
 - Web experience built with Next.js.

@@ -14,21 +14,7 @@ The product experience is centered on three goals:
 
 A simple high-level view of the system is:
 
-```text
-Clients / Web / Mobile
-        |
-        v
-  API Gateway (NestJS)
-   |  |  |  |  |  |
-   |  |  |  |  |  +--> Assistant Service
-   |  |  |  |  +--> Notification Service
-   |  |  |  +--> Statistics Service
-   |  |  +--> Payment Service
-   |  +--> Exam Engine
-   +--> Content Service
-   |
-   +--> Auth Service
-```
+![Architecture Diagram](./diagram-creator/microservices_architecture.png)
 
 The gateway is the single ingress point for all incoming traffic. Internal services do not expose public endpoints directly.
 
