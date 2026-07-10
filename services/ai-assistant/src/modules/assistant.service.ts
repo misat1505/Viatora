@@ -101,8 +101,22 @@ export class AssistantService {
   async getConversationHistory(
     dto: GetConversationHistoryRequest,
   ): Promise<GetConversationHistoryResponse> {
+    const { questionId, userId } = dto;
+
+    const conversation =
+      await this.conversationRepository.findByUserAndQuestion(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        userId,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        questionId,
+      );
+
+    if (!conversation) {
+      return { messages: [] };
+    }
+
     const messages = await this.messageRepository.findByConversationId(
-      dto.conversationId,
+      conversation.id,
     );
 
     return {

@@ -20,7 +20,8 @@ message SendMessageResponse {
 }
 
 message GetConversationHistoryRequest {
-  string conversationId = 1;
+  string questionId = 1;
+  string userId = 2;
 }
 
 message GetConversationHistoryResponse {

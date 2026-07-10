@@ -1,6 +1,16 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, IsNotEmpty } from 'class-validator';
 
+export class GetConversationHistoryQueryDTO {
+  @IsString()
+  @IsNotEmpty()
+  @ApiProperty({
+    description: 'Id of the question this conversation relates to',
+    example: 'b3f1c2a0-1234-4a5b-8c9d-abcdef123456',
+  })
+  questionId!: string;
+}
+
 export class GetConversationHistoryParamsDTO {
   @IsString()
   @IsNotEmpty()

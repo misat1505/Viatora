@@ -4,8 +4,8 @@ import {
   Get,
   Inject,
   OnModuleInit,
-  Param,
   Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -19,7 +19,7 @@ import { UserProfile } from 'src/generated/auth';
 import { AssistantServiceClient } from 'src/generated/assistant';
 import { SendMessageDTO, SendMessageResponseDTO } from './dto/send-message.dto';
 import {
-  GetConversationHistoryParamsDTO,
+  GetConversationHistoryQueryDTO,
   GetConversationHistoryResponseDTO,
 } from './dto/get-conversation-history.dto';
 
@@ -55,15 +55,16 @@ export class AssistantController implements OnModuleInit {
     return result;
   }
 
-  @Get('/conversation/:conversationId')
+  @Get('/conversation')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetConversationHistoryResponseDTO })
   async getConversationHistory(
-    @Param() params: GetConversationHistoryParamsDTO,
+    @Query() query: GetConversationHistoryQueryDTO,
+    @CurrentUser() user: UserProfile,
   ): Promise<GetConversationHistoryResponseDTO> {
     const result = await firstValueFrom(
       this.assistantService.getConversationHistory(
-        { conversationId: params.conversationId },
+        { questionId: query.questionId, userId: user.userId },
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),

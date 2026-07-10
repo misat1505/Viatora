@@ -14,7 +14,6 @@ export class AssistantController {
 
   @GrpcMethod('AssistantService', 'SendMessage')
   sendMessage(data: SendMessageRequest): Promise<SendMessageResponse> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.assistantService.sendMessage(data);
   }
 
@@ -22,7 +21,6 @@ export class AssistantController {
   getConversationHistory(
     data: GetConversationHistoryRequest,
   ): Promise<GetConversationHistoryResponse> {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.assistantService.getConversationHistory(data);
   }
 }
