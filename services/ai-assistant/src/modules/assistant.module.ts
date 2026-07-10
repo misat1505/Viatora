@@ -6,10 +6,20 @@ import { TypeOrmModule } from '@nestjs/typeorm';
 import { Conversation } from './persistance/entities/conversation.entity';
 import { Message } from './persistance/entities/message.entity';
 import { MessageRepository } from './persistance/message.repository';
+import { QuestionRepository } from './persistance/question.repository';
+import { GrpcClientsModule } from 'src/grpc/clients.module';
 
 @Module({
-  imports: [TypeOrmModule.forFeature([Conversation, Message])],
-  providers: [AssistantService, ConversationRepository, MessageRepository],
+  imports: [
+    TypeOrmModule.forFeature([Conversation, Message]),
+    GrpcClientsModule,
+  ],
+  providers: [
+    AssistantService,
+    ConversationRepository,
+    MessageRepository,
+    QuestionRepository,
+  ],
   controllers: [AssistantController],
 })
 export class AssistantModule {}

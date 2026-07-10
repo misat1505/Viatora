@@ -1,4 +1,4 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import OpenAI from 'openai';
 import { ConversationRepository } from './persistance/conversation.repository';
 import { MessageRepository } from './persistance/message.repository';
@@ -11,6 +11,7 @@ import {
   SendMessageRequest,
   SendMessageResponse,
 } from 'src/generated/assistant';
+import { QuestionRepository } from './persistance/question.repository';
 
 @Injectable()
 export class AssistantService {
@@ -19,6 +20,7 @@ export class AssistantService {
   constructor(
     private readonly conversationRepository: ConversationRepository,
     private readonly messageRepository: MessageRepository,
+    private readonly questionRepository: QuestionRepository,
     configService: ConfigService,
   ) {
     this.client = new OpenAI({
@@ -36,6 +38,11 @@ export class AssistantService {
     );
 
     if (!conversation) {
+      const question =
+        await this.questionRepository.getQuestionsById(questionId);
+      if (!question)
+        throw new NotFoundException("Question of given id doesn't exist");
+
       conversation = await this.conversationRepository.create({
         userId,
         questionId,
