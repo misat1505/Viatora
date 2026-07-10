@@ -7,7 +7,7 @@ export const commands = {
   web: 'pnpm dev',
   'content-service': 'pnpm start:dev',
   'exam-engine': 'pnpm start:dev',
-  'payment-service': 'pnpm payment-service:dev',
+  'payment-service': 'node ./scripts/payment-service-dev.js',
   'ai-assistant': 'pnpm start:dev',
 };
 
@@ -19,7 +19,7 @@ concurrently(
     .map(([name, config]) => ({
       command: commands[name],
       name,
-      cwd: config.cwd,
+      cwd: name === 'payment-service' ? process.cwd() : config.cwd,
       prefixColor: config.color,
     })),
   {
