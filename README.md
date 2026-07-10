@@ -64,7 +64,12 @@ For service-specific setup and run instructions, see the individual service READ
 
 ## Documentation
 
+Start with the documentation hub for the full set of guides:
+
+- [Documentation hub](docs/README.md)
 - [Architecture overview](docs/architecture.md)
+- [Communication model](docs/communication/communication.md)
+- [Security guide](docs/security.md)
 - [Technical rationale](docs/tech-rationale.md)
 - [Service documentation](docs/services)
 

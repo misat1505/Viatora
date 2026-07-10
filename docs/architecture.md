@@ -10,15 +10,37 @@ The product experience is centered on three goals:
 2. Provide clear feedback and measurable progress.
 3. Offer intelligent support through AI-assisted explanations.
 
+## Architecture diagram
+
+A simple high-level view of the system is:
+
+```text
+Clients / Web / Mobile
+        |
+        v
+  API Gateway (NestJS)
+   |  |  |  |  |  |
+   |  |  |  |  |  +--> Assistant Service
+   |  |  |  |  +--> Notification Service
+   |  |  |  +--> Statistics Service
+   |  |  +--> Payment Service
+   |  +--> Exam Engine
+   +--> Content Service
+   |
+   +--> Auth Service
+```
+
+The gateway is the single ingress point for all incoming traffic. Internal services do not expose public endpoints directly.
+
 ## Core services
 
 ### 1. Web application
 
-The frontend experience is delivered through Next.js and provides the user-facing journey for exams, account management, and progress tracking.
+The frontend experience is delivered through Next.js and provides the user-facing journey for exams, account management, progress tracking, and subscriptions.
 
 ### 2. API Gateway
 
-The gateway acts as the single entry point for client traffic. It handles routing, access control, authentication checks, and basic protection for downstream services.
+The gateway acts as the single entry point for client traffic. It handles routing, access control, authentication checks, rate limiting, and request translation for the downstream services. All user-facing traffic flows through this layer.
 
 ### 3. Auth Service
 
@@ -26,7 +48,7 @@ This service manages identity and session security. It supports social login, to
 
 ### 4. Exam Engine
 
-The exam engine is the core learning workflow. It manages exam sessions, evaluates submissions, and stores results for later analysis.
+The exam engine is the core learning workflow. It manages exam sessions, evaluates submissions, stores results, and publishes completed exam events.
 
 ### 5. Content Service
 
@@ -34,7 +56,7 @@ The content service provides exam questions, media assets, and structured learni
 
 ### 6. Payment Service
 
-This service handles subscription access and billing flows. It ensures that premium capabilities are gated and that billing events can trigger downstream actions.
+This service handles subscription access and billing flows. It creates Stripe checkout sessions, processes Stripe webhooks, and persists subscription state.
 
 ### 7. Statistics Service
 
@@ -56,6 +78,20 @@ The system uses a combination of synchronous service-to-service communication an
 - Kafka is used for asynchronous events such as completed exams, payments, and account events.
 - Redis supports caching and short-lived session state.
 - PostgreSQL stores the persistent data for each service.
+- Sanity is used as the content source for rich exam materials.
+- Stripe is used for subscription and billing operations.
+
+## Service storage responsibilities
+
+Each service owns its own persistence boundary:
+
+- Auth Service: user profiles, refresh tokens, identity state.
+- Exam Engine: exam sessions, answers, result records.
+- Content Service: question bank and media metadata, backed by Sanity and cached in Redis.
+- Payment Service: orders, subscriptions, and Stripe-related billing state.
+- Statistics Service: aggregated exam and learning analytics data.
+- Notification Service: notification preferences and delivery logs.
+- AI Assistant Service: conversation history and assistant message records.
 
 ## Why this architecture fits the project
 
@@ -63,5 +99,7 @@ This structure helps the team keep the platform reliable while still allowing ea
 
 ## Related documentation
 
+- [Documentation hub](./README.md)
 - [Technical rationale](./tech-rationale.md)
 - [Communication summary](./communication/communication.md)
+- [Security guide](./security.md)
