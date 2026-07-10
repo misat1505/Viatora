@@ -3,6 +3,7 @@ import { QUESTIONS_BANK_REPOSITORY_TOKEN } from './persistance/questions-bank.re
 import { type IQuestionsBankRepository } from './persistance/questions-bank.repository.interface';
 import {
   DetailedExamQuestion,
+  GetQuestionByIdRequest,
   GetQuestionBySlugRequest,
   GetQuestionsRequest,
   GetQuestionsResponse,
@@ -30,6 +31,15 @@ export class QuestionsBankService {
     const question = await this.questionBankRepository.getQuestionBySlug(
       dto.slug,
     );
+    if (!question) throw new QuestionNotFoundException();
+
+    return question;
+  }
+
+  async getQuestionById(
+    dto: GetQuestionByIdRequest,
+  ): Promise<DetailedExamQuestion> {
+    const question = await this.questionBankRepository.getQuestionById(dto.id);
     if (!question) throw new QuestionNotFoundException();
 
     return question;

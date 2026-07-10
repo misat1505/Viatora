@@ -134,4 +134,53 @@ export class QuestionsBankRepository
 
     return question;
   }
+
+  async getQuestionById(id: string): Promise<DetailedExamQuestion | null> {
+    const query = `
+    *[
+      _type == "question" &&
+      !(_id in path("drafts.**")) &&
+      _id == $id
+    ][0]{
+      _id,
+      text,
+      slug,
+      points,
+      options,
+      media,
+      tags,
+      categories,
+      questionType,
+      correctOption,
+      explanation
+    }
+  `;
+
+    const fetchedQuestion = await this.sanityClient.fetch(query, { id });
+
+    if (!fetchedQuestion) {
+      return null;
+    }
+
+    const question: DetailedExamQuestion = {
+      id: fetchedQuestion._id,
+      categories: fetchedQuestion.categories,
+      slug: fetchedQuestion.slug.current,
+      points: fetchedQuestion.points,
+      media: {
+        type: fetchedQuestion.media.type,
+        url: fetchedQuestion.media?.image?.asset?._ref ?? '',
+      },
+      answers: {
+        ...fetchedQuestion.options,
+        correctAnswer: fetchedQuestion.correctOption,
+      },
+      questionType: fetchedQuestion.questionType,
+      tags: fetchedQuestion.tags,
+      text: fetchedQuestion.text,
+      explanation: fetchedQuestion.explanation,
+    };
+
+    return question;
+  }
 }

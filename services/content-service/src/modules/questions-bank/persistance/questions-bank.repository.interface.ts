@@ -10,4 +10,5 @@ export interface IQuestionsBankRepository {
   ): Promise<GetQuestionsResponse['questions']>;
 
   getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null>;
+  getQuestionById(id: string): Promise<DetailedExamQuestion | null>;
 }
