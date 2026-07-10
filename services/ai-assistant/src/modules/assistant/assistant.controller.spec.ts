@@ -2,8 +2,8 @@ import { Test } from '@nestjs/testing';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
 
 import { AssistantController } from './assistant.controller';
-import { AssistantService } from './assistant.service';
 import { SendMessageRequest } from 'src/generated/assistant';
+import { AssistantService } from './assistant.service';
 
 describe('AssistantController', () => {
   let controller: AssistantController;

@@ -1,5 +1,5 @@
 import { Module } from '@nestjs/common';
-import { AssistantModule } from './modules/assistant.module';
+import { AssistantModule } from './modules/assistant/assistant.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
 
