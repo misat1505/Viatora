@@ -2,9 +2,12 @@ import { Injectable } from '@nestjs/common';
 import { InjectRepository } from '@nestjs/typeorm';
 import { Repository } from 'typeorm';
 import { Conversation } from './entities/conversation.entity';
+import { IConversationRepository } from './conversation.repository.interface';
+
+export const CONVERSATION_REPOSITORY = Symbol('CONVERSATION_REPOSITORY');
 
 @Injectable()
-export class ConversationRepository {
+export class ConversationRepository implements IConversationRepository {
   constructor(
     @InjectRepository(Conversation)
     private readonly repository: Repository<Conversation>,

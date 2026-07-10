@@ -1,6 +1,6 @@
 import { Inject, Injectable, NotFoundException } from '@nestjs/common';
-import { ConversationRepository } from './persistance/conversation.repository';
-import { MessageRepository } from './persistance/message.repository';
+import { CONVERSATION_REPOSITORY } from './persistance/conversation.repository';
+import { MESSAGE_REPOSITORY } from './persistance/message.repository';
 import { MessageRole } from './persistance/entities/message.entity';
 import { buildSystemPrompt } from './utils/build-system-prompt';
 import {
@@ -9,18 +9,27 @@ import {
   SendMessageRequest,
   SendMessageResponse,
 } from 'src/generated/assistant';
-import { QuestionRepository } from './persistance/question.repository';
+import { QUESTION_REPOSITORY } from './persistance/question.repository';
 import { extractQuestionData } from './utils/extract-question-data';
 import { Locale } from 'src/generated/content';
 import { OPENAI_SERVICE } from '../openai/openai.service';
 import { type IOpenAIService } from '../openai/openai.interface';
+import { type IConversationRepository } from './persistance/conversation.repository.interface';
+import { type IMessageRepository } from './persistance/message.repository.interface';
+import { type IQuestionRepository } from './persistance/question.repository.interface';
 
 @Injectable()
 export class AssistantService {
   constructor(
-    private readonly conversationRepository: ConversationRepository,
-    private readonly messageRepository: MessageRepository,
-    private readonly questionRepository: QuestionRepository,
+    @Inject(CONVERSATION_REPOSITORY)
+    private readonly conversationRepository: IConversationRepository,
+
+    @Inject(MESSAGE_REPOSITORY)
+    private readonly messageRepository: IMessageRepository,
+
+    @Inject(QUESTION_REPOSITORY)
+    private readonly questionRepository: IQuestionRepository,
+
     @Inject(OPENAI_SERVICE)
     private readonly openAIService: IOpenAIService,
   ) {}

@@ -8,9 +8,12 @@ import {
 } from 'src/generated/content';
 import { CONTENT_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
+import { IQuestionRepository } from './question.repository.interface';
+
+export const QUESTION_REPOSITORY = Symbol('QUESTION_REPOSITORY');
 
 @Injectable()
-export class QuestionRepository implements OnModuleInit {
+export class QuestionRepository implements IQuestionRepository, OnModuleInit {
   private questionsService!: ContentServiceClient;
 
   constructor(
