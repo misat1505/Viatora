@@ -2,7 +2,7 @@
 
 Viatora is a modern, multi-service platform for preparing for the driving license exam. It combines structured exam practice, subscription-based access, progress analytics, and an AI-powered learning assistant into one experience designed to help learners study more effectively.
 
-![Product overview placeholder](https://placehold.co/1400x700?text=Viatora+Product+Preview)
+![Product overview placeholder](./docs/screenshots/question.png)
 
 ## Why Viatora stands out
 
@@ -23,7 +23,7 @@ Viatora is a modern, multi-service platform for preparing for the driving licens
 
 Viatora includes a dedicated AI assistant service that uses an LLM-backed experience to support learners during study sessions. The assistant is meant to make preparation more interactive by explaining difficult questions, answering follow-up questions, and helping students understand the reasoning behind correct answers.
 
-![AI assistant placeholder](https://placehold.co/1400x700?text=AI+Assistant+Preview)
+![AI assistant placeholder](./docs/screenshots/assistant-guides.png)
 
 ## Architecture at a glance
 
