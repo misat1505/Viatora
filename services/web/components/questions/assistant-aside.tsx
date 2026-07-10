@@ -2,11 +2,12 @@
 'use client';
 
 import { useEffect, useRef, useState, useTransition } from 'react';
-import { Bot, Loader2, Send, User, X } from 'lucide-react';
+import { Bot, Loader2, Send, User } from 'lucide-react';
 import ReactMarkdown from 'react-markdown';
 import remarkGfm from 'remark-gfm';
 import { cn } from '@/lib/utils';
 import { Button } from '@/components/ui/button';
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from '@/components/ui/sheet';
 import type { Locale } from '@/app/[lang]/dictionaries';
 import { sendMessageToAssistant } from '@/actions/assistant/send-message-to-assistant';
 import { getConversationHistory } from '@/actions/assistant/get-conversation-history';
@@ -27,7 +28,6 @@ const dict = {
   pl: {
     title: 'Asystent AI',
     openLabel: 'Asystent',
-    closeLabel: 'Zamknij asystenta',
     placeholder: 'Zapytaj o podpowiedź lub wyjaśnienie...',
     send: 'Wyślij',
     empty: 'Masz pytanie do tego zadania? Zapytaj asystenta o podpowiedź.',
@@ -37,7 +37,6 @@ const dict = {
   en: {
     title: 'AI Assistant',
     openLabel: 'Assistant',
-    closeLabel: 'Close assistant',
     placeholder: 'Ask for a hint or explanation...',
     send: 'Send',
     empty: 'Stuck on this question? Ask the assistant for a hint.',
@@ -81,14 +80,6 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: 'smooth' });
   }, [messages, isPending]);
-
-  useEffect(() => {
-    function onKeyDown(e: KeyboardEvent) {
-      if (e.key === 'Escape') setIsOpen(false);
-    }
-    document.addEventListener('keydown', onKeyDown);
-    return () => document.removeEventListener('keydown', onKeyDown);
-  }, []);
 
   // Auto-resize the textarea as the user types
   useEffect(() => {
@@ -151,50 +142,29 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
   }
 
   return (
-    <>
-      {!isOpen && (
+    <Sheet open={isOpen} onOpenChange={setIsOpen}>
+      <SheetTrigger asChild>
         <button
-          onClick={() => setIsOpen(true)}
           aria-label={t.openLabel}
-          className="fixed right-0 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-l-lg bg-primary px-2.5 py-4 text-primary-foreground shadow-md transition-colors hover:cursor-pointer hover:bg-primary/90"
+          className={cn(
+            'fixed right-0 top-1/2 z-40 flex -translate-y-1/2 flex-col items-center gap-2 rounded-l-lg bg-primary px-2.5 py-4 text-primary-foreground shadow-md transition-colors hover:cursor-pointer hover:bg-primary/90',
+            isOpen && 'hidden',
+          )}
         >
           <Bot className="h-5 w-5" aria-hidden="true" />
           <span className="text-xs font-medium [writing-mode:vertical-rl]">{t.openLabel}</span>
         </button>
-      )}
+      </SheetTrigger>
 
-      {isOpen && (
-        <div
-          className="fixed inset-0 z-40 bg-background/60 backdrop-blur-sm lg:hidden"
-          onClick={() => setIsOpen(false)}
-          aria-hidden="true"
-        />
-      )}
-
-      <aside
-        className={cn(
-          'fixed right-0 top-0 z-50 flex h-svh w-full flex-col border-l border-border bg-card text-card-foreground shadow-xl transition-transform duration-300 ease-in-out sm:w-96',
-          isOpen ? 'translate-x-0' : 'translate-x-full',
-        )}
-      >
-        <div className="flex items-center justify-between border-b border-border p-4">
-          <div className="flex items-center gap-2">
-            <Bot className="h-5 w-5 text-primary" aria-hidden="true" />
-            <h2 className="font-semibold">{t.title}</h2>
-          </div>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => setIsOpen(false)}
-            aria-label={t.closeLabel}
-          >
-            <X className="h-4 w-4" aria-hidden="true" />
-          </Button>
-        </div>
+      <SheetContent side="right" className="flex w-full flex-col gap-0 p-0 sm:max-w-96">
+        <SheetHeader className="flex-row items-center gap-2 space-y-0 border-b border-border py-4">
+          <Bot className="h-5 w-5 text-primary" aria-hidden="true" />
+          <SheetTitle>{t.title}</SheetTitle>
+        </SheetHeader>
 
         <div
           ref={scrollRef}
-          className="flex-1 overflow-y-auto p-4 scrollbar-none [&::-webkit-scrollbar]:hidden"
+          className="flex-1 overflow-y-auto p-4 [scrollbar-color:var(--border)_transparent] [&::-webkit-scrollbar]:w-2 [&::-webkit-scrollbar-track]:bg-transparent [&::-webkit-scrollbar-thumb]:rounded-full [&::-webkit-scrollbar-thumb]:bg-border"
         >
           {messages.length === 0 && !isPending ? (
             <p className="mt-8 text-center text-sm text-muted-foreground">{t.empty}</p>
@@ -225,9 +195,7 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
                     <div
                       className={cn(
                         'max-w-[80%] rounded-lg px-3 py-2 text-sm leading-relaxed',
-                        isUser
-                          ? 'bg-secondary text-secondary-foreground'
-                          : 'bg-muted text-foreground',
+                        isUser ? 'bg-primary text-primary-foreground' : 'bg-muted text-foreground',
                       )}
                     >
                       {isUser ? (
@@ -278,7 +246,7 @@ export function AssistantAside({ questionId, lang }: AssistantAsideProps) {
             <Send className="h-4 w-4" aria-hidden="true" />
           </Button>
         </form>
-      </aside>
-    </>
+      </SheetContent>
+    </Sheet>
   );
 }
