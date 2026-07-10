@@ -10,7 +10,6 @@ import { QUESTION_REPOSITORY } from './persistance/question.repository';
 import { OPENAI_SERVICE } from '../openai/openai.service';
 
 import { MessageRole } from './persistance/entities/message.entity';
-import { SendMessageRequest } from 'src/generated/assistant';
 import { ExamQuestion } from 'src/generated/content';
 
 describe('AssistantService', () => {
@@ -95,7 +94,7 @@ describe('AssistantService', () => {
         questionId: 'question-1',
         message: 'Help me',
         locale: 'en',
-      } as SendMessageRequest);
+      });
 
       expect(
         conversationRepositoryMock.findByUserAndQuestion,
@@ -160,7 +159,7 @@ describe('AssistantService', () => {
         questionId: 'question-1',
         message: 'Explain',
         locale: 'en',
-      } as SendMessageRequest);
+      });
 
       expect(questionRepositoryMock.getQuestionsById).toHaveBeenCalledWith(
         'question-1',
@@ -191,7 +190,7 @@ describe('AssistantService', () => {
           questionId: 'question-1',
           message: 'Hello',
           locale: 'en',
-        } as SendMessageRequest),
+        }),
       ).rejects.toThrow("Question of given id doesn't exist");
     });
   });

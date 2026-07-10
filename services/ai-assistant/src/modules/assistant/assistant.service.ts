@@ -106,9 +106,8 @@ export class AssistantService {
 
     const conversation =
       await this.conversationRepository.findByUserAndQuestion(
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         userId,
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
         questionId,
       );
 

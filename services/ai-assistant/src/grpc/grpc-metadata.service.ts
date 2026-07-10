@@ -12,7 +12,6 @@ export class GrpcMetadataService {
   }
 
   get authMeta(): Metadata {
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return this.meta.clone();
   }
 }

@@ -3,7 +3,6 @@ import { ConfigService } from '@nestjs/config';
 
 import { OpenAIService } from './openai.service';
 
-// eslint-disable-next-line @typescript-eslint/no-unsafe-return
 const createMock = vi.hoisted(() => vi.fn());
 
 vi.mock('openai', () => {

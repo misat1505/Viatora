@@ -21,7 +21,6 @@ export class Message {
   @Column()
   conversationId!: string;
 
-  // eslint-disable-next-line @typescript-eslint/no-unsafe-return
   @ManyToOne(() => Conversation, (conversation) => conversation.messages)
   @JoinColumn({ name: 'conversationId' })
   conversation!: Conversation;

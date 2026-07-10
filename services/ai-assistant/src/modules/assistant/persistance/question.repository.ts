@@ -30,11 +30,10 @@ export class QuestionRepository implements IQuestionRepository, OnModuleInit {
     id: GetQuestionByIdRequest['id'],
   ): Promise<DetailedExamQuestion | null> {
     const question = await firstValueFrom(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionById(
         { id },
         // @ts-expect-error metadata not in generated types
-        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+
         this.grpcMetadataService.authMeta,
       ),
     );
