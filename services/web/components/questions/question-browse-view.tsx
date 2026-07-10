@@ -9,6 +9,7 @@ import { DetailedExamQuestionDTO } from '@/generated/viatoraAPI.schemas';
 import { sanityImageUrl } from '@/lib/sanity-image';
 import ChatGPTLogo from '@/assets/chatGPT-logo.webp';
 import { buttonVariants } from '../ui/button';
+import { AssistantAside } from './assistant-aside';
 
 type AnswerKey = 'a' | 'b' | 'c';
 
@@ -194,6 +195,8 @@ export function QuestionBrowseView({ question, lang, selected }: QuestionBrowseV
           </div>
         </div>
       </Card>
+
+      <AssistantAside questionId={question.id} lang={lang} />
     </div>
   );
 }
