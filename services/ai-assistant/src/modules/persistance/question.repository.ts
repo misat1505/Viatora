@@ -3,7 +3,7 @@ import { type ClientGrpc } from '@nestjs/microservices';
 import { firstValueFrom } from 'rxjs';
 import {
   ContentServiceClient,
-  ExamQuestion,
+  DetailedExamQuestion,
   GetQuestionByIdRequest,
 } from 'src/generated/content';
 import { CONTENT_PACKAGE } from 'src/grpc/clients.module';
@@ -25,7 +25,7 @@ export class QuestionRepository implements OnModuleInit {
 
   async getQuestionsById(
     id: GetQuestionByIdRequest['id'],
-  ): Promise<ExamQuestion | null> {
+  ): Promise<DetailedExamQuestion | null> {
     const question = await firstValueFrom(
       // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionById(

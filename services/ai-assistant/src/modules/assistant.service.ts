@@ -12,6 +12,8 @@ import {
   SendMessageResponse,
 } from 'src/generated/assistant';
 import { QuestionRepository } from './persistance/question.repository';
+import { extractQuestionData } from './utils/extract-question-data';
+import { Locale } from 'src/generated/content';
 
 @Injectable()
 export class AssistantService {
@@ -30,7 +32,7 @@ export class AssistantService {
   }
 
   async sendMessage(params: SendMessageRequest): Promise<SendMessageResponse> {
-    const { questionId, userId, message } = params;
+    const { questionId, userId, message, locale } = params;
 
     let conversation = await this.conversationRepository.findByUserAndQuestion(
       userId,
@@ -43,13 +45,15 @@ export class AssistantService {
       if (!question)
         throw new NotFoundException("Question of given id doesn't exist");
 
+      const { questionContent, questionOptions, correctAnswer } =
+        extractQuestionData(question, locale as keyof Locale);
+
       conversation = await this.conversationRepository.create({
         userId,
         questionId,
-        // TODO: call content service
-        questionContent: '',
-        questionOptions: [''],
-        correctAnswer: '',
+        questionContent,
+        questionOptions,
+        correctAnswer,
       });
     }
 
