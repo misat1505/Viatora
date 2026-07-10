@@ -12,7 +12,6 @@ from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.inmemory import Redis
 from diagrams.programming.framework import Nextjs, Spring
 from diagrams.programming.language import Python
-from diagrams.saas.payment import Stripe
 
 graph_attr = {
     "fontsize": "14",
@@ -35,29 +34,29 @@ with Diagram(
 
     with Cluster("Backend"):
         gateway = Custom(
-            "API Gateway\nNestJS",
+            "API Gateway",
             "./icons/nestjs.png",
         )
-        cache = Redis("Redis\nRate limiting & cache")
+        cache = Redis("Rate limiting & cache")
 
         with Cluster("Identity"):
             auth = Python("Auth Service")
             auth_db = PostgreSQL("Auth DB")
-            auth >> Edge(label="gRPC") >> auth_db
+            auth >> Edge() >> auth_db
 
         with Cluster("Learning Flow"):
             exam = Custom(
-                "Exam Engine\nNestJS",
+                "Exam Engine",
                 "./icons/nestjs.png",
             )
             exam_db = PostgreSQL("Exam DB")
             exam_cache = Redis("Exam Session Cache")
-            exam >> Edge(label="gRPC") >> exam_db
+            exam >> Edge() >> exam_db
             exam >> Edge(label="session state") >> exam_cache
 
         with Cluster("Content"):
             content = Custom(
-                "Content Service\nNestJS",
+                "Content Service",
                 "./icons/nestjs.png",
             )
             sanity = Custom(
@@ -70,14 +69,17 @@ with Diagram(
 
         with Cluster("Payments"):
             payment = Spring("Payment Service")
-            stripe = Stripe("Stripe")
+            stripe = Custom(
+                "Stripe",
+                "./icons/stripe.png",
+            )
             payment_db = PostgreSQL("Payment DB")
-            payment >> Edge(label="gRPC") >> payment_db
+            payment >> Edge() >> payment_db
             payment >> Edge(label="checkout / webhooks") >> stripe
 
         with Cluster("AI Assistant"):
             assistant = Custom(
-                "AI Assistant\nNestJS",
+                "AI Assistant",
                 "./icons/nestjs.png",
             )
             openrouter = Custom(
@@ -85,18 +87,19 @@ with Diagram(
                 "./icons/openrouter.png",
             )
             assistant_db = PostgreSQL("Assistant DB")
-            assistant >> Edge(label="gRPC") >> assistant_db
+            assistant >> Edge() >> assistant_db
             assistant >> Edge(label="LLM requests") >> openrouter
 
-    user >> web >> gateway
+    user >> web
+    web >> Edge(label="HTTP/HTTPS") >> gateway
 
-    gateway >> Edge(label="JWT / OAuth") >> auth
-    gateway >> Edge(label="exam sessions") >> exam
-    gateway >> Edge(label="questions") >> content
-    gateway >> Edge(label="checkout / subscriptions") >> payment
-    gateway >> Edge(label="assistant chat") >> assistant
+    gateway >> Edge(label="JWT / OAuth (gRPC)") >> auth
+    gateway >> Edge(label="exam sessions (gRPC)") >> exam
+    gateway >> Edge(label="questions (gRPC)") >> content
+    gateway >> Edge(label="checkout / subscriptions (gRPC)") >> payment
+    gateway >> Edge(label="assistant chat (gRPC)") >> assistant
     gateway >> Edge(label="cache & throttling") >> cache
 
-    exam >> Edge(label="question fetch") >> content
-    exam >> Edge(label="subscription check") >> payment
-    assistant >> Edge(label="question context") >> content
+    exam >> Edge(label="question fetch (gRPC)") >> content
+    exam >> Edge(label="subscription check (gRPC)") >> payment
+    assistant >> Edge(label="question context (gRPC)") >> content
