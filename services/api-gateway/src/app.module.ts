@@ -6,6 +6,7 @@ import KeyvRedis from '@keyv/redis';
 import { ExamsModule } from './modules/exams/exams.module';
 import { QuestionsModule } from './modules/questions/questions.module';
 import { PaymentsModule } from './modules/payments/payments.module';
+import { AssistantModule } from './modules/assistant/assistant.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { PaymentsModule } from './modules/payments/payments.module';
     ExamsModule,
     QuestionsModule,
     PaymentsModule,
+    AssistantModule,
   ],
 })
 export class AppModule {}

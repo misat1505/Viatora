@@ -10,6 +10,7 @@ describe('QuestionsBankController', () => {
   const serviceMock = {
     getQuestionsByCategory: vi.fn(),
     getQuestionBySlug: vi.fn(),
+    getQuestionById: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -65,6 +66,25 @@ describe('QuestionsBankController', () => {
     const result = await controller.getQuestionBySlug(dto);
 
     expect(serviceMock.getQuestionBySlug).toHaveBeenCalledWith(dto);
+    expect(result).toEqual(response);
+  });
+
+  it('should call service and return question by id', async () => {
+    const dto = {
+      id: 'q1',
+    };
+
+    const response = {
+      id: 'q1',
+      slug: 'sample-question',
+      text: 'Question text',
+    };
+
+    serviceMock.getQuestionById.mockResolvedValue(response);
+
+    const result = await controller.getQuestionById(dto);
+
+    expect(serviceMock.getQuestionById).toHaveBeenCalledWith(dto);
     expect(result).toEqual(response);
   });
 });

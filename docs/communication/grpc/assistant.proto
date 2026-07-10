@@ -1,0 +1,36 @@
+syntax = "proto3";
+
+package Viatora.assistant;
+
+service AssistantService {
+  rpc SendMessage (SendMessageRequest) returns (SendMessageResponse);
+  rpc GetConversationHistory (GetConversationHistoryRequest) returns (GetConversationHistoryResponse);
+}
+
+message SendMessageRequest {
+  string questionId = 1;
+  string userId = 2;
+  string message = 3;
+  string locale = 4;
+}
+
+message SendMessageResponse {
+  string conversationId = 1;
+  string reply = 2;
+}
+
+message GetConversationHistoryRequest {
+  string questionId = 1;
+  string userId = 2;
+}
+
+message GetConversationHistoryResponse {
+  repeated ChatMessage messages = 1;
+}
+
+message ChatMessage {
+  string id = 1;
+  string role = 2;
+  string content = 3;
+  string createdAt = 4;
+}
