@@ -1,79 +1,91 @@
-## Service Breakdown
+# Architecture Overview
 
-### 1. API Gateway — NestJS
+Viatora is structured as a modular platform that separates core responsibilities into independent services. This approach makes the product easier to evolve, easier to deploy, and better suited for real-world growth than a single monolithic application.
 
-The single entry point for all client traffic. Handles JWT validation (tokens issued by the Auth Service), rate limiting per IP and per user, and routes requests to downstream services via HTTP or gRPC. Also enforces subscription checks — if a user hasn't paid, requests to the Exam Engine are rejected here. Uses a Redis connection for caching rate limit counters and session tokens.
+## Product perspective
 
-See [details](./services/api-gateway.md).
+The product experience is centered on three goals:
 
----
+1. Help learners prepare for the driving license exam.
+2. Provide clear feedback and measurable progress.
+3. Offer intelligent support through AI-assisted explanations.
 
-### 2. Auth Service — FastAPI
+## Architecture diagram
 
-Manages user identity. Integrates with Google OAuth 2.0 for social login and issues its own JWT access + refresh tokens. Stores users in its own PostgreSQL instance. On successful registration, publishes a `user.registered` event to Kafka so other services can react (e.g. Notifications sends a welcome email). Communicates with the API Gateway via gRPC for token introspection (fast, typed, low latency).
+A simple high-level view of the system is:
 
-**Key endpoints**: `POST /auth/google`, `POST /auth/refresh`, `GET /auth/me`
+![Architecture Diagram](./diagram-creator/microservices_architecture.png)
 
-See [details](./services/auth-service.md).
+The gateway is the single ingress point for all incoming traffic. Internal services do not expose public endpoints directly.
 
----
+## Core services
 
-### 3. Exam Engine — NestJS
+### 1. Web application
 
-The core domain service. Serves exam sessions — randomly selects questions from the Content Service (via gRPC), tracks user answers, calculates scores, and persists results in its own PostgreSQL database. When an exam finishes, it publishes an `exam.completed` event to Kafka (consumed by Statistics and Notifications). Enforces access control by verifying subscription status against the Payment Service via gRPC before starting a session.
+The frontend experience is delivered through Next.js and provides the user-facing journey for exams, account management, progress tracking, and subscriptions.
 
-Redis is used here to store active in-progress exam sessions (TTL-based, no DB writes mid-session).
+### 2. API Gateway
 
-**Key flows**: `POST /exams/start` → gRPC call to Content → Redis session → `POST /exams/submit` → Kafka publish
+The gateway acts as the single entry point for client traffic. It handles routing, access control, authentication checks, rate limiting, and request translation for the downstream services. All user-facing traffic flows through this layer.
 
-See [details](./services/exam-engine.md).
+### 3. Auth Service
 
----
+This service manages identity and session security. It supports social login, token issuance, and user identity validation for the rest of the platform.
 
-### 4. Content Service — NestJS
+### 4. Exam Engine
 
-The question bank. Fetches questions, images, and video links from Sanity CMS (a headless CMS well-suited for rich media like road sign images and instructional clips). Exposes a gRPC interface consumed by the Exam Engine for question retrieval. Caches heavily in Redis since the question bank changes infrequently — cache invalidation triggers on Sanity webhook events.
+The exam engine is the core learning workflow. It manages exam sessions, evaluates submissions, stores results, and publishes completed exam events.
 
-**Data model**: Question (text, category, difficulty), MediaAsset (image/video URL from Sanity), Answer options.
+### 5. Content Service
 
-See [details](./services/content-service.md).
+The content service provides exam questions, media assets, and structured learning material. It is designed to work well with rich media such as images and instructional videos.
 
----
+### 6. Payment Service
 
-### 5. Payment Service — Spring Boot
+This service handles subscription access and billing flows. It creates Stripe checkout sessions, processes Stripe webhooks, and persists subscription state.
 
-Handles subscription purchases via Stripe. Spring Boot is a natural fit here — robust transaction management, mature Stripe Java SDK, and easy Webhook handling. On successful payment, publishes `payment.confirmed` to Kafka, which unlocks access for the user. The Exam Engine and API Gateway consume this event to update subscription status. Stores payment records and subscription validity in its own PostgreSQL database.
+### 7. Statistics Service
 
-**Key flows**: `POST /payments/checkout` → Stripe session → Stripe Webhook → Kafka → unlock access
+The statistics service turns exam outcomes into useful insights such as performance trends, weak areas, and progress over time.
 
-See [details](./services/payment-service.md).
+### 8. Notification Service
 
----
+This service handles user communications such as confirmations, reminders, and milestone updates.
 
-### 6. Statistics Service — FastAPI
+### 9. AI Assistant Service
 
-Consumes `exam.completed` Kafka events and persists structured time-series data into TimescaleDB (PostgreSQL extension optimised for time-series). Provides the user-facing history and analytics endpoints — pass rate over time, average score per category, weak spots, streak tracking. FastAPI is ideal here for its speed with async I/O when aggregating large datasets. Redis caches pre-computed user dashboards with a short TTL.
+The AI assistant service adds an interactive layer on top of the learning experience. It can explain difficult questions in plain language and support learners when they need more guidance.
 
-**Example metrics**: score per session, category accuracy %, time-per-question, monthly trend.
+## Communication model
 
-See [details](./services/statistics-service.md).
+The system uses a combination of synchronous service-to-service communication and event-driven messaging:
 
----
+- HTTP and gRPC are used for direct requests where low latency matters.
+- Kafka is used for asynchronous events such as completed exams, payments, and account events.
+- Redis supports caching and short-lived session state.
+- PostgreSQL stores the persistent data for each service.
+- Sanity is used as the content source for rich exam materials.
+- Stripe is used for subscription and billing operations.
 
-### 7. Notification Service — Spring Boot
+## Service storage responsibilities
 
-A Kafka consumer. Listens to `user.registered`, `exam.completed`, and `payment.confirmed` topics and dispatches emails via SendGrid and push notifications via Firebase FCM. Spring Boot's `@KafkaListener` and scheduling features make this straightforward. Has its own lightweight PostgreSQL for notification logs and preferences (e.g. user opted out of email).
+Each service owns its own persistence boundary:
 
-See [details](./services/notification-service.md).
+- Auth Service: user profiles, refresh tokens, identity state.
+- Exam Engine: exam sessions, answers, result records.
+- Content Service: question bank and media metadata, backed by Sanity and cached in Redis.
+- Payment Service: orders, subscriptions, and Stripe-related billing state.
+- Statistics Service: aggregated exam and learning analytics data.
+- Notification Service: notification preferences and delivery logs.
+- AI Assistant Service: conversation history and assistant message records.
 
----
+## Why this architecture fits the project
 
-## Communication Summary
+This structure helps the team keep the platform reliable while still allowing each domain to evolve independently. It also makes it easier to introduce more AI features, richer analytics, and additional content experiences over time.
 
-See [Communication Summary](./communication/communication.md).
+## Related documentation
 
----
-
-## Tech Rationale
-
-See [Tech Rationale](./tech-rationale.md).
+- [Documentation hub](./README.md)
+- [Technical rationale](./tech-rationale.md)
+- [Communication summary](./communication/communication.md)
+- [Security guide](./security.md)
