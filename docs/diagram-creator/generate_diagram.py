@@ -40,9 +40,14 @@ with Diagram(
         cache = Redis("Rate limiting & cache")
 
         with Cluster("Identity"):
+            google = Custom(
+                "Google OAuth",
+                "./icons/google.png",
+            )
             auth = Python("Auth Service")
             auth_db = PostgreSQL("Auth DB")
             auth >> Edge() >> auth_db
+            auth >> Edge(label="OAuth 2.0 / OpenID Connect") >> google
 
         with Cluster("Learning Flow"):
             exam = Custom(

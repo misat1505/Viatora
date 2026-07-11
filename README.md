@@ -19,12 +19,6 @@ Viatora is a modern, multi-service platform for preparing for the driving licens
 - Notifications for sign-up, payments, and exam milestones.
 - Rich media content managed through a headless CMS for images, videos, and learning assets.
 
-## AI in the project
-
-Viatora includes a dedicated AI assistant service that uses an LLM-backed experience to support learners during study sessions. The assistant is meant to make preparation more interactive by explaining difficult questions, answering follow-up questions, and helping students understand the reasoning behind correct answers.
-
-![AI assistant placeholder](./docs/screenshots/assistant-guides.png)
-
 ## Architecture at a glance
 
 ![Viatora architecture](./docs/diagram-creator/microservices_architecture.png)
@@ -48,6 +42,12 @@ A full overview is available in [docs/architecture.md](docs/architecture.md).
 - Backend services: NestJS, FastAPI, Spring Boot
 - Data and messaging: PostgreSQL, Redis, Kafka, Sanity
 - Infrastructure: Docker, container-based local development
+
+## AI in the project
+
+Viatora includes a dedicated AI assistant service that uses an LLM-backed experience to support learners during study sessions. The assistant is meant to make preparation more interactive by explaining difficult questions, answering follow-up questions, and helping students understand the reasoning behind correct answers.
+
+![AI assistant placeholder](./docs/screenshots/assistant-guides.png)
 
 ## Getting started
 
