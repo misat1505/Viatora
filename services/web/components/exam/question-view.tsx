@@ -1,8 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import Image from 'next/image';
-import { ImageOff, CheckCircle2 } from 'lucide-react';
+import { CheckCircle2 } from 'lucide-react';
 import { cn } from '@/lib/utils';
 import { Card } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
@@ -14,8 +13,8 @@ import type { Locale } from '@/app/[lang]/dictionaries';
 import { ExamQuestionDTO, ExamSessionDTO } from '@/generated/viatoraAPI.schemas';
 import { answerQuestion } from '@/actions/exams/answer-question';
 import { useRouter } from 'next/navigation';
-import { sanityImageUrl } from '@/lib/sanity-image';
 import { finishExam } from '@/actions/exams/finish-exam';
+import MediaDisplayer from '../questions/media-displayer';
 
 type AnswerKey = 'a' | 'b' | 'c';
 
@@ -117,21 +116,11 @@ export function QuestionView({
       <Card className="w-full max-w-2xl overflow-hidden lg:max-w-4xl pt-0 gap-y-0 relative">
         {/* Media */}
         <div className="relative h-48 w-full bg-muted sm:h-64 lg:h-96">
-          {question.media.type === 'image' && question.media.url ? (
-            <Image
-              src={sanityImageUrl(question.media.url)!}
-              alt={question.text[lang] || question.text.en}
-              fill
-              className="object-contain"
-              sizes="(max-width: 1024px) 100vw, 900px"
-              priority
-            />
-          ) : (
-            <div className="flex h-full w-full flex-col items-center justify-center gap-2 text-muted-foreground">
-              <ImageOff className="h-8 w-8" aria-hidden="true" />
-              <span className="text-xs">{t.noImage}</span>
-            </div>
-          )}
+          <MediaDisplayer
+            media={question.media}
+            errorText={question.text[lang] || question.text.en}
+            unavailableText={t.noImage}
+          />
 
           <div className="absolute left-3 top-3">
             <Badge className="bg-background/80 text-foreground backdrop-blur-sm">

@@ -8,3 +8,11 @@ export function sanityImageUrl(ref: string): string | null {
   const [, hash, dimensions, format] = match;
   return `https://cdn.sanity.io/images/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${hash}-${dimensions}.${format}`;
 }
+
+export function sanityFileUrl(ref: string): string | null {
+  const match = ref.match(/^file-([a-f0-9]+)-(\w+)$/);
+  if (!match) return null;
+
+  const [, hash, format] = match;
+  return `https://cdn.sanity.io/files/${SANITY_PROJECT_ID}/${SANITY_DATASET}/${hash}.${format}`;
+}
