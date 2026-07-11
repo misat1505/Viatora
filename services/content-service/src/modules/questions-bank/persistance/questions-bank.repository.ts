@@ -2,12 +2,12 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
   DetailedExamQuestion,
-  ExamQuestion,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
 import { createClient, SanityClient } from '@sanity/client';
 import { ConfigService } from '@nestjs/config';
+import { parseDetailedQuestion, parseQuestion } from '../utils/parse-question';
 
 export const QUESTIONS_BANK_REPOSITORY_TOKEN = Symbol(
   'QUESTIONS_BANK_REPOSITORY_TOKEN',
@@ -64,24 +64,7 @@ export class QuestionsBankRepository
       points,
     });
 
-    const questions = (result as any[]).map((entry) => {
-      const question: ExamQuestion = {
-        id: entry._id,
-        categories: entry.categories,
-        slug: entry.slug.current,
-        points: entry.points,
-        media: {
-          type: entry.media.type,
-          url: entry.media?.image?.asset?._ref ?? '',
-        },
-        answers: { ...entry.options, correctAnswer: entry.correctOption },
-        questionType: entry.questionType,
-        tags: entry.tags,
-        text: entry.text,
-      };
-
-      return question;
-    });
+    const questions = (result as any[]).map(parseQuestion);
 
     return questions;
   }
@@ -113,26 +96,7 @@ export class QuestionsBankRepository
       return null;
     }
 
-    const question: DetailedExamQuestion = {
-      id: fetchedQuestion._id,
-      categories: fetchedQuestion.categories,
-      slug: fetchedQuestion.slug.current,
-      points: fetchedQuestion.points,
-      media: {
-        type: fetchedQuestion.media.type,
-        url: fetchedQuestion.media?.image?.asset?._ref ?? '',
-      },
-      answers: {
-        ...fetchedQuestion.options,
-        correctAnswer: fetchedQuestion.correctOption,
-      },
-      questionType: fetchedQuestion.questionType,
-      tags: fetchedQuestion.tags,
-      text: fetchedQuestion.text,
-      explanation: fetchedQuestion.explanation,
-    };
-
-    return question;
+    return parseDetailedQuestion(fetchedQuestion);
   }
 
   async getQuestionById(id: string): Promise<DetailedExamQuestion | null> {
@@ -162,25 +126,6 @@ export class QuestionsBankRepository
       return null;
     }
 
-    const question: DetailedExamQuestion = {
-      id: fetchedQuestion._id,
-      categories: fetchedQuestion.categories,
-      slug: fetchedQuestion.slug.current,
-      points: fetchedQuestion.points,
-      media: {
-        type: fetchedQuestion.media.type,
-        url: fetchedQuestion.media?.image?.asset?._ref ?? '',
-      },
-      answers: {
-        ...fetchedQuestion.options,
-        correctAnswer: fetchedQuestion.correctOption,
-      },
-      questionType: fetchedQuestion.questionType,
-      tags: fetchedQuestion.tags,
-      text: fetchedQuestion.text,
-      explanation: fetchedQuestion.explanation,
-    };
-
-    return question;
+    return parseDetailedQuestion(fetchedQuestion);
   }
 }
