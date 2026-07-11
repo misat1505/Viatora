@@ -13,6 +13,5 @@ export const getQuestionBySlug = safeServerAction(async (slug: string) => {
     headers: { Authorization: `Bearer ${accessToken}` },
   });
 
-  console.log(QuestionsControllerGetQuestionBySlugResponse.safeParse(response.data));
   return QuestionsControllerGetQuestionBySlugResponse.parse(response.data);
 });
