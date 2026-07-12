@@ -3,6 +3,8 @@ import { ExamResultsList } from '@/components/exam/exams-result-list';
 import { getDictionary, Locale } from '../dictionaries';
 import { StartExamTiles } from '@/components/exam/start-exam-tiles';
 import { getUserSubscriptions } from '@/actions/payments/get-user-subscriptions';
+import { LoginRequired } from '@/components/login-required';
+import { UnauthorizedError } from '@/utils/error';
 
 const ExamBrowserPage = async ({ params }: { params: Promise<{ lang: Locale }> }) => {
   const { lang } = await params;
@@ -10,6 +12,9 @@ const ExamBrowserPage = async ({ params }: { params: Promise<{ lang: Locale }> }
   const t = dict.account;
 
   const [error, exams] = await getExamsResults();
+  if (error instanceof UnauthorizedError) {
+    return <LoginRequired lang={lang} />;
+  }
   if (error) throw error;
 
   const [, userSubscriptions] = await getUserSubscriptions();
