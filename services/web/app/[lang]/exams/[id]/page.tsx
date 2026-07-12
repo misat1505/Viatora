@@ -1,10 +1,16 @@
 import { getExamById } from '@/actions/exams/get-exam-by-id';
 import { Locale } from '../../dictionaries';
-import { redirect } from 'next/navigation';
+import { notFound, redirect } from 'next/navigation';
+import { NotFoundError, UnauthorizedError } from '@/utils/error';
+import { LoginRequired } from '@/components/login-required';
 
 const ExamPage = async ({ params }: { params: Promise<{ id: string; lang: Locale }> }) => {
   const { id: examId, lang } = await params;
   const [error, exam] = await getExamById(examId);
+  if (error instanceof NotFoundError) return notFound();
+  if (error instanceof UnauthorizedError) {
+    return <LoginRequired lang={lang} />;
+  }
 
   if (error) throw error;
 
