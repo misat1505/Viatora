@@ -5,6 +5,12 @@ import {
   QuestionsBankRepository,
 } from './persistance/questions-bank.repository';
 import { QuestionsBankService } from './questions-bank.service';
+import { ConfigService } from '@nestjs/config';
+import Redis from 'ioredis';
+import {
+  QUESTIONS_BANK_CACHE_TOKEN,
+  QuestionsBankCache,
+} from './cache/questions-bank.cache';
 
 @Module({
   controllers: [QuestionsBankController],
@@ -13,6 +19,21 @@ import { QuestionsBankService } from './questions-bank.service';
     {
       provide: QUESTIONS_BANK_REPOSITORY_TOKEN,
       useClass: QuestionsBankRepository,
+    },
+    {
+      provide: QUESTIONS_BANK_CACHE_TOKEN,
+      useClass: QuestionsBankCache,
+    },
+    {
+      provide: 'REDIS',
+      inject: [ConfigService],
+      useFactory: (config: ConfigService) => {
+        return new Redis({
+          host: config.getOrThrow<string>('REDIS_HOST'),
+          port: config.getOrThrow<number>('REDIS_PORT'),
+          password: config.getOrThrow<string>('REDIS_PASSWORD'),
+        });
+      },
     },
   ],
 })
