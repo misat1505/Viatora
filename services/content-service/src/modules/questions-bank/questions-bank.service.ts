@@ -9,12 +9,16 @@ import {
   GetQuestionsResponse,
 } from 'src/generated/content';
 import { QuestionNotFoundException } from 'src/common/exceptions/not-found.exception';
+import { QUESTIONS_BANK_CACHE_TOKEN } from './cache/questions-bank.cache';
+import { type IQuestionsBankCache } from './cache/questions-bank.cache.interface';
 
 @Injectable()
 export class QuestionsBankService {
   constructor(
     @Inject(QUESTIONS_BANK_REPOSITORY_TOKEN)
     private readonly questionBankRepository: IQuestionsBankRepository,
+    @Inject(QUESTIONS_BANK_CACHE_TOKEN)
+    private readonly questionBankCache: IQuestionsBankCache,
   ) {}
 
   async getQuestionsByCategory(
@@ -28,10 +32,15 @@ export class QuestionsBankService {
   async getQuestionBySlug(
     dto: GetQuestionBySlugRequest,
   ): Promise<DetailedExamQuestion> {
-    const question = await this.questionBankRepository.getQuestionBySlug(
-      dto.slug,
-    );
+    const { slug } = dto;
+
+    const cachedQuestion = await this.questionBankCache.getQuestionBySlug(slug);
+    if (cachedQuestion) return cachedQuestion;
+
+    const question = await this.questionBankRepository.getQuestionBySlug(slug);
     if (!question) throw new QuestionNotFoundException();
+
+    await this.questionBankCache.setQuestion(question);
 
     return question;
   }
@@ -39,8 +48,15 @@ export class QuestionsBankService {
   async getQuestionById(
     dto: GetQuestionByIdRequest,
   ): Promise<DetailedExamQuestion> {
-    const question = await this.questionBankRepository.getQuestionById(dto.id);
+    const { id } = dto;
+
+    const cachedQuestion = await this.questionBankCache.getQuestionById(id);
+    if (cachedQuestion) return cachedQuestion;
+
+    const question = await this.questionBankRepository.getQuestionById(id);
     if (!question) throw new QuestionNotFoundException();
+
+    await this.questionBankCache.setQuestion(question);
 
     return question;
   }
