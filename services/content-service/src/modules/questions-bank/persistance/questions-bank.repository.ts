@@ -3,11 +3,10 @@ import { IQuestionsBankRepository } from './questions-bank.repository.interface'
 import {
   DetailedExamQuestion,
   GetQuestionsRequest,
-  GetQuestionsResponse,
 } from 'src/generated/content';
 import { createClient, SanityClient } from '@sanity/client';
 import { ConfigService } from '@nestjs/config';
-import { parseDetailedQuestion, parseQuestion } from '../utils/parse-question';
+import { parseDetailedQuestion } from '../utils/parse-question';
 
 export const QUESTIONS_BANK_REPOSITORY_TOKEN = Symbol(
   'QUESTIONS_BANK_REPOSITORY_TOKEN',
@@ -29,44 +28,6 @@ export class QuestionsBankRepository
       token: this.configService.getOrThrow<string>('SANITY_TOKEN'),
       useCdn: false,
     });
-  }
-
-  async getQuestionsByCategory(
-    filters: GetQuestionsRequest,
-  ): Promise<GetQuestionsResponse['questions']> {
-    const { category, questionType, count, points } = filters;
-
-    const query = `
-      *[
-        _type == "question" &&
-        !(_id in path("drafts.**")) &&
-        $category in categories &&
-        questionType == $questionType &&
-        points == $points
-      ][0...$count]{
-        _id,
-        text,
-        slug,
-        points,
-        options,
-        media,
-        tags,
-        categories,
-        questionType,
-        correctOption
-      }
-    `;
-
-    const result = await this.sanityClient.fetch<any[]>(query, {
-      category,
-      questionType,
-      count,
-      points,
-    });
-
-    const questions = result.map(parseQuestion);
-
-    return questions;
   }
 
   async getQuestionBySlug(slug: string): Promise<DetailedExamQuestion | null> {
