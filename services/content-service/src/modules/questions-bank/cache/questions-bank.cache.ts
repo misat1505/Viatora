@@ -54,7 +54,7 @@ export class QuestionsBankCache implements IQuestionsBankCache {
     return ids;
   }
 
-  async cacheQuestionIds(
+  async cacheQuestionFilter(
     filters: GetQuestionsRequest,
     ids: ExamQuestion['id'][],
   ): Promise<void> {
@@ -65,6 +65,36 @@ export class QuestionsBankCache implements IQuestionsBankCache {
 
     pipeline.sadd(key, ...ids);
     pipeline.expire(key, 60 * 60 * 24);
+
+    await pipeline.exec();
+  }
+
+  async getQuestionsByIds(
+    ids: ExamQuestion['id'][],
+  ): Promise<(DetailedExamQuestion | null)[]> {
+    const keys = ids.map((id) => `${this.prefix}:id:${id}`);
+    const cached = await this.redis.mget(keys);
+    const parsed = cached.map((q) => {
+      if (!q) return null;
+      return JSON.parse(q) as DetailedExamQuestion;
+    });
+
+    return parsed;
+  }
+
+  async cacheQuestions(questions: DetailedExamQuestion[]): Promise<void> {
+    const pipeline = this.redis.pipeline();
+
+    for (const question of questions) {
+      pipeline.set(
+        `${this.prefix}:id:${question.id}`,
+        JSON.stringify(question),
+      );
+      pipeline.set(
+        `${this.prefix}:slug:${question.slug}`,
+        JSON.stringify(question),
+      );
+    }
 
     await pipeline.exec();
   }

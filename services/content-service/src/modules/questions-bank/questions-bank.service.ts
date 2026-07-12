@@ -26,9 +26,8 @@ export class QuestionsBankService {
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse> {
     const questionsIds = await this.getRandomQuestionIds(filters);
-    const questions =
-      await this.questionBankRepository.getQuestionsByCategory(filters);
-    return { questions, cacheHit: 'miss' };
+    const [questions, cacheHit] = await this.getQuestionsByIds(questionsIds);
+    return { questions, cacheHit };
   }
 
   async getQuestionBySlug(
@@ -68,16 +67,56 @@ export class QuestionsBankService {
   ): Promise<ExamQuestion['id'][]> {
     const idsFromCache =
       await this.questionBankCache.getRandomQuestionIds(filters);
-    console.log(idsFromCache);
     if (idsFromCache) return idsFromCache;
 
     const fetchedIds =
       await this.questionBankRepository.getQuestionIdsByFilters(filters);
-    await this.questionBankCache.cacheQuestionIds(filters, fetchedIds);
+    await this.questionBankCache.cacheQuestionFilter(filters, fetchedIds);
 
     const ids = await this.questionBankCache.getRandomQuestionIds(filters);
     if (!ids) throw new Error('Questions not found');
 
     return ids;
+  }
+
+  private async getQuestionsByIds(
+    ids: ExamQuestion['id'][],
+  ): Promise<[ExamQuestion[], GetQuestionsResponse['cacheHit']]> {
+    const cacheResponse = await this.questionBankCache.getQuestionsByIds(ids);
+
+    const result = new Map<string, DetailedExamQuestion>();
+    const missingIds: string[] = [];
+
+    cacheResponse.forEach((value, index) => {
+      if (value) {
+        result.set(ids[index], value);
+      } else {
+        missingIds.push(ids[index]);
+      }
+    });
+
+    let cacheHit: GetQuestionsResponse['cacheHit'] = 'hit';
+
+    if (missingIds.length > 0) {
+      cacheHit = 'miss';
+
+      const missingQuestions =
+        await this.questionBankRepository.getQuestionsByIds(missingIds);
+
+      await this.questionBankCache.cacheQuestions(missingQuestions);
+
+      missingQuestions.forEach((question) => {
+        result.set(question.id, question);
+      });
+    }
+
+    const detailedQuestions = ids
+      .map((id) => result.get(id))
+      .filter(Boolean) as DetailedExamQuestion[];
+    const questions: ExamQuestion[] = detailedQuestions.map(
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
+      ({ explanation, ...rest }) => rest,
+    );
+    return [questions, cacheHit];
   }
 }

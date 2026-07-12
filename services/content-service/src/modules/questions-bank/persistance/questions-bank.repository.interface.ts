@@ -13,4 +13,5 @@ export interface IQuestionsBankRepository {
   getQuestionById(id: string): Promise<DetailedExamQuestion | null>;
 
   getQuestionIdsByFilters(filters: GetQuestionsRequest): Promise<string[]>;
+  getQuestionsByIds(ids: string[]): Promise<DetailedExamQuestion[]>;
 }

@@ -57,14 +57,14 @@ export class QuestionsBankRepository
       }
     `;
 
-    const result = await this.sanityClient.fetch(query, {
+    const result = await this.sanityClient.fetch<any[]>(query, {
       category,
       questionType,
       count,
       points,
     });
 
-    const questions = (result as any[]).map(parseQuestion);
+    const questions = result.map(parseQuestion);
 
     return questions;
   }
@@ -144,5 +144,30 @@ export class QuestionsBankRepository
       `,
       filters,
     );
+  }
+
+  async getQuestionsByIds(ids: string[]): Promise<DetailedExamQuestion[]> {
+    const query = `
+      *[
+        _type == "question" &&
+        _id in $ids
+      ]{
+        _id,
+        text,
+        slug,
+        points,
+        options,
+        media,
+        tags,
+        categories,
+        questionType,
+        correctOption,
+        explanation
+      }
+      `;
+
+    const questions = await this.sanityClient.fetch<any[]>(query, { ids });
+
+    return questions.map(parseDetailedQuestion);
   }
 }

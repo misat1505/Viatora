@@ -11,8 +11,12 @@ export interface IQuestionsBankCache {
   ): Promise<DetailedExamQuestion | null>;
   setQuestion(question: DetailedExamQuestion): Promise<void>;
   getRandomQuestionIds(filters: GetQuestionsRequest): Promise<string[] | null>;
-  cacheQuestionIds(
+  cacheQuestionFilter(
     filters: GetQuestionsRequest,
     ids: ExamQuestion['id'][],
   ): Promise<void>;
+  getQuestionsByIds(
+    ids: ExamQuestion['id'][],
+  ): Promise<(DetailedExamQuestion | null)[]>;
+  cacheQuestions(questions: DetailedExamQuestion[]): Promise<void>;
 }
