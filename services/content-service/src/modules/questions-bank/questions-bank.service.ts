@@ -3,6 +3,7 @@ import { QUESTIONS_BANK_REPOSITORY_TOKEN } from './persistance/questions-bank.re
 import { type IQuestionsBankRepository } from './persistance/questions-bank.repository.interface';
 import {
   DetailedExamQuestion,
+  ExamQuestion,
   GetQuestionByIdRequest,
   GetQuestionBySlugRequest,
   GetQuestionsRequest,
@@ -24,6 +25,7 @@ export class QuestionsBankService {
   async getQuestionsByCategory(
     filters: GetQuestionsRequest,
   ): Promise<GetQuestionsResponse> {
+    const questionsIds = await this.getRandomQuestionIds(filters);
     const questions =
       await this.questionBankRepository.getQuestionsByCategory(filters);
     return { questions, cacheHit: 'miss' };
@@ -59,5 +61,23 @@ export class QuestionsBankService {
     await this.questionBankCache.setQuestion(question);
 
     return question;
+  }
+
+  private async getRandomQuestionIds(
+    filters: GetQuestionsRequest,
+  ): Promise<ExamQuestion['id'][]> {
+    const idsFromCache =
+      await this.questionBankCache.getRandomQuestionIds(filters);
+    console.log(idsFromCache);
+    if (idsFromCache) return idsFromCache;
+
+    const fetchedIds =
+      await this.questionBankRepository.getQuestionIdsByFilters(filters);
+    await this.questionBankCache.cacheQuestionIds(filters, fetchedIds);
+
+    const ids = await this.questionBankCache.getRandomQuestionIds(filters);
+    if (!ids) throw new Error('Questions not found');
+
+    return ids;
   }
 }

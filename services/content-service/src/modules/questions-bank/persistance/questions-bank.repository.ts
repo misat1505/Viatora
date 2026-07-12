@@ -128,4 +128,21 @@ export class QuestionsBankRepository
 
     return parseDetailedQuestion(fetchedQuestion);
   }
+
+  async getQuestionIdsByFilters(
+    filters: GetQuestionsRequest,
+  ): Promise<string[]> {
+    return this.sanityClient.fetch<string[]>(
+      `
+      *[
+        _type == "question" &&
+        !(_id in path("drafts.**")) &&
+        $category in categories &&
+        questionType == $questionType &&
+        points == $points
+      ]._id
+      `,
+      filters,
+    );
+  }
 }
