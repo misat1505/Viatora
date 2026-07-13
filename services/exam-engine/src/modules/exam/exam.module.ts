@@ -17,9 +17,10 @@ import {
   EXAMS_CONFIG,
 } from './config/exams-config';
 import { ExamResultsModule } from '../exam-results/exam-results.module';
+import { KafkaModule } from 'src/kafka/kafka.module';
 
 @Module({
-  imports: [GrpcClientsModule, ExamResultsModule],
+  imports: [GrpcClientsModule, ExamResultsModule, KafkaModule],
   controllers: [ExamController],
   providers: [
     ExamService,

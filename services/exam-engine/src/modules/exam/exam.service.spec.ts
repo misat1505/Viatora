@@ -19,6 +19,7 @@ import {
   QuestionNotFoundException,
 } from 'src/common/exceptions/not-found.exception';
 import { ExamResultsService } from '../exam-results/exam-results.service';
+import { KafkaProducerService } from 'src/kafka/kafka-producer.service';
 
 vi.mock('./utils/shuffle-questions', () => ({
   shuffleQuestions: (questions: ExamQuestion[]) => questions,
@@ -35,6 +36,10 @@ describe('ExamService', () => {
     createExamSession: vi.fn(),
     getById: vi.fn(),
     updateById: vi.fn(),
+  };
+
+  const kafkaProducerMock = {
+    produce: vi.fn(),
   };
 
   const examsConfigurationsMock = {
@@ -79,6 +84,10 @@ describe('ExamService', () => {
         {
           provide: ExamResultsService,
           useValue: examResultsServiceMock,
+        },
+        {
+          provide: KafkaProducerService,
+          useValue: kafkaProducerMock,
         },
       ],
     }).compile();
@@ -431,6 +440,12 @@ describe('ExamService', () => {
 
     expect(examRepositoryMock.getById).toHaveBeenCalledWith('sess_1');
     expect(examResultsServiceMock.markExam).toHaveBeenCalled();
+
+    expect(kafkaProducerMock.produce).toHaveBeenCalledTimes(1);
+    expect(kafkaProducerMock.produce).toHaveBeenCalledWith(
+      'exam.finished',
+      result,
+    );
 
     expect(result).toEqual(resultMock);
   });
