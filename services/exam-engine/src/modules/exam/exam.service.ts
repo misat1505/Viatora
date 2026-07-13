@@ -31,6 +31,7 @@ import {
 } from 'src/common/exceptions/bad-request.exception';
 import { ExamInitializationException } from 'src/common/exceptions/internal.exception';
 import { ExamResultsService } from '../exam-results/exam-results.service';
+import { KafkaProducerService } from 'src/kafka/kafka-producer.service';
 
 @Injectable()
 export class ExamService {
@@ -42,6 +43,7 @@ export class ExamService {
     @Inject(DEFAULT_EXAMS_CONFIGS_TOKEN)
     private readonly examsConfigurations: ExamsConfigurations,
     private readonly examResultsService: ExamResultsService,
+    private readonly kafkaProucerService: KafkaProducerService,
   ) {}
 
   async startExamSession(dto: StartSessionRequest): Promise<ExamSession> {
@@ -164,6 +166,8 @@ export class ExamService {
       );
 
     const examResult = await this.examResultsService.markExam(exam);
+
+    await this.kafkaProucerService.produce('exam.finished', examResult);
 
     return examResult;
   }
