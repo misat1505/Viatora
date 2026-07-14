@@ -2,6 +2,7 @@ import { Injectable, OnModuleInit } from '@nestjs/common';
 import { IQuestionsBankRepository } from './questions-bank.repository.interface';
 import {
   DetailedExamQuestion,
+  GetQuestionsByFiltersRequest,
   GetQuestionsRequest,
 } from 'src/generated/content';
 import { createClient, SanityClient } from '@sanity/client';
@@ -128,6 +129,51 @@ export class QuestionsBankRepository
       `;
 
     const questions = await this.sanityClient.fetch<any[]>(query, { ids });
+
+    return questions.map(parseDetailedQuestion);
+  }
+
+  async getQuestionsByFilters(
+    filters: GetQuestionsByFiltersRequest,
+  ): Promise<DetailedExamQuestion[]> {
+    const { lang = 'en', limit = 10, page = 1, points, tags = [] } = filters;
+
+    const start = (page - 1) * limit;
+    const end = start + limit;
+
+    const query = `
+      *[
+        _type == "question" &&
+        !(_id in path("drafts.**"))
+        ${points ? '&& points == $points' : ''}
+        ${tags.length ? '&& count(tags[@ in $tags]) == length($tags)' : ''}
+      ]
+      | order(text[$lang] asc)
+      [$start...$end]
+      {
+        _id,
+        text,
+        slug,
+        points,
+        options,
+        media,
+        tags,
+        categories,
+        questionType,
+        correctOption,
+        explanation
+      }
+    `;
+
+    const params = {
+      lang,
+      points,
+      tags,
+      start,
+      end,
+    };
+
+    const questions = await this.sanityClient.fetch<any[]>(query, params);
 
     return questions.map(parseDetailedQuestion);
   }

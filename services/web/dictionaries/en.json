@@ -501,5 +501,58 @@
         "description": "See plans and unlock more categories."
       }
     }
+  },
+  "questions": {
+    "browserTitle": "Question Browser",
+    "browserDescription": "Browse and filter driving exam questions.",
+    "filters": {
+      "title": "Filters",
+      "reset": "Reset",
+      "page": "Page",
+      "limit": "Limit",
+      "points": "Points",
+      "tags": "Tags",
+      "selectTags": "Select tags...",
+      "point": "point",
+      "pointsPlural": "points"
+    },
+    "list": {
+      "points": "pts",
+      "viewQuestion": "View question"
+    }
+  },
+  "multiSelect": {
+    "placeholder": "Select options",
+    "noResultsFound": "No results found.",
+    "dropdownDescription": "Multi-select dropdown. Use arrow keys to navigate, Enter to select, and Escape to close.",
+    "noOptionsSelected": "No options selected",
+    "selectedSummary_one": "{{count}} option selected: {{list}}",
+    "selectedSummary_other": "{{count}} options selected: {{list}}",
+    "triggerAriaLabel": "Multi-select: {{selected}} of {{total}} options selected. {{placeholder}}",
+    "removeOption": "Remove {{label}} from selection",
+    "clearAll": "Clear all {{count}} selected options",
+    "moreCount": "+ {{count}} more",
+    "availableOptions": "Available options",
+    "searchPlaceholder": "Search options...",
+    "searchAriaLabel": "Search through available options",
+    "searchHelp": "Type to filter options. Use arrow keys to navigate results.",
+    "selectAll": "Select All",
+    "selectAllWithCount": "Select All - {{count}} options",
+    "selectAllAriaLabel": "Select all {{count}} options",
+    "optionSelectedSuffix": ", selected",
+    "optionNotSelectedSuffix": ", not selected",
+    "optionDisabledSuffix": ", disabled",
+    "clear": "Clear",
+    "close": "Close",
+    "announce": {
+      "singleSelected": "{{label}} selected. {{count}} of {{total}} options selected.",
+      "multipleSelected_one": "{{addedCount}} option selected. {{count}} of {{total}} total selected.",
+      "multipleSelected_other": "{{addedCount}} options selected. {{count}} of {{total}} total selected.",
+      "optionRemoved": "Option removed. {{count}} of {{total}} options selected.",
+      "dropdownOpened": "Dropdown opened. {{total}} options available. Use arrow keys to navigate.",
+      "dropdownClosed": "Dropdown closed.",
+      "searchResults_one": "{{count}} option found for \"{{search}}\"",
+      "searchResults_other": "{{count}} options found for \"{{search}}\""
+    }
   }
 }

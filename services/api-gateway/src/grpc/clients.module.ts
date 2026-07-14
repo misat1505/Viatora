@@ -52,6 +52,9 @@ export const ASSISTANT_PACKAGE = 'ASSISTANT_PACKAGE';
             package: 'Viatora.content',
             protoPath: PROTO_PATHS.content,
             url: config.getOrThrow('CONTENT_SERVICE_GRPC_URL'),
+            loader: {
+              arrays: true,
+            },
           },
         }),
       },

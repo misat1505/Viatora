@@ -16,11 +16,24 @@ service ContentService {
   // Composition: 20 basic (1pt) + 6 medium (2pt) + 6 specialist (3pt) = 32 questions, max 74pts.
   // NOTE: correct_option and basicAnswer are NOT exposed — exam integrity.
   rpc GetQuestions (GetQuestionsRequest) returns (GetQuestionsResponse);
+  rpc GetQuestionsByFilters (GetQuestionsByFiltersRequest) returns (GetQuestionsByFiltersResponse);
 
   // Fetches a single question with correct_option and explanation.
   // Used after exam completion for result breakdown.
   rpc GetQuestionById (GetQuestionByIdRequest) returns (DetailedExamQuestion);
   rpc GetQuestionBySlug (GetQuestionBySlugRequest) returns (DetailedExamQuestion);
+}
+
+message GetQuestionsByFiltersRequest {
+  int32 page = 1;
+  int32 limit = 2;
+  int32 points = 3;
+  repeated string tags = 4;
+  string lang = 5;
+}
+
+message GetQuestionsByFiltersResponse {
+  repeated DetailedExamQuestion questions = 1;
 }
 
 // ── GetQuestions ─────────────────────────────────────────────────
