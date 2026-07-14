@@ -16,6 +16,7 @@ export function safeServerAction<Args extends unknown[], T>(fn: (...args: Args) 
       return [null, data];
     } catch (e) {
       if (e instanceof AxiosError) {
+        console.error('RESPONSE ERROR:', e.response?.status, e.response?.data);
         const status = e.response?.status;
 
         switch (status) {

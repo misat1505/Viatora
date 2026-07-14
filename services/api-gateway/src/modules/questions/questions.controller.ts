@@ -1,9 +1,12 @@
 import {
+  Body,
   Controller,
   Get,
   Inject,
   OnModuleInit,
   Param,
+  Post,
+  Query,
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -14,6 +17,7 @@ import { QUESTIONS_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
 import { DetailedExamQuestionDTO } from './dto/detailed-question.dto';
+import { GetQuestionsQueryDto } from './dto/get-questions.dto';
 
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
@@ -45,5 +49,28 @@ export class QuestionsController implements OnModuleInit {
 
     // @ts-expect-error TODO: make this error go away
     return result;
+  }
+
+  @Post()
+  @ApiOkResponse({
+    type: DetailedExamQuestionDTO,
+    isArray: true,
+  })
+  async getQuestions(
+    @Body() body: GetQuestionsQueryDto,
+  ): Promise<DetailedExamQuestionDTO[]> {
+    console.log(body);
+    return [];
+
+    // const result = await firstValueFrom(
+    //   this.questionsService.getQuestions(
+    //     query,
+    //     // @ts-expect-error metadata not generated
+    //     this.grpcMetadataService.authMeta,
+    //   ),
+    // );
+
+    // // @ts-expect-error
+    // return result.questions;
   }
 }
