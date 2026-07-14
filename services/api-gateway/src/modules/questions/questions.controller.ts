@@ -6,7 +6,6 @@ import {
   OnModuleInit,
   Param,
   Post,
-  Query,
   UseGuards,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
@@ -60,7 +59,6 @@ export class QuestionsController implements OnModuleInit {
     @Body() body: Required<GetQuestionsQueryDto>,
   ): Promise<DetailedExamQuestionDTO[]> {
     const result = await firstValueFrom(
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
       this.questionsService.getQuestionsByFilters(
         body,
         // @ts-expect-error metadata not generated
@@ -69,7 +67,6 @@ export class QuestionsController implements OnModuleInit {
     );
 
     // @ts-expect-error TODO: make this error go away
-    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
     return result.questions;
   }
 }

@@ -14,6 +14,7 @@ describe('QuestionsBankService', () => {
     getQuestionById: vi.fn(),
     getQuestionIdsByFilters: vi.fn(),
     getQuestionsByIds: vi.fn(),
+    getQuestionsByFilters: vi.fn(),
   };
 
   const cacheMock = {
@@ -274,6 +275,88 @@ describe('QuestionsBankService', () => {
           id: 'missing',
         }),
       ).rejects.toBeInstanceOf(QuestionNotFoundException);
+    });
+  });
+
+  describe('getQuestionsByFilters', () => {
+    it('should return questions using provided filters', async () => {
+      const filters = {
+        lang: 'pl',
+        limit: 20,
+        page: 2,
+        points: 5,
+        tags: ['math', 'algebra'],
+      };
+
+      const questions = [
+        {
+          id: 'q1',
+          slug: 'question-1',
+        },
+        {
+          id: 'q2',
+          slug: 'question-2',
+        },
+      ];
+
+      repositoryMock.getQuestionsByFilters.mockResolvedValue(questions);
+
+      const result = await service.getQuestionsByFilters(filters);
+
+      expect(repositoryMock.getQuestionsByFilters).toHaveBeenCalledWith({
+        lang: 'pl',
+        limit: 20,
+        page: 2,
+        points: 5,
+        tags: ['math', 'algebra'],
+      });
+
+      expect(result).toEqual({
+        questions,
+      });
+    });
+
+    it('should apply default values for missing filters', async () => {
+      const filters = {};
+
+      const questions = [
+        {
+          id: 'q1',
+        },
+      ];
+
+      repositoryMock.getQuestionsByFilters.mockResolvedValue(questions);
+
+      // @ts-expect-error test for guard
+      const result = await service.getQuestionsByFilters(filters);
+
+      expect(repositoryMock.getQuestionsByFilters).toHaveBeenCalledWith({
+        lang: 'en',
+        limit: 10,
+        page: 1,
+        points: null,
+        tags: [],
+      });
+
+      expect(result).toEqual({
+        questions,
+      });
+    });
+
+    it('should propagate repository error', async () => {
+      repositoryMock.getQuestionsByFilters.mockRejectedValue(
+        new Error('database failed'),
+      );
+
+      await expect(
+        service.getQuestionsByFilters({
+          lang: 'en',
+          page: 0,
+          limit: 0,
+          points: 0,
+          tags: [],
+        }),
+      ).rejects.toThrow('database failed');
     });
   });
 });

@@ -190,4 +190,98 @@ describe('QuestionsBankRepository', () => {
 
     expect(result).toEqual([]);
   });
+
+  it('should call sanity with pagination params in getQuestionsByFilters', async () => {
+    sanityFetchMock.mockResolvedValue([
+      {
+        _id: 'q1',
+        text: {
+          en: 'Question 1',
+        },
+        slug: {
+          current: 'question-1',
+        },
+        points: 5,
+        options: {
+          a: 'A',
+          b: 'B',
+        },
+        media: null,
+        tags: ['math'],
+        categories: ['A'],
+        questionType: 'basic',
+        correctOption: 'a',
+        explanation: 'Explanation',
+      },
+    ]);
+
+    const result = await repository.getQuestionsByFilters({
+      lang: 'en',
+      limit: 10,
+      page: 2,
+      points: 5,
+      tags: ['math'],
+    });
+
+    expect(sanityFetchMock).toHaveBeenCalledTimes(1);
+
+    const [query, params] = sanityFetchMock.mock.calls[0];
+
+    expect(query).toContain('points == $points');
+    expect(query).toContain('count(tags[@ in $tags]) == length($tags)');
+    expect(query).toContain('$start...$end');
+
+    expect(params).toEqual({
+      lang: 'en',
+      points: 5,
+      tags: ['math'],
+      start: 10,
+      end: 20,
+    });
+
+    expect(result).toEqual([
+      {
+        id: 'q1',
+        categories: ['A'],
+        slug: 'question-1',
+        points: 5,
+        media: {
+          type: 'none',
+          url: '',
+        },
+        answers: {
+          a: 'A',
+          b: 'B',
+          correctAnswer: 'a',
+        },
+        questionType: 'basic',
+        tags: ['math'],
+        text: {
+          en: 'Question 1',
+        },
+        explanation: 'Explanation',
+      },
+    ]);
+  });
+
+  it('should use default values in getQuestionsByFilters', async () => {
+    sanityFetchMock.mockResolvedValue([]);
+
+    // @ts-expect-error test for guard
+    const result = await repository.getQuestionsByFilters({});
+
+    expect(sanityFetchMock).toHaveBeenCalledTimes(1);
+
+    const [, params] = sanityFetchMock.mock.calls[0];
+
+    expect(params).toEqual({
+      lang: 'en',
+      points: undefined,
+      tags: [],
+      start: 0,
+      end: 10,
+    });
+
+    expect(result).toEqual([]);
+  });
 });

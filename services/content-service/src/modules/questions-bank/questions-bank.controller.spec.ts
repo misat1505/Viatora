@@ -11,6 +11,7 @@ describe('QuestionsBankController', () => {
     getQuestionsByCategory: vi.fn(),
     getQuestionBySlug: vi.fn(),
     getQuestionById: vi.fn(),
+    getQuestionsByFilters: vi.fn(),
   };
 
   beforeEach(async () => {
@@ -86,5 +87,56 @@ describe('QuestionsBankController', () => {
 
     expect(serviceMock.getQuestionById).toHaveBeenCalledWith(dto);
     expect(result).toEqual(response);
+  });
+
+  it('should call service and return filtered questions', async () => {
+    const dto = {
+      category: 'B',
+      difficulty: 'easy',
+      limit: 10,
+    };
+
+    const response = {
+      questions: [
+        {
+          id: 'q1',
+          slug: 'question-1',
+        },
+      ],
+      total: 1,
+    };
+
+    serviceMock.getQuestionsByFilters.mockResolvedValue(response);
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    const result = await controller.getQuestionsByFilters(dto as any);
+
+    expect(serviceMock.getQuestionsByFilters).toHaveBeenCalledWith(dto);
+    expect(result).toEqual(response);
+  });
+
+  it('should propagate error from getQuestionsByFilters', async () => {
+    const dto = {
+      category: 'B',
+    };
+
+    serviceMock.getQuestionsByFilters.mockRejectedValue(
+      new Error('service failed'),
+    );
+
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+    await expect(controller.getQuestionsByFilters(dto as any)).rejects.toThrow(
+      'service failed',
+    );
+  });
+
+  it('should propagate error from getQuestionBySlug', async () => {
+    serviceMock.getQuestionBySlug.mockRejectedValue(
+      new Error('service failed'),
+    );
+
+    await expect(
+      controller.getQuestionBySlug({ slug: 'test' }),
+    ).rejects.toThrow('service failed');
   });
 });
