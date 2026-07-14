@@ -6,6 +6,8 @@ import {
   ExamQuestion,
   GetQuestionByIdRequest,
   GetQuestionBySlugRequest,
+  GetQuestionsByFiltersRequest,
+  GetQuestionsByFiltersResponse,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
@@ -60,6 +62,19 @@ export class QuestionsBankService {
     await this.questionBankCache.setQuestion(question);
 
     return question;
+  }
+
+  async getQuestionsByFilters(
+    filters: GetQuestionsByFiltersRequest,
+  ): Promise<GetQuestionsByFiltersResponse> {
+    const questions = await this.questionBankRepository.getQuestionsByFilters({
+      lang: filters.lang ?? 'en',
+      limit: filters.limit ?? 10,
+      page: filters.page ?? 1,
+      points: filters.points ?? null,
+      tags: filters.tags ?? [],
+    });
+    return { questions };
   }
 
   private async getRandomQuestionIds(

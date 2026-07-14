@@ -1,5 +1,6 @@
 import {
   DetailedExamQuestion,
+  GetQuestionsByFiltersRequest,
   GetQuestionsRequest,
 } from 'src/generated/content';
 
@@ -9,4 +10,8 @@ export interface IQuestionsBankRepository {
 
   getQuestionIdsByFilters(filters: GetQuestionsRequest): Promise<string[]>;
   getQuestionsByIds(ids: string[]): Promise<DetailedExamQuestion[]>;
+
+  getQuestionsByFilters(
+    filters: GetQuestionsByFiltersRequest,
+  ): Promise<DetailedExamQuestion[]>;
 }

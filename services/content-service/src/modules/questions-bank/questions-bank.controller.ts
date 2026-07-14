@@ -40,6 +40,6 @@ export class QuestionsBankController {
   getQuestionsByFilters(
     @Body() dto: GetQuestionsByFiltersRequest,
   ): Promise<GetQuestionsByFiltersResponse> {
-    return Promise.resolve({ questions: [] });
+    return this.questionsBankService.getQuestionsByFilters(dto);
   }
 }
