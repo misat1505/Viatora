@@ -522,5 +522,39 @@
       "points": "pkt",
       "viewQuestion": "Zobacz pytanie"
     }
+  },
+  "multiSelect": {
+    "placeholder": "Wybierz opcje",
+    "noResultsFound": "Nie znaleziono wyników.",
+    "dropdownDescription": "Lista rozwijana wielokrotnego wyboru. Użyj strzałek, aby nawigować, Enter aby wybrać, Escape aby zamknąć.",
+    "noOptionsSelected": "Nie wybrano żadnej opcji",
+    "selectedSummary_one": "Wybrano {{count}} opcję: {{list}}",
+    "selectedSummary_other": "Wybrano {{count}} opcji: {{list}}",
+    "triggerAriaLabel": "Wybór wielokrotny: wybrano {{selected}} z {{total}} opcji. {{placeholder}}",
+    "removeOption": "Usuń {{label}} z wyboru",
+    "clearAll": "Wyczyść wszystkie wybrane opcje ({{count}})",
+    "moreCount": "+ jeszcze {{count}}",
+    "availableOptions": "Dostępne opcje",
+    "searchPlaceholder": "Szukaj opcji...",
+    "searchAriaLabel": "Przeszukaj dostępne opcje",
+    "searchHelp": "Wpisz tekst, aby filtrować opcje. Użyj strzałek, aby nawigować po wynikach.",
+    "selectAll": "Zaznacz wszystko",
+    "selectAllWithCount": "Zaznacz wszystko - {{count}} opcji",
+    "selectAllAriaLabel": "Zaznacz wszystkie {{count}} opcji",
+    "optionSelectedSuffix": ", wybrano",
+    "optionNotSelectedSuffix": ", nie wybrano",
+    "optionDisabledSuffix": ", wyłączone",
+    "clear": "Wyczyść",
+    "close": "Zamknij",
+    "announce": {
+      "singleSelected": "Wybrano {{label}}. Wybrano {{count}} z {{total}} opcji.",
+      "multipleSelected_one": "Wybrano {{addedCount}} opcję. Łącznie wybrano {{count}} z {{total}}.",
+      "multipleSelected_other": "Wybrano {{addedCount}} opcji. Łącznie wybrano {{count}} z {{total}}.",
+      "optionRemoved": "Usunięto opcję. Wybrano {{count}} z {{total}} opcji.",
+      "dropdownOpened": "Otwarto listę rozwijaną. Dostępnych opcji: {{total}}. Użyj strzałek, aby nawigować.",
+      "dropdownClosed": "Zamknięto listę rozwijaną.",
+      "searchResults_one": "Znaleziono {{count}} opcję dla \"{{search}}\"",
+      "searchResults_other": "Znaleziono {{count}} opcji dla \"{{search}}\""
+    }
   }
 }

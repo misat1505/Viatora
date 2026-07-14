@@ -4,6 +4,8 @@ import { getQuestionByFilters } from '@/actions/questions/get-question-by-filter
 import { GetQuestionsQueryDto } from '@/generated/viatoraAPI.schemas';
 import { getDictionary, Locale } from '../../app/[lang]/dictionaries';
 import { LocalizedLink } from '../localized-link';
+import { UnauthorizedError } from '@/utils/error';
+import { LoginRequired } from '../login-required';
 
 type Dict = Awaited<ReturnType<typeof getDictionary>>;
 
@@ -13,11 +15,14 @@ type QuestionsBrowserProps = {
 };
 
 const QuestionsBrowser = async ({ filters, dictionary }: QuestionsBrowserProps) => {
+  const lang = (filters.lang ?? 'pl') as Locale;
+
   const [error, questions] = await getQuestionByFilters(filters);
+  if (error instanceof UnauthorizedError) {
+    return <LoginRequired lang={lang} />;
+  }
 
   if (error) throw error;
-
-  const lang = (filters.lang ?? 'en') as Locale;
 
   return (
     <div className="space-y-3">
