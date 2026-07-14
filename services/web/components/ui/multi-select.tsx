@@ -1069,7 +1069,7 @@ export const MultiSelect = React.forwardRef<MultiSelectRef, MultiSelectProps>(
                             isSelected ? ', selected' : ', not selected'
                           }${option.disabled ? ', disabled' : ''}`}
                           className={cn(
-                            'cursor-pointer bg-card!',
+                            'cursor-pointer bg-card! mb-1!',
                             option.disabled && 'opacity-50 cursor-not-allowed',
                           )}
                           disabled={option.disabled}
