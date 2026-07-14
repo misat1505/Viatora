@@ -56,11 +56,11 @@ export class QuestionsController implements OnModuleInit {
     isArray: true,
   })
   async getQuestions(
-    @Body() body: Required<GetQuestionsQueryDto>,
+    @Body() body: GetQuestionsQueryDto,
   ): Promise<DetailedExamQuestionDTO[]> {
     const result = await firstValueFrom(
       this.questionsService.getQuestionsByFilters(
-        body,
+        { ...(body as Required<GetQuestionsQueryDto>) },
         // @ts-expect-error metadata not generated
         this.grpcMetadataService.authMeta,
       ),
