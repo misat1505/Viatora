@@ -16,6 +16,9 @@ async function bootstrap() {
           '../../../../docs/communication/grpc/content.proto',
         ),
         url: '0.0.0.0:50054',
+        loader: {
+          arrays: true,
+        },
       },
     },
   );

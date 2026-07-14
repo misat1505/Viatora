@@ -57,20 +57,19 @@ export class QuestionsController implements OnModuleInit {
     isArray: true,
   })
   async getQuestions(
-    @Body() body: GetQuestionsQueryDto,
+    @Body() body: Required<GetQuestionsQueryDto>,
   ): Promise<DetailedExamQuestionDTO[]> {
-    console.log(body);
-    return [];
+    const result = await firstValueFrom(
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      this.questionsService.getQuestionsByFilters(
+        body,
+        // @ts-expect-error metadata not generated
+        this.grpcMetadataService.authMeta,
+      ),
+    );
 
-    // const result = await firstValueFrom(
-    //   this.questionsService.getQuestions(
-    //     query,
-    //     // @ts-expect-error metadata not generated
-    //     this.grpcMetadataService.authMeta,
-    //   ),
-    // );
-
-    // // @ts-expect-error
-    // return result.questions;
+    // @ts-expect-error TODO: make this error go away
+    // eslint-disable-next-line @typescript-eslint/no-unsafe-return
+    return result.questions;
   }
 }

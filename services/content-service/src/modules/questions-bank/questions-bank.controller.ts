@@ -5,6 +5,8 @@ import {
   DetailedExamQuestion,
   GetQuestionByIdRequest,
   GetQuestionBySlugRequest,
+  GetQuestionsByFiltersRequest,
+  GetQuestionsByFiltersResponse,
   GetQuestionsRequest,
   GetQuestionsResponse,
 } from 'src/generated/content';
@@ -32,5 +34,12 @@ export class QuestionsBankController {
     @Body() dto: GetQuestionByIdRequest,
   ): Promise<DetailedExamQuestion> {
     return this.questionsBankService.getQuestionById(dto);
+  }
+
+  @GrpcMethod('ContentService', 'GetQuestionsByFilters')
+  getQuestionsByFilters(
+    @Body() dto: GetQuestionsByFiltersRequest,
+  ): Promise<GetQuestionsByFiltersResponse> {
+    return Promise.resolve({ questions: [] });
   }
 }
