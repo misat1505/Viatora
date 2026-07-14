@@ -503,5 +503,24 @@
         "description": "Sprawdź plany i odblokuj kolejne kategorie."
       }
     }
+  },
+  "questions": {
+    "browserTitle": "Przeglądarka pytań",
+    "browserDescription": "Przeglądaj i filtruj pytania egzaminacyjne.",
+    "filters": {
+      "title": "Filtry",
+      "reset": "Resetuj",
+      "page": "Strona",
+      "limit": "Ilość",
+      "points": "Punkty",
+      "tags": "Tagi",
+      "selectTags": "Wybierz tagi...",
+      "point": "punkt",
+      "pointsPlural": "punkty"
+    },
+    "list": {
+      "points": "pkt",
+      "viewQuestion": "Zobacz pytanie"
+    }
   }
 }

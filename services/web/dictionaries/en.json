@@ -501,5 +501,24 @@
         "description": "See plans and unlock more categories."
       }
     }
+  },
+  "questions": {
+    "browserTitle": "Question Browser",
+    "browserDescription": "Browse and filter driving exam questions.",
+    "filters": {
+      "title": "Filters",
+      "reset": "Reset",
+      "page": "Page",
+      "limit": "Limit",
+      "points": "Points",
+      "tags": "Tags",
+      "selectTags": "Select tags...",
+      "point": "point",
+      "pointsPlural": "points"
+    },
+    "list": {
+      "points": "pts",
+      "viewQuestion": "View question"
+    }
   }
 }

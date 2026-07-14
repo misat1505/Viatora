@@ -2,14 +2,17 @@ import { ArrowUpRight } from 'lucide-react';
 
 import { getQuestionByFilters } from '@/actions/questions/get-question-by-filters';
 import { GetQuestionsQueryDto } from '@/generated/viatoraAPI.schemas';
-import { Locale } from '../../app/[lang]/dictionaries';
+import { getDictionary, Locale } from '../../app/[lang]/dictionaries';
 import { LocalizedLink } from '../localized-link';
+
+type Dict = Awaited<ReturnType<typeof getDictionary>>;
 
 type QuestionsBrowserProps = {
   filters: GetQuestionsQueryDto;
+  dictionary: Dict['questions']['list'];
 };
 
-const QuestionsBrowser = async ({ filters }: QuestionsBrowserProps) => {
+const QuestionsBrowser = async ({ filters, dictionary }: QuestionsBrowserProps) => {
   const [error, questions] = await getQuestionByFilters(filters);
 
   if (error) throw error;
@@ -28,7 +31,7 @@ const QuestionsBrowser = async ({ filters }: QuestionsBrowserProps) => {
               <h2 className="font-semibold leading-relaxed">{question.text?.[lang]}</h2>
 
               <span className="shrink-0 rounded-full bg-primary px-3 py-1 text-xs font-medium text-primary-foreground">
-                {question.points} pts
+                {question.points} {dictionary.points}
               </span>
             </div>
 
@@ -48,7 +51,7 @@ const QuestionsBrowser = async ({ filters }: QuestionsBrowserProps) => {
 
           <LocalizedLink
             href={`/q/${question.slug}`}
-            aria-label="Zobacz pytanie"
+            aria-label={dictionary.viewQuestion}
             className="flex shrink-0 items-center justify-center rounded-full border bg-muted p-2 text-muted-foreground transition group-hover:bg-primary group-hover:text-primary-foreground"
           >
             <ArrowUpRight className="h-4 w-4" />

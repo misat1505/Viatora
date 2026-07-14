@@ -17,6 +17,7 @@ import {
 import { Badge } from '@/components/ui/badge';
 import { Button, buttonVariants } from '@/components/ui/button';
 import { Label } from '../ui/label';
+import { getDictionary } from '@/app/[lang]/dictionaries';
 
 export const TAGS = [
   'road-signs',
@@ -36,14 +37,18 @@ export const TAGS = [
   'risk-perception',
 ].sort();
 
+type Dict = Awaited<ReturnType<typeof getDictionary>>;
+
 type Props = {
   page: number;
   limit: number;
   points: number;
   tags: string[];
+
+  dictionary: Dict['questions']['filters'];
 };
 
-export default function QuestionFilters({ page, limit, points, tags }: Props) {
+export default function QuestionFilters({ page, limit, points, tags, dictionary }: Props) {
   const pathname = usePathname();
   const router = useRouter();
   const searchParams = useSearchParams();
@@ -81,7 +86,7 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
       <CardHeader className="flex flex-row items-center justify-between">
         <div className="flex items-center gap-2">
           <Filter className="h-4 w-4 text-muted-foreground" />
-          <CardTitle>Filters</CardTitle>
+          <CardTitle>{dictionary.title}</CardTitle>
           {hasActiveFilters && (
             <Badge variant="secondary" className="ml-1">
               {activeFiltersCount}
@@ -89,21 +94,15 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
           )}
         </div>
 
-        <Button
-          variant="outline"
-          size="sm"
-          onClick={resetFilters}
-          disabled={!hasActiveFilters}
-          className="gap-1.5"
-        >
+        <Button variant="outline" size="sm" onClick={resetFilters}>
           <RotateCcw className="h-3.5 w-3.5" />
-          Reset
+          {dictionary.reset}
         </Button>
       </CardHeader>
 
       <CardContent className="grid gap-6 md:grid-cols-2 lg:grid-cols-4">
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Page</Label>
+          <Label className="text-sm font-medium">{dictionary.page}</Label>
 
           <Select value={page.toString()} onValueChange={(v) => setParam('page', v)}>
             <SelectTrigger className={buttonVariants({ variant: 'outline' })}>
@@ -121,7 +120,7 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Limit</Label>
+          <Label className="text-sm font-medium">{dictionary.limit}</Label>
 
           <Select value={limit.toString()} onValueChange={(v) => setParam('limit', v)}>
             <SelectTrigger className={buttonVariants({ variant: 'outline' })}>
@@ -139,7 +138,7 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
         </div>
 
         <div className="space-y-2">
-          <Label className="text-sm font-medium">Points</Label>
+          <Label className="text-sm font-medium">{dictionary.points}</Label>
 
           <Select value={points.toString()} onValueChange={(v) => setParam('points', v)}>
             <SelectTrigger className={buttonVariants({ variant: 'outline' })}>
@@ -149,7 +148,7 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
             <SelectContent>
               {[1, 2, 3].map((value) => (
                 <SelectItem key={value} value={value.toString()}>
-                  {value} {value > 1 ? 'points' : 'point'}
+                  {value} {value > 1 ? dictionary.pointsPlural : dictionary.point}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -157,15 +156,16 @@ export default function QuestionFilters({ page, limit, points, tags }: Props) {
         </div>
 
         <div className="space-y-2 lg:col-span-4">
-          <Label className="text-sm font-medium">Tags</Label>
+          <Label className="text-sm font-medium">{dictionary.tags}</Label>
 
           <MultiSelect
             key={tags.join(',')}
             options={options}
             defaultValue={tags}
             onValueChange={(values) => setParam('tags', values.join(','))}
-            placeholder="Select tags..."
+            placeholder={dictionary.selectTags}
             className={buttonVariants({ variant: 'outline' })}
+            variant="secondary"
           />
         </div>
       </CardContent>
