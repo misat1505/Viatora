@@ -9,6 +9,7 @@ export const commands = {
   'exam-engine': 'pnpm start:dev',
   'payment-service': 'node ./scripts/payment-service-dev.js',
   'ai-assistant': 'pnpm start:dev',
+  'statistics-service': 'uv run ./dev.py',
 };
 
 const services = getActiveServices();

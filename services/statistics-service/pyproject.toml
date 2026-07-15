@@ -1,0 +1,33 @@
+[project]
+name = "statistics-service"
+version = "0.1.0"
+description = "Add your description here"
+readme = "README.md"
+requires-python = ">=3.13"
+dependencies = [
+    "confluent-kafka>=2.15.0",
+    "dependency-injector>=4.49.1",
+    "grpcio-tools>=1.82.1",
+    "pydantic-settings>=2.14.2",
+    "pydantic>=2.13.4",
+    "watchfiles>=1.2.0",
+]
+
+[dependency-groups]
+dev = [
+    "mypy>=2.3.0",
+    "pytest>=9.1.1",
+    "types-grpcio>=1.82.1.20260711",
+    "types-protobuf>=7.34.1.20260518",
+]
+
+[tool.mypy]
+exclude = "generated"
+
+[[tool.mypy.overrides]]
+module = "generated.*"
+ignore_errors = true
+
+[[tool.mypy.overrides]]
+module = "utils.settings"
+disable_error_code = ["call-arg"]

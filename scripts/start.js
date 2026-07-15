@@ -9,6 +9,7 @@ export const commands = {
   'exam-engine': 'pnpm start:prod',
   'payment-service': 'java -jar build/libs/payment-service.jar --spring.profiles.active=local',
   'ai-assistant': 'pnpm start:prod',
+  'statistics-service': 'uv run ./main.py',
 };
 
 const services = getActiveServices();
