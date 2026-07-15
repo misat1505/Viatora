@@ -12,6 +12,5 @@ class StatsServicer(stats_pb2_grpc.StatsServiceServicer):
 
     @ValidateRequest(GetSummaryRequest)
     async def GetSummary(self, request: GetSummaryRequest, _: grpc.ServicerContext):
-        print(request)
         data = await self.stats_service.get_summary(request)
         return stats_pb2.GetSummaryResponse(**data.model_dump())  # type: ignore[attr-defined]
