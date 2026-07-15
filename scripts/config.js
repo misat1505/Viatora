@@ -27,6 +27,10 @@ export const allServices = {
     cwd: 'services/ai-assistant',
     color: 'white',
   },
+  'statistics-service': {
+    cwd: 'services/statistics-service',
+    color: 'gray',
+  },
 };
 
 export function getActiveServices() {

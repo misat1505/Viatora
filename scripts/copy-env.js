@@ -8,6 +8,7 @@ const paths = [
   { dir: 'services/exam-engine', dest: '.env' },
   { dir: 'services/payment-service', dest: '.env' },
   { dir: 'services/ai-assistant', dest: '.env' },
+  { dir: 'services/statistics-service', dest: '.env' },
 ];
 
 paths.forEach(({ dir, dest }) => {

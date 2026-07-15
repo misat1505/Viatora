@@ -8,6 +8,7 @@ export const commands = {
   'content-service': 'pnpm install',
   'exam-engine': 'pnpm install',
   'ai-assistant': 'pnpm install',
+  'statistics-service': 'uv sync',
 };
 
 const services = getActiveServices();

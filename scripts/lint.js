@@ -8,6 +8,7 @@ export const commands = {
   'content-service': 'pnpm lint',
   'exam-engine': 'pnpm lint',
   'ai-assistant': 'pnpm lint',
+  'statistics-service': 'uv run mypy .',
 };
 
 const services = getActiveServices();

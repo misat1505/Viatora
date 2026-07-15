@@ -8,6 +8,7 @@ export const commands = {
   'exam-engine': 'pnpm test',
   'payment-service': 'node ./scripts/run-gradle.mjs --console=plain --quiet test',
   'ai-assistant': 'pnpm test',
+  'statistics-service': 'uv run pytest .',
 };
 
 const services = getActiveServices();
