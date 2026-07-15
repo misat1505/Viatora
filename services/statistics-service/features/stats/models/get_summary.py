@@ -7,8 +7,8 @@ class GetSummaryRequest(BaseModel):
 
 class GetSummaryResponse(BaseModel):
     total_exams: int
-    pass_rate: int
-    average_score: int
+    pass_rate: float
+    average_score: float
     best_score: int
     current_streak: int
     longest_streak: int

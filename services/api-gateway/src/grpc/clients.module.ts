@@ -9,6 +9,7 @@ export const EXAMS_PACKAGE = 'EXAMS_PACKAGE';
 export const QUESTIONS_PACKAGE = 'QUESTIONS_PACKAGE';
 export const PAYMENTS_PACKAGE = 'PAYMENTS_PACKAGE';
 export const ASSISTANT_PACKAGE = 'ASSISTANT_PACKAGE';
+export const STATS_PACKAGE = 'STATS_PACKAGE';
 
 @Module({
   imports: [
@@ -81,6 +82,19 @@ export const ASSISTANT_PACKAGE = 'ASSISTANT_PACKAGE';
             package: 'Viatora.assistant',
             protoPath: PROTO_PATHS.assistant,
             url: config.getOrThrow('ASSISTANT_SERVICE_GRPC_URL'),
+          },
+        }),
+      },
+      {
+        name: STATS_PACKAGE,
+        imports: [ConfigModule],
+        inject: [ConfigService],
+        useFactory: (config: ConfigService) => ({
+          transport: Transport.GRPC,
+          options: {
+            package: 'Viatora.stats',
+            protoPath: PROTO_PATHS.stats,
+            url: config.getOrThrow('STATS_SERVICE_GRPC_URL'),
           },
         }),
       },

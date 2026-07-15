@@ -2,7 +2,7 @@ from .models.get_summary import GetSummaryRequest, GetSummaryResponse
 
 
 class StatsService:
-    def get_summary(dto: GetSummaryRequest) -> GetSummaryResponse:
+    async def get_summary(self, dto: GetSummaryRequest) -> GetSummaryResponse:
         return GetSummaryResponse(
             total_exams=1,
             pass_rate=0.7,

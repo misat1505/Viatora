@@ -15,4 +15,5 @@ export const PROTO_PATHS = {
     __dirname,
     '../../../../../docs/communication/grpc/assistant.proto',
   ),
+  stats: join(__dirname, '../../../../../docs/communication/grpc/stats.proto'),
 };
