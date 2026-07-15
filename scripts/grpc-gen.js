@@ -2,6 +2,7 @@ import concurrently from 'concurrently';
 import fs from 'fs';
 
 fs.mkdirSync('./services/auth-service/generated', { recursive: true });
+fs.mkdirSync('./services/statistics-service/generated', { recursive: true });
 
 concurrently(
   [

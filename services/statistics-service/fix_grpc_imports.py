@@ -2,7 +2,6 @@ import re
 from pathlib import Path
 
 grpc_files = [
-    Path("./generated/auth_pb2_grpc.py"),
     Path("./generated/stats_pb2_grpc.py"),
 ]
 
