@@ -1,19 +1,23 @@
 import asyncio
-import threading
 
 from generated import stats_pb2_grpc
 from grpc import aio
+from utils.database import Base
 from utils.di import Container
 from utils.settings import settings
 
 
-async def serve():
-    container = Container()
+async def create_tables(engine) -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
 
-    threading.Thread(
-        target=container.exam_consumer,
-        daemon=True,
-    ).start()
+
+async def serve():
+    container = Container(settings=settings)
+
+    await create_tables(container.engine())
+
+    asyncio.create_task(container.exam_consumer().start())
 
     server = aio.server()
 

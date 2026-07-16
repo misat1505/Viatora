@@ -556,5 +556,31 @@
       "searchResults_one": "Znaleziono {{count}} opcję dla \"{{search}}\"",
       "searchResults_other": "Znaleziono {{count}} opcji dla \"{{search}}\""
     }
+  },
+  "stats": {
+    "title": "Statystyki egzaminów",
+    "subtitle": "Podsumowanie Twoich wyników",
+    "totalExams": "Liczba egzaminów",
+    "passRate": "Zdawalność",
+    "averageScore": "Średni wynik",
+    "bestScore": "Najlepszy wynik",
+    "currentStreak": "Aktualna passa",
+    "longestStreak": "Najdłuższa passa",
+    "totalTime": "Łączny czas",
+    "exams": "egzaminów",
+    "points": "pkt",
+    "minutesShort": "min",
+    "passRateChartTitle": "Zdawalność",
+    "passRateChartDesc": "Zdane vs niezdane egzaminy",
+    "passed": "Zdane",
+    "failed": "Niezdane",
+    "scoreChartTitle": "Porównanie wyników",
+    "scoreChartDesc": "Średni wynik vs najlepszy wynik",
+    "average": "Średni",
+    "best": "Najlepszy",
+    "streakChartTitle": "Passa",
+    "streakChartDesc": "Aktualna passa vs Twoja najdłuższa passa",
+    "current": "Aktualna",
+    "longest": "Najdłuższa"
   }
 }

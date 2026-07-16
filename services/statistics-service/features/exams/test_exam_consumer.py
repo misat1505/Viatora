@@ -2,7 +2,7 @@
 
 import importlib
 from datetime import datetime, timezone
-from unittest.mock import Mock
+from unittest.mock import AsyncMock, Mock
 
 import pytest
 import utils.decorators
@@ -70,7 +70,7 @@ def exam_consumer_class(monkeypatch):
 
     monkeypatch.setattr(
         utils.decorators,
-        "TopicHandler",
+        "TopicConsumer",
         lambda *_args, **_kwargs: lambda func: func,
     )
 
@@ -89,7 +89,9 @@ def exam_consumer_class(monkeypatch):
 
 @pytest.fixture
 def exam_service():
-    return Mock()
+    service = Mock()
+    service.add_exam_result = AsyncMock()
+    return service
 
 
 @pytest.fixture
@@ -97,12 +99,13 @@ def consumer(exam_consumer_class, exam_service):
     return exam_consumer_class(exam_service)
 
 
-def test_handle_exam_finished_calls_service(
+@pytest.mark.asyncio
+async def test_handle_exam_finished_calls_service(
     consumer,
     exam_service,
 ):
     payload = create_dummy_exam()
 
-    consumer.handle_exam_finished(payload)
+    await consumer.handle_exam_finished(payload)
 
-    exam_service.process_exam_finished.assert_called_once_with(payload)
+    exam_service.add_exam_result.assert_called_once_with(payload)

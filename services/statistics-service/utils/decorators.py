@@ -1,5 +1,7 @@
+import asyncio
 import inspect
 import json
+from enum import Enum
 from functools import wraps
 from typing import Callable, Type
 
@@ -8,10 +10,10 @@ from pydantic import BaseModel
 from utils.config import create_kafka_consumer
 
 
-def TopicHandler(topic: str):
+def TopicConsumer(topic: Enum):
     def decorator(func):
 
-        func._kafka_topic = topic
+        func._kafka_topic = topic.value
 
         return func
 
@@ -47,18 +49,19 @@ def KafkaConsumer(cls):
             if topic:
                 self.endpoints[topic] = method
 
-        self.start()
-
     cls.__init__ = init_wrapper
 
-    def start(self):
+    async def start(self):
         topics = list(self.endpoints.keys())
         self._consumer.subscribe(topics)
 
         print(f"Kafka listening: {topics}")
 
         while True:
-            msg = self._consumer.poll(1.0)
+            msg = await asyncio.to_thread(
+                self._consumer.poll,
+                1.0,
+            )
             if msg is None:
                 continue
 
@@ -71,7 +74,7 @@ def KafkaConsumer(cls):
 
             handler = self.endpoints.get(topic)
             if handler:
-                handler(payload)
+                await handler(payload)
 
             self._consumer.commit(msg)
 

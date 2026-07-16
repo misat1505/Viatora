@@ -12,7 +12,9 @@ const StartExamSessionButton = ({ category, children, className }: StartExamSess
   const router = useRouter();
 
   async function handleClick() {
-    const exam = await startExamSession(category);
+    const [error, exam] = await startExamSession(category);
+    // TODO: do sth about this, some toast
+    if (error) throw error;
     router.push(`/${lang}/exams/${exam.sessionId}`);
   }
 

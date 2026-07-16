@@ -2,18 +2,11 @@
 
 import { ExamsControllerStartExamSessionResponse } from '@/generated/zod/exams/exams';
 import { examsApiClient } from '@/lib/api';
-import { cookies } from 'next/headers';
+import { safeServerAction } from '@/utils/safe-server-action';
 
-export async function startExamSession(category: string) {
-  const cookieStore = await cookies();
-  const accessToken = cookieStore.get('token')?.value;
-
-  const response = await examsApiClient.examsControllerStartExamSession(
-    {
-      category,
-    },
-    { headers: { Authorization: `Bearer ${accessToken}` } },
-  );
-
+export const startExamSession = safeServerAction(async (category: string) => {
+  const response = await examsApiClient.examsControllerStartExamSession({
+    category,
+  });
   return ExamsControllerStartExamSessionResponse.parse(response.data);
-}
+});
