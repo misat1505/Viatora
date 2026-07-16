@@ -9,7 +9,7 @@ def send_exam_finished():
 
     payload = {
         "sessionId": "cf9db151-ec9a-457c-9101-bdf7c59213e2",
-        "userId": "4a2d258a-781a-4154-87ee-d7c4625420e8",
+        "userId": "123",
         "status": "completed",
         "category": "B",
         "totalQuestions": 32,

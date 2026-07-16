@@ -11,6 +11,11 @@ export const PAYMENTS_PACKAGE = 'PAYMENTS_PACKAGE';
 export const ASSISTANT_PACKAGE = 'ASSISTANT_PACKAGE';
 export const STATS_PACKAGE = 'STATS_PACKAGE';
 
+const defaultLoader = {
+  defaults: true,
+  arrays: true,
+} as const;
+
 @Module({
   imports: [
     ClientsModule.registerAsync([
@@ -24,6 +29,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.auth',
             protoPath: PROTO_PATHS.auth,
             url: config.getOrThrow('AUTH_SERVICE_GRPC_URL'),
+            loader: defaultLoader,
           },
         }),
       },
@@ -37,9 +43,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.exam',
             protoPath: PROTO_PATHS.exam,
             url: config.getOrThrow('EXAM_SERVICE_GRPC_URL'),
-            loader: {
-              arrays: true,
-            },
+            loader: defaultLoader,
           },
         }),
       },
@@ -53,9 +57,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.content',
             protoPath: PROTO_PATHS.content,
             url: config.getOrThrow('CONTENT_SERVICE_GRPC_URL'),
-            loader: {
-              arrays: true,
-            },
+            loader: defaultLoader,
           },
         }),
       },
@@ -69,6 +71,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.payment',
             protoPath: PROTO_PATHS.payment,
             url: config.getOrThrow('PAYMENT_SERVICE_GRPC_URL'),
+            loader: defaultLoader,
           },
         }),
       },
@@ -82,6 +85,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.assistant',
             protoPath: PROTO_PATHS.assistant,
             url: config.getOrThrow('ASSISTANT_SERVICE_GRPC_URL'),
+            loader: defaultLoader,
           },
         }),
       },
@@ -95,6 +99,7 @@ export const STATS_PACKAGE = 'STATS_PACKAGE';
             package: 'Viatora.stats',
             protoPath: PROTO_PATHS.stats,
             url: config.getOrThrow('STATS_SERVICE_GRPC_URL'),
+            loader: defaultLoader,
           },
         }),
       },

@@ -17,6 +17,24 @@ class UserExamStatisticsRepository:
             )
             return result.scalar_one_or_none()
 
+    async def create(
+        self,
+        user_id: str,
+        values: Mapping[str, Any],
+    ) -> UserExamStatistics:
+        async with self.session_factory() as session:
+            statistics = UserExamStatistics(
+                user_id=user_id,
+                **values,
+            )
+
+            session.add(statistics)
+
+            await session.commit()
+            await session.refresh(statistics)
+
+            return statistics
+
     async def update(
         self,
         user_id: str,

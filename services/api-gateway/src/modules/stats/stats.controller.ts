@@ -1,4 +1,10 @@
-import { Controller, Get, Inject, OnModuleInit } from '@nestjs/common';
+import {
+  Controller,
+  Get,
+  Inject,
+  OnModuleInit,
+  UseGuards,
+} from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { STATS_PACKAGE } from 'src/grpc/clients.module';
@@ -6,9 +12,12 @@ import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
 import { StatsServiceClient } from 'src/generated/stats';
 import { GetSummaryResponseDTO } from './dto/get-summary.dto';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { CurrentUser } from 'src/common/decorators/get-current-user';
+import { UserProfile } from 'src/generated/auth';
 
 @Controller('/stats')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 export class StatsController implements OnModuleInit {
   private statsService!: StatsServiceClient;
 
@@ -24,10 +33,12 @@ export class StatsController implements OnModuleInit {
 
   @Get('/sumamry')
   @ApiOkResponse({ type: GetSummaryResponseDTO })
-  async getStatsSummary(): Promise<GetSummaryResponseDTO> {
+  async getStatsSummary(
+    @CurrentUser() user: UserProfile,
+  ): Promise<GetSummaryResponseDTO> {
     const result = await firstValueFrom(
       this.statsService.getSummary(
-        { userId: '123' },
+        { userId: user.userId },
         // @ts-expect-error metadata not in generated types
         this.grpcMetadataService.authMeta,
       ),

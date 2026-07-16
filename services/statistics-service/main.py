@@ -1,5 +1,4 @@
 import asyncio
-import threading
 
 from generated import stats_pb2_grpc
 from grpc import aio
@@ -18,10 +17,7 @@ async def serve():
 
     await create_tables(container.engine())
 
-    threading.Thread(
-        target=container.exam_consumer,
-        daemon=True,
-    ).start()
+    asyncio.create_task(container.exam_consumer().start())
 
     server = aio.server()
 

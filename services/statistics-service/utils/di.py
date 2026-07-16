@@ -2,7 +2,6 @@ import logging
 
 from dependency_injector import containers, providers
 from features.exams.exam_consumer import ExamConsumer
-from features.exams.exam_service import ExamService
 from features.exams.user_exam_statistics_repository import UserExamStatisticsRepository
 from features.stats.stats_service import StatsService
 from features.stats.stats_servicer import StatsServicer
@@ -36,16 +35,13 @@ class Container(containers.DeclarativeContainer):
         session_factory=session_factory,
     )
 
-    exam_service = providers.Factory(
-        ExamService,
-        user_exam_statistics_repository=user_exam_statistics_repository,
+    stats_service = providers.Factory(
+        StatsService, user_exam_statistics_repository=user_exam_statistics_repository
     )
 
     exam_consumer = providers.Factory(
         ExamConsumer,
-        exam_service=exam_service,
+        stats_service=stats_service,
     )
-
-    stats_service = providers.Factory(StatsService)
 
     stats_servicer = providers.Factory(StatsServicer, stats_service=stats_service)

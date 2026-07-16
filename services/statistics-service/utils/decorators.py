@@ -1,3 +1,4 @@
+import asyncio
 import inspect
 import json
 from enum import Enum
@@ -48,18 +49,19 @@ def KafkaConsumer(cls):
             if topic:
                 self.endpoints[topic] = method
 
-        self.start()
-
     cls.__init__ = init_wrapper
 
-    def start(self):
+    async def start(self):
         topics = list(self.endpoints.keys())
         self._consumer.subscribe(topics)
 
         print(f"Kafka listening: {topics}")
 
         while True:
-            msg = self._consumer.poll(1.0)
+            msg = await asyncio.to_thread(
+                self._consumer.poll,
+                1.0,
+            )
             if msg is None:
                 continue
 
@@ -72,7 +74,7 @@ def KafkaConsumer(cls):
 
             handler = self.endpoints.get(topic)
             if handler:
-                handler(payload)
+                await handler(payload)
 
             self._consumer.commit(msg)
 
