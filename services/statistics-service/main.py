@@ -3,12 +3,20 @@ import threading
 
 from generated import stats_pb2_grpc
 from grpc import aio
+from utils.database import Base
 from utils.di import Container
 from utils.settings import settings
 
 
+async def create_tables(engine) -> None:
+    async with engine.begin() as conn:
+        await conn.run_sync(Base.metadata.create_all)
+
+
 async def serve():
-    container = Container()
+    container = Container(settings=settings)
+
+    await create_tables(container.engine())
 
     threading.Thread(
         target=container.exam_consumer,

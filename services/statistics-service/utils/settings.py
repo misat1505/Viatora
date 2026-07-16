@@ -10,5 +10,7 @@ class Settings(BaseSettings):
     kafka_port: int
     kafka_group_id: str = "statistics-service"
 
+    database_url: str
+
 
 settings = Settings()

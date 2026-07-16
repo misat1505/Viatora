@@ -1,5 +1,6 @@
 import inspect
 import json
+from enum import Enum
 from functools import wraps
 from typing import Callable, Type
 
@@ -8,10 +9,10 @@ from pydantic import BaseModel
 from utils.config import create_kafka_consumer
 
 
-def TopicHandler(topic: str):
+def TopicConsumer(topic: Enum):
     def decorator(func):
 
-        func._kafka_topic = topic
+        func._kafka_topic = topic.value
 
         return func
 

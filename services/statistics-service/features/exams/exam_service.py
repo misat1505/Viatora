@@ -1,11 +1,11 @@
-from features.exams.exam_result_repository import ExamResultRepository
 from features.exams.models.exam import ExamFinishedPayload
+from features.exams.user_exam_statistics_repository import UserExamStatisticsRepository
 
 
 class ExamService:
-    def __init__(self, exam_result_repository: ExamResultRepository):
-        self.exam_result_repository = exam_result_repository
+    def __init__(self, user_exam_statistics_repository: UserExamStatisticsRepository):
+        self.user_exam_statistics_repository = user_exam_statistics_repository
 
     def process_exam_finished(self, exam: ExamFinishedPayload):
         print("ExamService", "process_exam_finished")
-        self.exam_result_repository.insert_result(exam)
+        self.user_exam_statistics_repository.insert_result(exam)

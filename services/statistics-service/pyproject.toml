@@ -5,11 +5,13 @@ description = "Add your description here"
 readme = "README.md"
 requires-python = ">=3.13"
 dependencies = [
+    "asyncpg>=0.31.0",
     "confluent-kafka>=2.15.0",
     "dependency-injector>=4.49.1",
     "grpcio-tools>=1.82.1",
     "pydantic-settings>=2.14.2",
     "pydantic>=2.13.4",
+    "sqlalchemy>=2.0.51",
     "watchfiles>=1.2.0",
 ]
 
