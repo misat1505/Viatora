@@ -23,14 +23,50 @@ import {
   ChartLegend,
   ChartLegendContent,
 } from '@/components/ui/chart';
-import { getDictionary } from '@/app/[lang]/dictionaries';
-import { GetSummaryResponseDTO } from '@/generated/viatoraAPI.schemas';
 
-type Dict = Awaited<ReturnType<typeof getDictionary>>;
+// Shape of the stats JSON returned by the API.
+export interface ExamStatsDTO {
+  totalExams: number;
+  passRate: number; // percentage, 0-100
+  averageScore: number;
+  bestScore: number;
+  currentStreak: number;
+  longestStreak: number;
+  totalTimeMinutes: number;
+}
+
+// Shape of the i18n dictionary. Import the matching locale JSON
+// (e.g. locales/en/stats.json or locales/pl/stats.json) and pass it in as `dict`.
+export interface ExamStatsDict {
+  title: string;
+  subtitle: string;
+  totalExams: string;
+  passRate: string;
+  averageScore: string;
+  bestScore: string;
+  currentStreak: string;
+  longestStreak: string;
+  totalTime: string;
+  exams: string;
+  points: string;
+  minutesShort: string;
+  passRateChartTitle: string;
+  passRateChartDesc: string;
+  passed: string;
+  failed: string;
+  scoreChartTitle: string;
+  scoreChartDesc: string;
+  average: string;
+  best: string;
+  streakChartTitle: string;
+  streakChartDesc: string;
+  current: string;
+  longest: string;
+}
 
 interface ExamStatsViewProps {
-  stats: GetSummaryResponseDTO;
-  dict: Dict['stats'];
+  stats: ExamStatsDTO;
+  dict: ExamStatsDict;
 }
 
 function formatMinutes(totalMinutes: number, unit: string) {
@@ -58,10 +94,7 @@ export function ExamStatsView({ stats, dict: t }: ExamStatsViewProps) {
     best: { label: t.best, color: 'var(--secondary)' },
   } satisfies ChartConfig;
 
-  const scoreData = [
-    { key: t.average, value: stats.averageScore, fill: 'var(--color-average)' },
-    { key: t.best, value: stats.bestScore, fill: 'var(--color-best)' },
-  ];
+  const scoreData = [{ average: stats.averageScore, best: stats.bestScore }];
 
   const streakConfig = {
     current: { label: t.current, color: 'var(--primary)' },
@@ -200,10 +233,10 @@ export function ExamStatsView({ stats, dict: t }: ExamStatsViewProps) {
             <ChartContainer config={scoreConfig} className="mx-auto aspect-square max-h-64">
               <BarChart data={scoreData}>
                 <CartesianGrid vertical={false} />
-                <XAxis dataKey="key" tickLine={false} axisLine={false} />
+                <XAxis hide />
                 <ChartTooltip content={<ChartTooltipContent />} />
-                <Bar dataKey="value" maxBarSize={69} fill="var(--color-average)" radius={4} />
-                {/* <Bar dataKey="best" fill="var(--color-best)" radius={4} /> */}
+                <Bar dataKey="average" fill="var(--color-average)" radius={4} maxBarSize={69} />
+                <Bar dataKey="best" fill="var(--color-best)" radius={4} maxBarSize={69} />
                 <ChartLegend content={<ChartLegendContent />} />
               </BarChart>
             </ChartContainer>
