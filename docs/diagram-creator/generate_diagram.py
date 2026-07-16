@@ -119,6 +119,7 @@ with Diagram(
     gateway >> Edge(label="checkout / subscriptions (gRPC)") >> payment
     gateway >> Edge(label="assistant chat (gRPC)") >> assistant
     gateway >> Edge(label="cache & throttling") >> cache
+    gateway >> Edge(label="statistics queries (gRPC)") >> statistics
 
     exam >> Edge(label="question fetch (gRPC)") >> content
     exam >> Edge(label="subscription check (gRPC)") >> payment
