@@ -10,6 +10,7 @@ from diagrams.custom import Custom
 from diagrams.onprem.client import Users
 from diagrams.onprem.database import PostgreSQL
 from diagrams.onprem.inmemory import Redis
+from diagrams.onprem.queue import Kafka
 from diagrams.programming.framework import Nextjs, Spring
 from diagrams.programming.language import Python
 
@@ -39,6 +40,9 @@ with Diagram(
         )
         cache = Redis("Rate limiting & cache")
 
+        with Cluster("Event Bus"):
+            kafka = Kafka("Kafka")
+
         with Cluster("Identity"):
             google = Custom(
                 "Google OAuth",
@@ -58,6 +62,8 @@ with Diagram(
             exam_cache = Redis("Exam Session Cache")
             exam >> Edge() >> exam_db
             exam >> Edge(label="session state") >> exam_cache
+
+            exam >> Edge(label="exam.finished event") >> kafka
 
         with Cluster("Content"):
             content = Custom(
@@ -94,6 +100,15 @@ with Diagram(
             assistant_db = PostgreSQL("Assistant DB")
             assistant >> Edge() >> assistant_db
             assistant >> Edge(label="LLM requests") >> openrouter
+
+        with Cluster("Statistics"):
+            statistics = Python(
+                "Statistics",
+            )
+            statistics_db = PostgreSQL("Statistics DB")
+            statistics >> Edge() >> statistics_db
+
+            kafka >> Edge(label="consume exam.finished") >> statistics
 
     user >> web
     web >> Edge(label="HTTP/HTTPS") >> gateway
