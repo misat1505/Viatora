@@ -554,5 +554,31 @@
       "searchResults_one": "{{count}} option found for \"{{search}}\"",
       "searchResults_other": "{{count}} options found for \"{{search}}\""
     }
+  },
+  "stats": {
+    "title": "Exam Statistics",
+    "subtitle": "Your overall performance overview",
+    "totalExams": "Total Exams",
+    "passRate": "Pass Rate",
+    "averageScore": "Average Score",
+    "bestScore": "Best Score",
+    "currentStreak": "Current Streak",
+    "longestStreak": "Longest Streak",
+    "totalTime": "Total Time",
+    "exams": "exams",
+    "points": "pts",
+    "minutesShort": "min",
+    "passRateChartTitle": "Pass Rate",
+    "passRateChartDesc": "Passed vs failed exams",
+    "passed": "Passed",
+    "failed": "Failed",
+    "scoreChartTitle": "Score Comparison",
+    "scoreChartDesc": "Average vs best score",
+    "average": "Average",
+    "best": "Best",
+    "streakChartTitle": "Streak Progress",
+    "streakChartDesc": "Current streak vs your longest streak",
+    "current": "Current",
+    "longest": "Longest"
   }
 }
