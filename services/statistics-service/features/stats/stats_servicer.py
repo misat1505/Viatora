@@ -1,4 +1,5 @@
 import grpc
+from exceptions.not_found_exception import NotFoundException
 from generated import stats_pb2, stats_pb2_grpc
 from utils.decorators import ValidateRequest
 
@@ -11,6 +12,11 @@ class StatsServicer(stats_pb2_grpc.StatsServiceServicer):
         self.stats_service = stats_service
 
     @ValidateRequest(GetSummaryRequest)
-    async def GetSummary(self, request: GetSummaryRequest, _: grpc.ServicerContext):
-        data = await self.stats_service.get_summary(request)
-        return stats_pb2.GetSummaryResponse(**data.model_dump())  # type: ignore[attr-defined]
+    async def GetSummary(
+        self, request: GetSummaryRequest, context: grpc.ServicerContext
+    ):
+        try:
+            data = await self.stats_service.get_summary(request)
+            return stats_pb2.GetSummaryResponse(**data.model_dump())  # type: ignore[attr-defined]
+        except NotFoundException as e:
+            return await context.abort(grpc.StatusCode.NOT_FOUND, str(e))

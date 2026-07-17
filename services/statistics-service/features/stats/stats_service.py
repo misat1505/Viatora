@@ -1,3 +1,4 @@
+from exceptions.not_found_exception import NotFoundException
 from features.exams.models.exam import ExamFinishedPayload
 from features.exams.user_exam_statistics_repository import UserExamStatisticsRepository
 
@@ -28,7 +29,7 @@ class StatsService:
             stats = await self.repository.get_by_user_id(dto.user_id)
 
             if stats is None:
-                raise ValueError(f"Statistics not found for user {dto.user_id}")
+                raise NotFoundException(f"Statistics not found for user {dto.user_id}")
 
             await self.cache.set(stats)
 
