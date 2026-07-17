@@ -21,4 +21,5 @@ class GetSummaryResponse(BaseModel):
         cls,
         stats: UserExamStatisticsDTO,
     ) -> "GetSummaryResponse":
-        return cls(**stats.model_dump(include=cls.model_fields.keys()))
+        fields = set(cls.model_fields.keys())
+        return cls(**stats.model_dump(include=fields))
