@@ -106,7 +106,9 @@ with Diagram(
                 "Statistics",
             )
             statistics_db = PostgreSQL("Statistics DB")
+            statistics_cache = Redis("Statistics Cache")
             statistics >> Edge() >> statistics_db
+            statistics >> Edge() >> statistics_cache
 
             kafka >> Edge(label="consume exam.finished") >> statistics
 
