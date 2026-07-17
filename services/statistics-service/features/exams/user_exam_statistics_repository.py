@@ -47,7 +47,6 @@ class UserExamStatisticsRepository:
         user_id: str,
         dto: UpdateUserExamStatisticsDTO,
     ) -> UserExamStatisticsDTO | None:
-
         async with self.session_factory() as session:
             result = await session.execute(
                 select(UserExamStatistics).where(UserExamStatistics.user_id == user_id)

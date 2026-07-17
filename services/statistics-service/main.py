@@ -15,9 +15,11 @@ async def create_tables(engine) -> None:
 async def serve():
     container = Container(settings=settings)
 
+    logger = container.logger()
+
     await create_tables(container.engine())
 
-    asyncio.create_task(container.exam_consumer().start())
+    consumer = container.exam_consumer()
 
     server = aio.server()
 
@@ -30,10 +32,14 @@ async def serve():
 
     await server.start()
 
-    logger = container.logger()
-    logger.info("Auth gRPC server started on port %s", settings.grpc_port)
+    logger.info(
+        "Stats gRPC server started on port %s",
+        settings.grpc_port,
+    )
 
-    await server.wait_for_termination()
+    async with asyncio.TaskGroup() as tg:
+        tg.create_task(consumer.start())
+        tg.create_task(server.wait_for_termination())
 
 
 if __name__ == "__main__":
