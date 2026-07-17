@@ -1,15 +1,15 @@
 import importlib
 from unittest.mock import AsyncMock, Mock
 
+import grpc
 import pytest
 import utils.decorators
+from exceptions.not_found_exception import NotFoundException
 from features.stats.models.get_summary import GetSummaryResponse
 
 
 @pytest.fixture
 def stats_servicer_class(monkeypatch):
-    # Disable ValidateRequest decorator before importing
-
     monkeypatch.setattr(
         utils.decorators,
         "ValidateRequest",
@@ -26,6 +26,7 @@ def stats_servicer_class(monkeypatch):
 @pytest.fixture
 def stats_service():
     service = Mock()
+
     service.get_summary = AsyncMock()
 
     return service
@@ -39,10 +40,20 @@ def servicer(
     return stats_servicer_class(stats_service)
 
 
+@pytest.fixture
+def context():
+    context = Mock()
+
+    context.abort = AsyncMock()
+
+    return context
+
+
 @pytest.mark.asyncio
 async def test_get_summary_returns_grpc_response(
     servicer,
     stats_service,
+    context,
 ):
     stats_service.get_summary.return_value = GetSummaryResponse(
         total_exams=10,
@@ -56,8 +67,6 @@ async def test_get_summary_returns_grpc_response(
 
     request = Mock()
     request.user_id = "user-123"
-
-    context = Mock()
 
     response = await servicer.GetSummary(
         request,
@@ -73,3 +82,25 @@ async def test_get_summary_returns_grpc_response(
     assert response.current_streak == 3
     assert response.longest_streak == 5
     assert response.total_time_minutes == 240
+
+
+@pytest.mark.asyncio
+async def test_get_summary_returns_not_found_error(
+    servicer,
+    stats_service,
+    context,
+):
+    stats_service.get_summary.side_effect = NotFoundException("Statistics not found")
+
+    request = Mock()
+    request.user_id = "missing-user"
+
+    await servicer.GetSummary(
+        request,
+        context,
+    )
+
+    context.abort.assert_awaited_once_with(
+        grpc.StatusCode.NOT_FOUND,
+        "Statistics not found",
+    )
