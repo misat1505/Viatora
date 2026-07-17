@@ -15,9 +15,11 @@ async def create_tables(engine) -> None:
 async def serve():
     container = Container(settings=settings)
 
+    logger = container.logger()
+
     await create_tables(container.engine())
 
-    asyncio.create_task(container.exam_consumer().start())
+    consumer = container.exam_consumer()
 
     server = aio.server()
 
@@ -30,11 +32,24 @@ async def serve():
 
     await server.start()
 
-    logger = container.logger()
-    logger.info("Auth gRPC server started on port %s", settings.grpc_port)
+    logger.info(
+        "Stats gRPC server started on port %s",
+        settings.grpc_port,
+    )
 
-    await server.wait_for_termination()
+    try:
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(consumer.start())
+            tg.create_task(server.wait_for_termination())
+    except* (asyncio.CancelledError, KeyboardInterrupt):
+        logger.info("Shutting down...")
+    finally:
+        await server.stop(grace=2)
+        logger.info("Server stopped cleanly")
 
 
 if __name__ == "__main__":
-    asyncio.run(serve())
+    try:
+        asyncio.run(serve())
+    except KeyboardInterrupt:
+        pass

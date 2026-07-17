@@ -8,7 +8,7 @@ class Settings(BaseSettings):
 
     kafka_host: str
     kafka_port: int
-    kafka_group_id: str = "statistics-service"
+    kafka_group_id: str = "statistics-service-v2"
 
     database_url: str
 
