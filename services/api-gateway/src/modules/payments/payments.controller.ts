@@ -9,6 +9,7 @@ import {
   type RawBodyRequest,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
 import { type ClientGrpc } from '@nestjs/microservices';
 import { PAYMENTS_PACKAGE } from 'src/grpc/clients.module';
@@ -25,6 +26,13 @@ import {
   CreateCheckoutDTO,
   CreateCheckoutResponseDTO,
 } from './dto/create-checkout.dto';
+import {
+  CACHE_MANAGER,
+  CacheInterceptor,
+  CacheKey,
+} from '@nestjs/cache-manager';
+import { type Cache } from 'cache-manager';
+import { buildCacheKey } from 'src/utils/build-cache-key';
 
 @Controller('/payments')
 export class PaymentsController implements OnModuleInit {
@@ -33,6 +41,7 @@ export class PaymentsController implements OnModuleInit {
   constructor(
     @Inject(PAYMENTS_PACKAGE) private readonly grpcClient: ClientGrpc,
     private readonly grpcMetadataService: GrpcMetadataService,
+    @Inject(CACHE_MANAGER) private readonly cacheManager: Cache,
   ) {}
 
   onModuleInit() {
@@ -75,6 +84,8 @@ export class PaymentsController implements OnModuleInit {
   }
 
   @Get('/plans')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey(buildCacheKey('payments', 'plans'))
   @ApiOkResponse({ type: GetAllAvailablePlansDTO })
   async getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
     const result = await firstValueFrom(

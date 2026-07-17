@@ -16,7 +16,7 @@ import { QUESTIONS_PACKAGE } from 'src/grpc/clients.module';
 import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { firstValueFrom } from 'rxjs';
 import { DetailedExamQuestionDTO } from './dto/detailed-question.dto';
-import { GetQuestionsQueryDto } from './dto/get-questions.dto';
+import { GetQuestionsQueryDTO } from './dto/get-questions.dto';
 
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
@@ -56,11 +56,11 @@ export class QuestionsController implements OnModuleInit {
     isArray: true,
   })
   async getQuestions(
-    @Body() body: GetQuestionsQueryDto,
+    @Body() body: GetQuestionsQueryDTO,
   ): Promise<DetailedExamQuestionDTO[]> {
     const result = await firstValueFrom(
       this.questionsService.getQuestionsByFilters(
-        { ...(body as Required<GetQuestionsQueryDto>) },
+        { ...(body as Required<GetQuestionsQueryDTO>) },
         // @ts-expect-error metadata not generated
         this.grpcMetadataService.authMeta,
       ),
