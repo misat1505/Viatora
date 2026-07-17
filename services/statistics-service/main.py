@@ -37,10 +37,21 @@ async def serve():
         settings.grpc_port,
     )
 
-    async with asyncio.TaskGroup() as tg:
-        tg.create_task(consumer.start())
-        tg.create_task(server.wait_for_termination())
+    try:
+        async with asyncio.TaskGroup() as tg:
+            tg.create_task(consumer.start())
+            tg.create_task(server.wait_for_termination())
+    except* (asyncio.CancelledError, KeyboardInterrupt):
+        logger.info("Shutting down...")
+    finally:
+        await server.stop(grace=2)
+        # jeśli konsumer ma metodę stop/close - odkomentuj:
+        # await consumer.stop()
+        logger.info("Server stopped cleanly")
 
 
 if __name__ == "__main__":
-    asyncio.run(serve())
+    try:
+        asyncio.run(serve())
+    except KeyboardInterrupt:
+        pass
