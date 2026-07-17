@@ -8,6 +8,7 @@ from features.stats.stats_service import StatsService
 from features.stats.stats_servicer import StatsServicer
 from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
+from utils.config import create_kafka_consumer
 from utils.settings import Settings
 
 logging.basicConfig(
@@ -40,6 +41,11 @@ class Container(containers.DeclarativeContainer):
         decode_responses=True,
     )
 
+    kafka_consumer = providers.Singleton(
+        create_kafka_consumer,
+        settings=settings,
+    )
+
     stats_cache = providers.Factory(StatsCache, redis=redis)
 
     user_exam_statistics_repository = providers.Factory(
@@ -55,6 +61,7 @@ class Container(containers.DeclarativeContainer):
 
     exam_consumer = providers.Factory(
         ExamConsumer,
+        consumer=kafka_consumer,
         stats_service=stats_service,
     )
 

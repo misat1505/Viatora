@@ -1,5 +1,3 @@
-# tests/features/exams/test_exam_consumer.py
-
 import importlib
 from datetime import datetime, timezone
 from unittest.mock import AsyncMock, Mock
@@ -64,13 +62,7 @@ def exam_consumer_class(monkeypatch):
 
     monkeypatch.setattr(
         utils.decorators,
-        "KafkaConsumer",
-        lambda cls: cls,
-    )
-
-    monkeypatch.setattr(
-        utils.decorators,
-        "TopicConsumer",
+        "KafkaTopic",
         lambda *_args, **_kwargs: lambda func: func,
     )
 
@@ -88,6 +80,11 @@ def exam_consumer_class(monkeypatch):
 
 
 @pytest.fixture
+def kafka_consumer():
+    return Mock()
+
+
+@pytest.fixture
 def exam_service():
     service = Mock()
     service.add_exam_result = AsyncMock()
@@ -95,8 +92,8 @@ def exam_service():
 
 
 @pytest.fixture
-def consumer(exam_consumer_class, exam_service):
-    return exam_consumer_class(exam_service)
+def consumer(exam_consumer_class, kafka_consumer, exam_service):
+    return exam_consumer_class(kafka_consumer, exam_service)
 
 
 @pytest.mark.asyncio

@@ -45,8 +45,6 @@ async def serve():
         logger.info("Shutting down...")
     finally:
         await server.stop(grace=2)
-        # jeśli konsumer ma metodę stop/close - odkomentuj:
-        # await consumer.stop()
         logger.info("Server stopped cleanly")
 
 

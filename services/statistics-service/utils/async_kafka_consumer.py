@@ -3,12 +3,12 @@ import inspect
 import json
 from abc import ABC
 
-from utils.config import create_kafka_consumer
+from confluent_kafka import Consumer
 
 
 class AsyncKafkaConsumer(ABC):
-    def __init__(self):
-        self._consumer = create_kafka_consumer()
+    def __init__(self, consumer: Consumer):
+        self._consumer = consumer
         self._running = False
         self.endpoints = self._discover_endpoints()
 

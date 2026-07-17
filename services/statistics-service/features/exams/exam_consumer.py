@@ -1,3 +1,4 @@
+from confluent_kafka import Consumer
 from features.exams.models.enums.topics import Topics
 from features.exams.models.exam import ExamFinishedPayload
 from features.stats.stats_service import StatsService
@@ -6,9 +7,9 @@ from utils.decorators import KafkaTopic, ValidatePayload
 
 
 class ExamConsumer(AsyncKafkaConsumer):
-    def __init__(self, stats_service: StatsService):
+    def __init__(self, consumer: Consumer, stats_service: StatsService):
+        super().__init__(consumer)
         self.stats_service = stats_service
-        super().__init__()
 
     @KafkaTopic(Topics.EXAM_FINISHED)
     @ValidatePayload(ExamFinishedPayload)
