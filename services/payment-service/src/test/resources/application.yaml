@@ -32,3 +32,6 @@ logging:
 stripe:
   secret-key: sk_test_fake
   webhook-secret: whsec_fake
+
+service:
+  key: SUyH7MZq03m5aMWDNlDAUUF2pLkWERhOQrzwD-V8ThvbDhwbblzctiZ3uOH2G9yuNP1iF2XqMHWnV3LjMvoLimFTExGz86Q90BKxIrFInvu25ksiSGW1Lbaaa4oofjD

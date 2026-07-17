@@ -2,6 +2,7 @@ import asyncio
 
 from generated import stats_pb2_grpc
 from grpc import aio
+from interceptors.service_key_interceptor import ServiceKeyInterceptor
 from utils.database import Base
 from utils.di import Container
 from utils.settings import settings
@@ -21,7 +22,7 @@ async def serve():
 
     consumer = container.exam_consumer()
 
-    server = aio.server()
+    server = aio.server(interceptors=[ServiceKeyInterceptor(settings.service_key)])
 
     stats_pb2_grpc.add_StatsServiceServicer_to_server(
         container.stats_servicer(),

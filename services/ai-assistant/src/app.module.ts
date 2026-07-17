@@ -2,6 +2,8 @@ import { Module } from '@nestjs/common';
 import { AssistantModule } from './modules/assistant/assistant.module';
 import { ConfigModule, ConfigService } from '@nestjs/config';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { ServiceKeyGuard } from './common/guards/service-key.guard';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -17,6 +19,12 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
     }),
     AssistantModule,
+  ],
+  providers: [
+    {
+      provide: APP_GUARD,
+      useClass: ServiceKeyGuard,
+    },
   ],
 })
 export class AppModule {}
