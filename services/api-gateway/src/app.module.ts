@@ -11,6 +11,7 @@ import { StatsModule } from './modules/stats/stats.module';
 import { APP_GUARD } from '@nestjs/core';
 import { ThrottlerGuard } from './common/guards/throttler.guard';
 import Redis from 'ioredis';
+import { REDIS_TOKEN } from './common/tokens';
 
 @Module({
   imports: [
@@ -36,7 +37,7 @@ import Redis from 'ioredis';
   providers: [
     { provide: APP_GUARD, useClass: ThrottlerGuard },
     {
-      provide: 'REDIS',
+      provide: REDIS_TOKEN,
       inject: [ConfigService],
       useFactory: (config: ConfigService) => {
         return new Redis({

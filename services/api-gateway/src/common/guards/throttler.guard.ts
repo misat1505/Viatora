@@ -7,14 +7,27 @@ import {
 import { createHash } from 'crypto';
 import { Request } from 'express';
 import Redis from 'ioredis';
+import { REDIS_TOKEN } from '../tokens';
+import { ConfigService } from '@nestjs/config';
+import { TooManyRequestsException } from '../exceptions/too-many-requests.exception';
 
 @Injectable()
 export class ThrottlerGuard implements CanActivate {
   prefix = 'api-gateway:throttler:ip';
-  windowSeconds = 60;
-  maxRequests = 10;
+  windowSeconds: number;
+  windowMaxRequests: number;
 
-  constructor(@Inject('REDIS') private readonly redis: Redis) {}
+  constructor(
+    @Inject(REDIS_TOKEN) private readonly redis: Redis,
+    configService: ConfigService,
+  ) {
+    this.windowSeconds = configService.getOrThrow<number>(
+      'THROTTLING_WINDOW_SECONDS',
+    );
+    this.windowMaxRequests = configService.getOrThrow<number>(
+      'THROTTLING_WINDOW_MAX_REQUESTS',
+    );
+  }
 
   async canActivate(context: ExecutionContext): Promise<boolean> {
     const { ip } = context.switchToHttp().getRequest<Request>();
@@ -30,9 +43,10 @@ export class ThrottlerGuard implements CanActivate {
     await this.redis.zremrangebyscore(redisKey, 0, windowStart);
 
     const count = await this.redis.zcard(redisKey);
-    if (count >= this.maxRequests) return false;
+    if (count >= this.windowMaxRequests) throw new TooManyRequestsException();
 
     await this.redis.zadd(redisKey, now, `${now}:${Math.random()}`);
+    await this.redis.expire(redisKey, this.windowSeconds);
 
     return true;
   }
