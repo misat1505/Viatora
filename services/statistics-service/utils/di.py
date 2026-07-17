@@ -3,8 +3,10 @@ import logging
 from dependency_injector import containers, providers
 from features.exams.exam_consumer import ExamConsumer
 from features.exams.user_exam_statistics_repository import UserExamStatisticsRepository
+from features.stats.cache.stats_cache import StatsCache
 from features.stats.stats_service import StatsService
 from features.stats.stats_servicer import StatsServicer
+from redis.asyncio import Redis
 from sqlalchemy.ext.asyncio import async_sessionmaker, create_async_engine
 from utils.settings import Settings
 
@@ -30,13 +32,25 @@ class Container(containers.DeclarativeContainer):
 
     logger = providers.Object(logging.getLogger())
 
+    redis = providers.Singleton(
+        Redis,
+        host=settings.redis_host,
+        port=settings.redis_port,
+        password=settings.redis_password,
+        decode_responses=True,
+    )
+
+    stats_cache = providers.Factory(StatsCache, redis=redis)
+
     user_exam_statistics_repository = providers.Factory(
         UserExamStatisticsRepository,
         session_factory=session_factory,
     )
 
     stats_service = providers.Factory(
-        StatsService, user_exam_statistics_repository=user_exam_statistics_repository
+        StatsService,
+        user_exam_statistics_repository=user_exam_statistics_repository,
+        stats_cache=stats_cache,
     )
 
     exam_consumer = providers.Factory(

@@ -1,18 +1,31 @@
 from features.exams.models.exam import ExamFinishedPayload
 from features.exams.user_exam_statistics_repository import UserExamStatisticsRepository
 
+from .cache.stats_cache import StatsCache
 from .models.get_summary import GetSummaryRequest, GetSummaryResponse
 
 
 class StatsService:
-    def __init__(self, user_exam_statistics_repository: UserExamStatisticsRepository):
+    def __init__(
+        self,
+        user_exam_statistics_repository: UserExamStatisticsRepository,
+        stats_cache: StatsCache,
+    ):
         self.user_exam_statistics_repository = user_exam_statistics_repository
+        self.stats_cache = stats_cache
 
     async def get_summary(self, dto: GetSummaryRequest) -> GetSummaryResponse:
-        stats = await self.user_exam_statistics_repository.get_by_user_id(dto.user_id)
+        stats = await self.stats_cache.get(dto.user_id)
 
-        # TODO: throw not found error
-        assert stats is not None
+        if stats is None:
+            stats = await self.user_exam_statistics_repository.get_by_user_id(
+                dto.user_id
+            )
+
+            # TODO: throw not found error
+            assert stats is not None
+
+            await self.stats_cache.set(stats)
 
         return GetSummaryResponse(
             total_exams=stats.total_exams,
@@ -52,19 +65,13 @@ class StatsService:
             stats.average_score * stats.total_exams + exam.earnedPoints
         ) / total_exams
 
-        best_score = max(
-            stats.best_score,
-            exam.earnedPoints,
-        )
+        best_score = max(stats.best_score, exam.earnedPoints)
 
         current_streak = stats.current_streak + 1 if exam.passed else 0
 
-        longest_streak = max(
-            stats.longest_streak,
-            current_streak,
-        )
+        longest_streak = max(stats.longest_streak, current_streak)
 
-        total_time_minutes = stats.total_time_minutes + (exam.timeLimitSeconds // 60)
+        total_time_minutes = stats.total_time_minutes + exam.timeLimitSeconds // 60
 
         await self.user_exam_statistics_repository.update(
             user_id=exam.userId,
@@ -79,3 +86,5 @@ class StatsService:
                 "total_time_minutes": total_time_minutes,
             },
         )
+
+        await self.stats_cache.delete(exam.userId)
