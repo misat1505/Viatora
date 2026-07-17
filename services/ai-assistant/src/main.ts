@@ -19,10 +19,6 @@ async function bootstrap() {
     },
   );
 
-  // TODO: add service key quard
-  // const guard = app.get(ServiceKeyGuard);
-  // app.useGlobalGuards(guard);
-
   await app.listen();
 }
 void bootstrap();

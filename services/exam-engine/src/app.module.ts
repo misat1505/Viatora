@@ -4,6 +4,7 @@ import { ConfigModule, ConfigService } from '@nestjs/config';
 import { ServiceKeyGuard } from './common/guards/service-key.guard';
 import { ExamResultsModule } from './modules/exam-results/exam-results.module';
 import { TypeOrmModule } from '@nestjs/typeorm';
+import { APP_GUARD } from '@nestjs/core';
 
 @Module({
   imports: [
@@ -21,6 +22,6 @@ import { TypeOrmModule } from '@nestjs/typeorm';
       }),
     }),
   ],
-  providers: [ServiceKeyGuard],
+  providers: [{ provide: APP_GUARD, useClass: ServiceKeyGuard }],
 })
 export class AppModule {}
