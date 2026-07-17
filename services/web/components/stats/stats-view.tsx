@@ -141,7 +141,7 @@ export function ExamStatsView({ stats, dict: t }: ExamStatsViewProps) {
             <Percent className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.passRate}%</div>
+            <div className="text-2xl font-bold">{stats.passRate.toFixed(2)}%</div>
           </CardContent>
         </Card>
 
@@ -153,7 +153,7 @@ export function ExamStatsView({ stats, dict: t }: ExamStatsViewProps) {
             <Target className="size-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{stats.averageScore}</div>
+            <div className="text-2xl font-bold">{stats.averageScore.toFixed(2)}</div>
           </CardContent>
         </Card>
 
