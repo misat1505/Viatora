@@ -3,15 +3,10 @@ import {
   Controller,
   Get,
   Inject,
-  OnModuleInit,
   Post,
   Query,
   UseGuards,
 } from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
-import { ASSISTANT_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { firstValueFrom } from 'rxjs';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
@@ -22,20 +17,16 @@ import {
   GetConversationHistoryQueryDTO,
   GetConversationHistoryResponseDTO,
 } from './dto/get-conversation-history.dto';
+import { ASSISTANT_GRPC_CLIENT } from './assistant.tokens';
+import { type GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
+import { AssistantMapper } from './dto/mapper/assistant.mapper';
 
 @Controller('/assistant')
-export class AssistantController implements OnModuleInit {
-  private assistantService!: AssistantServiceClient;
-
+export class AssistantController {
   constructor(
-    @Inject(ASSISTANT_PACKAGE) private readonly grpcClient: ClientGrpc,
-    private readonly grpcMetadataService: GrpcMetadataService,
+    @Inject(ASSISTANT_GRPC_CLIENT)
+    private readonly assistantClient: GrpcClientWrapper<AssistantServiceClient>,
   ) {}
-
-  onModuleInit() {
-    this.assistantService =
-      this.grpcClient.getService<AssistantServiceClient>('AssistantService');
-  }
 
   @Post('/message')
   @UseGuards(JwtAuthGuard)
@@ -44,15 +35,12 @@ export class AssistantController implements OnModuleInit {
     @Body() dto: SendMessageDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<SendMessageResponseDTO> {
-    const result = await firstValueFrom(
-      this.assistantService.sendMessage(
-        { userId: user.userId, ...dto },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.assistantClient.service.sendMessage({
+      userId: user.userId,
+      ...dto,
+    });
 
-    return result;
+    return AssistantMapper.toSendMessageResponseDTO(result);
   }
 
   @Get('/conversation')
@@ -62,14 +50,11 @@ export class AssistantController implements OnModuleInit {
     @Query() query: GetConversationHistoryQueryDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<GetConversationHistoryResponseDTO> {
-    const result = await firstValueFrom(
-      this.assistantService.getConversationHistory(
-        { questionId: query.questionId, userId: user.userId },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.assistantClient.service.getConversationHistory({
+      questionId: query.questionId,
+      userId: user.userId,
+    });
 
-    return result;
+    return AssistantMapper.toGetConversationHistoryResponseDTO(result);
   }
 }

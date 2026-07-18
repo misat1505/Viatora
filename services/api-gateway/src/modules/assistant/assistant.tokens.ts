@@ -1,0 +1,1 @@
+export const ASSISTANT_GRPC_CLIENT = Symbol('ASSISTANT_GRPC_CLIENT');
