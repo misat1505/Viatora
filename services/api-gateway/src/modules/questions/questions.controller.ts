@@ -1,53 +1,21 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  OnModuleInit,
-  Param,
-  Post,
-  UseGuards,
-} from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
+import { Body, Controller, Get, Param, Post, UseGuards } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { ContentServiceClient } from 'src/generated/content';
-import { QUESTIONS_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { firstValueFrom } from 'rxjs';
 import { DetailedExamQuestionDTO } from './dto/detailed-question.dto';
-import { GetQuestionsQueryDto } from './dto/get-questions.dto';
+import { GetQuestionsQueryDTO } from './dto/get-questions.dto';
+import { QuestionsService } from './questions.service';
 
 @Controller('/questions')
 @UseGuards(JwtAuthGuard)
-export class QuestionsController implements OnModuleInit {
-  private questionsService!: ContentServiceClient;
-
-  constructor(
-    @Inject(QUESTIONS_PACKAGE) private readonly grpcClient: ClientGrpc,
-    private readonly grpcMetadataService: GrpcMetadataService,
-  ) {}
-
-  onModuleInit() {
-    this.questionsService =
-      this.grpcClient.getService<ContentServiceClient>('ContentService');
-  }
+export class QuestionsController {
+  constructor(private readonly questionsService: QuestionsService) {}
 
   @Get('/:slug')
   @ApiOkResponse({ type: DetailedExamQuestionDTO })
-  async getQuestionBySlug(
+  getQuestionBySlug(
     @Param('slug') slug: string,
   ): Promise<DetailedExamQuestionDTO> {
-    const result = await firstValueFrom(
-      this.questionsService.getQuestionBySlug(
-        { slug },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    // @ts-expect-error TODO: make this error go away
-    return result;
+    return this.questionsService.getQuestionBySlug(slug);
   }
 
   @Post()
@@ -55,18 +23,9 @@ export class QuestionsController implements OnModuleInit {
     type: DetailedExamQuestionDTO,
     isArray: true,
   })
-  async getQuestions(
-    @Body() body: GetQuestionsQueryDto,
+  getQuestions(
+    @Body() body: GetQuestionsQueryDTO,
   ): Promise<DetailedExamQuestionDTO[]> {
-    const result = await firstValueFrom(
-      this.questionsService.getQuestionsByFilters(
-        { ...(body as Required<GetQuestionsQueryDto>) },
-        // @ts-expect-error metadata not generated
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    // @ts-expect-error TODO: make this error go away
-    return result.questions;
+    return this.questionsService.getQuestions(body);
   }
 }

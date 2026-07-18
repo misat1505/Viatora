@@ -10,7 +10,7 @@ import {
   Min,
 } from 'class-validator';
 
-export class GetQuestionsQueryDto {
+export class GetQuestionsQueryDTO {
   @ApiPropertyOptional({
     type: Number,
     example: 1,

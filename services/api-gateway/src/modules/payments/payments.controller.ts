@@ -3,18 +3,12 @@ import {
   Controller,
   Get,
   Headers,
-  Inject,
-  OnModuleInit,
   Post,
   type RawBodyRequest,
   Req,
   UseGuards,
+  UseInterceptors,
 } from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
-import { PAYMENTS_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { firstValueFrom } from 'rxjs';
-import { PaymentServiceClient } from 'src/generated/payment';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { GetAllAvailablePlansDTO } from './dto/plan.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -25,86 +19,46 @@ import {
   CreateCheckoutDTO,
   CreateCheckoutResponseDTO,
 } from './dto/create-checkout.dto';
+import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
+import { buildCacheKey } from 'src/utils/build-cache-key';
+import { PaymentsService } from './payments.service';
 
 @Controller('/payments')
-export class PaymentsController implements OnModuleInit {
-  private paymentsService!: PaymentServiceClient;
-
-  constructor(
-    @Inject(PAYMENTS_PACKAGE) private readonly grpcClient: ClientGrpc,
-    private readonly grpcMetadataService: GrpcMetadataService,
-  ) {}
-
-  onModuleInit() {
-    this.paymentsService =
-      this.grpcClient.getService<PaymentServiceClient>('PaymentService');
-  }
+export class PaymentsController {
+  constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('/checkout')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: CreateCheckoutResponseDTO })
-  async createCheckout(
+  createCheckout(
     @Body() dto: CreateCheckoutDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<CreateCheckoutResponseDTO> {
-    const result = await firstValueFrom(
-      this.paymentsService.createCheckout(
-        { userId: user.userId, userEmail: user.email, ...dto },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    return result;
+    return this.paymentsService.createCheckout(user, dto);
   }
 
   @Post('/stripe/webhook')
-  async stripeWebhook(
+  stripeWebhook(
     @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {
-    const result = await firstValueFrom(
-      this.paymentsService.handleStripeWebhook(
-        { payload: req.rawBody!, stripeSignature: signature },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    return result;
+    return this.paymentsService.stripeWebhook(req.rawBody!, signature);
   }
 
   @Get('/plans')
+  @UseInterceptors(CacheInterceptor)
+  @CacheKey(buildCacheKey('payments', 'plans'))
   @ApiOkResponse({ type: GetAllAvailablePlansDTO })
-  async getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
-    const result = await firstValueFrom(
-      this.paymentsService.getAllAvailablePlans(
-        {},
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    return result;
+  getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
+    return this.paymentsService.getAllAvailablePlans();
   }
 
   @Get('/subscriptions/mine')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetUserSubscriptionsDTO })
-  async getUserSubscriptions(
+  getUserSubscriptions(
     @CurrentUser() user: UserProfile,
   ): Promise<GetUserSubscriptionsDTO> {
-    const result = await firstValueFrom(
-      this.paymentsService.getUserSubscriptions(
-        {
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-
-    // @ts-expect-error make this error go away
-    return result;
+    return this.paymentsService.getUserSubscriptions(user.userId);
   }
 }

@@ -1,198 +1,256 @@
-import { beforeEach, describe, expect, it, vi, type Mocked } from 'vitest';
-import { Test, TestingModule } from '@nestjs/testing';
-import { of } from 'rxjs';
-import { ClientGrpc } from '@nestjs/microservices';
-import { Cache } from 'cache-manager';
-import { CACHE_MANAGER } from '@nestjs/cache-manager';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
+import { Test } from '@nestjs/testing';
 
-import { AuthServiceClient } from 'src/generated/auth';
 import { AuthController } from './auth.controller';
-import { AUTH_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
+import { AuthService } from './auth.service';
+import { AUTH_GRPC_CLIENT } from './auth.tokens';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
 
-describe('AuthController', () => {
+describe('AuthController integration', () => {
   let controller: AuthController;
 
-  const authServiceMock: Mocked<AuthServiceClient> = {
+  const grpcServiceMock = {
     initiateOAuth: vi.fn(),
     handleOAuthCallback: vi.fn(),
     refreshToken: vi.fn(),
     logout: vi.fn(),
     getMe: vi.fn(),
-  } as any;
-
-  const grpcMetadataServiceMock: Mocked<GrpcMetadataService> = {
-    authMeta: 'service-key',
-  } as any;
-
-  const cacheManagerMock: Mocked<Cache> = {
-    get: vi.fn(),
-    set: vi.fn(),
-  } as any;
+  };
 
   const grpcClientMock = {
-    getService: vi.fn().mockReturnValue(authServiceMock),
-  } as Partial<ClientGrpc>;
+    service: grpcServiceMock,
+  } as unknown as GrpcClientWrapper<any>;
 
   beforeEach(async () => {
     vi.clearAllMocks();
 
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef = await Test.createTestingModule({
       controllers: [AuthController],
       providers: [
+        AuthService,
         {
-          provide: AUTH_PACKAGE,
+          provide: AUTH_GRPC_CLIENT,
           useValue: grpcClientMock,
         },
-        {
-          provide: GrpcMetadataService,
-          useValue: grpcMetadataServiceMock,
-        },
-        {
-          provide: CACHE_MANAGER,
-          useValue: cacheManagerMock,
-        },
       ],
-    }).compile();
+    })
+      .overrideGuard(JwtAuthGuard)
+      .useValue({
+        canActivate: () => true,
+      })
+      .compile();
 
-    controller = module.get(AuthController);
-    controller.onModuleInit();
+    controller = moduleRef.get(AuthController);
   });
 
-  describe('onModuleInit', () => {
-    it('should initialize auth service', () => {
-      expect(grpcClientMock.getService).toHaveBeenCalledWith('AuthService');
-    });
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
   });
 
   describe('initiateGoogle', () => {
-    it('should return oauth url', async () => {
-      const redirectUrl = 'https://accounts.google.com/oauth';
+    it('should call grpc and return mapped oauth url', async () => {
+      grpcServiceMock.initiateOAuth.mockResolvedValue({
+        redirectUrl: 'https://google.com/oauth',
+      });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.initiateOAuth.mockReturnValue(of({ redirectUrl }) as any);
+      const result = await controller.initiateGoogle({
+        redirectUrl: 'http://localhost/callback',
+      });
 
-      const response = await controller.initiateGoogle(
-        'http://localhost:3000/auth/callback',
+      expect(grpcServiceMock.initiateOAuth).toHaveBeenCalledWith({
+        redirectUrl: 'http://localhost/callback',
+        state: '',
+      });
+
+      expect(result).toEqual({
+        url: 'https://google.com/oauth',
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.initiateOAuth.mockRejectedValue(
+        new Error('oauth failed'),
       );
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.initiateOAuth).toHaveBeenCalledWith(
-        { redirectUrl: 'http://localhost:3000/auth/callback' },
-        'service-key',
-      );
-
-      expect(response).toEqual({ url: redirectUrl });
+      await expect(
+        controller.initiateGoogle({
+          redirectUrl: 'http://localhost',
+        }),
+      ).rejects.toThrow('oauth failed');
     });
   });
 
   describe('googleCallback', () => {
-    it('should redirect with tokens', async () => {
-      const result = {
-        accessToken: 'access-token',
-        refreshToken: 'refresh-token',
-        redirectUrl: 'http://localhost:3000',
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.handleOAuthCallback.mockReturnValue(of(result) as any);
+    it('should build redirect url with tokens', async () => {
+      grpcServiceMock.handleOAuthCallback.mockResolvedValue({
+        redirectUrl: 'http://localhost',
+        accessToken: 'access',
+        refreshToken: 'refresh',
+      });
 
       const res = {
         redirect: vi.fn(),
       };
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      await controller.googleCallback('auth-code', 'state-value', res as any);
-
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.handleOAuthCallback).toHaveBeenCalledWith(
-        { code: 'auth-code', state: 'state-value' },
-        'service-key',
+      await controller.googleCallback(
+        {
+          code: 'code',
+          state: 'state',
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        res as any,
       );
+
+      expect(grpcServiceMock.handleOAuthCallback).toHaveBeenCalledWith({
+        code: 'code',
+        state: 'state',
+      });
 
       expect(res.redirect).toHaveBeenCalledWith(
-        'http://localhost:3000/?token=access-token&refreshToken=refresh-token',
+        'http://localhost/?token=access&refreshToken=refresh',
       );
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.handleOAuthCallback.mockRejectedValue(
+        new Error('callback failed'),
+      );
+
+      await expect(
+        controller.googleCallback(
+          {
+            code: 'code',
+            state: 'state',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          {
+            redirect: vi.fn(),
+          } as any,
+        ),
+      ).rejects.toThrow('callback failed');
     });
   });
 
   describe('refresh', () => {
     it('should refresh tokens', async () => {
-      const protoResult = {
-        accessToken: 'new-access-token',
-        refreshToken: 'new-refresh-token',
-        expiresIn: { low: 900 },
-      };
-
-      const apiResult = {
-        ...protoResult,
-        expiresIn: protoResult.expiresIn.low,
-      };
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.refreshToken.mockReturnValue(of(protoResult) as any);
-
-      const response = await controller.refresh({
-        refreshToken: 'old-refresh-token',
+      grpcServiceMock.refreshToken.mockResolvedValue({
+        accessToken: 'access',
+        refreshToken: 'refresh',
+        expiresIn: {
+          low: 900,
+          high: 0,
+          unsigned: true,
+        },
       });
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.refreshToken).toHaveBeenCalledWith(
-        { refreshToken: 'old-refresh-token' },
-        'service-key',
+      const result = await controller.refresh({
+        refreshToken: 'old',
+      });
+
+      expect(grpcServiceMock.refreshToken).toHaveBeenCalledWith({
+        refreshToken: 'old',
+      });
+
+      expect(result).toEqual({
+        accessToken: 'access',
+        refreshToken: 'refresh',
+        expiresIn: 900,
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.refreshToken.mockRejectedValue(
+        new Error('refresh failed'),
       );
 
-      expect(response).toEqual(apiResult);
+      await expect(
+        controller.refresh({
+          refreshToken: 'old',
+        }),
+      ).rejects.toThrow('refresh failed');
     });
   });
 
   describe('logout', () => {
+    const user = {
+      userId: 'user-1',
+      email: 'test@test.com',
+      displayName: 'Test',
+      avatarUrl: '',
+      isActive: true,
+      createdAt: '',
+      lastLoginAt: '',
+    };
+
     it('should logout user', async () => {
-      const user = { userId: 'user-123' };
-      const result = { success: true };
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.logout.mockReturnValue(of(result) as any);
-
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const response = await controller.logout(user as any, {
-        refreshToken: 'refresh-token',
+      grpcServiceMock.logout.mockResolvedValue({
+        success: true,
       });
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.logout).toHaveBeenCalledWith(
-        {
-          userId: 'user-123',
-          refreshToken: 'refresh-token',
-        },
-        'service-key',
-      );
+      const result = await controller.logout(user, {
+        refreshToken: 'refresh',
+      });
 
-      expect(response).toEqual(result);
+      expect(grpcServiceMock.logout).toHaveBeenCalledWith({
+        userId: 'user-1',
+        refreshToken: 'refresh',
+      });
+
+      expect(result).toEqual({
+        success: true,
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.logout.mockRejectedValue(new Error('logout failed'));
+
+      await expect(
+        controller.logout(user, {
+          refreshToken: 'refresh',
+        }),
+      ).rejects.toThrow('logout failed');
     });
   });
 
   describe('getMe', () => {
-    it('should return current user', async () => {
-      const user = { userId: 'user-123' };
-      const profile = {
-        userId: 'user-123',
-        email: 'john@example.com',
-      };
+    const user = {
+      userId: 'user-1',
+      email: '',
+      displayName: '',
+      avatarUrl: '',
+      isActive: false,
+      createdAt: '',
+      lastLoginAt: '',
+    };
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      authServiceMock.getMe.mockReturnValue(of(profile) as any);
+    it('should return mapped user profile', async () => {
+      grpcServiceMock.getMe.mockResolvedValue({
+        user: {
+          userId: 'user-1',
+          email: 'test@test.com',
+          displayName: 'Test',
+          avatarUrl: '',
+          isActive: true,
+          createdAt: new Date().toISOString(),
+          lastLoginAt: new Date().toISOString(),
+        },
+      });
 
-      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
-      const response = await controller.getMe(user as any);
+      const result = await controller.getMe(user);
 
-      // eslint-disable-next-line @typescript-eslint/unbound-method
-      expect(authServiceMock.getMe).toHaveBeenCalledWith(
-        { userId: 'user-123' },
-        'service-key',
-      );
+      expect(grpcServiceMock.getMe).toHaveBeenCalledWith({
+        userId: 'user-1',
+      });
 
-      expect(response).toEqual(profile);
+      expect(result.user.userId).toBe('user-1');
+      expect(result.user.email).toBe('test@test.com');
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.getMe.mockRejectedValue(new Error('me failed'));
+
+      await expect(controller.getMe(user)).rejects.toThrow('me failed');
     });
   });
 });

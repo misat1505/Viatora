@@ -1,20 +1,16 @@
 import { Test } from '@nestjs/testing';
-import { ExamsController } from './exams.controller';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { EXAMS_PACKAGE } from 'src/grpc/clients.module';
-import { of, throwError } from 'rxjs';
 import { beforeEach, describe, expect, it, vi } from 'vitest';
-import { UserProfile } from 'src/generated/auth';
 
-describe('ExamsController', () => {
+import { ExamsController } from './exams.controller';
+import { ExamsService } from './exams.service';
+import { EXAM_GRPC_CLIENT } from './exams.tokens';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
+
+describe('ExamsController integration', () => {
   let controller: ExamsController;
 
-  const grpcClientMock = {
-    getService: vi.fn(),
-  };
-
-  const examServiceMock = {
+  const grpcServiceMock = {
     startSession: vi.fn(),
     getSession: vi.fn(),
     submitAnswer: vi.fn(),
@@ -23,271 +19,266 @@ describe('ExamsController', () => {
     listResults: vi.fn(),
   };
 
-  const grpcMetadataServiceMock = {
-    authMeta: { metadata: 'mock' },
-  };
+  const grpcClientMock = {
+    service: grpcServiceMock,
+  } as unknown as GrpcClientWrapper<any>;
 
   beforeEach(async () => {
-    grpcClientMock.getService.mockReturnValue(examServiceMock);
+    vi.clearAllMocks();
 
     const moduleRef = await Test.createTestingModule({
       controllers: [ExamsController],
       providers: [
-        { provide: EXAMS_PACKAGE, useValue: grpcClientMock },
-        { provide: GrpcMetadataService, useValue: grpcMetadataServiceMock },
+        ExamsService,
+        {
+          provide: EXAM_GRPC_CLIENT,
+          useValue: grpcClientMock,
+        },
       ],
     })
       .overrideGuard(JwtAuthGuard)
-      .useValue({ canActivate: () => true })
+      .useValue({
+        canActivate: () => true,
+      })
       .compile();
 
     controller = moduleRef.get(ExamsController);
-
-    controller.onModuleInit();
-    vi.clearAllMocks();
   });
 
-  it('should call gRPC startSession with correct payload', async () => {
-    const dto = { category: 'B' };
-    const user = { userId: 'user-1' };
+  it('should be defined', () => {
+    expect(controller).toBeDefined();
+  });
 
-    const grpcResponse = { sessionId: 'sess_1' };
-
-    examServiceMock.startSession.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.startExamSession(dto, user as UserProfile);
-
-    expect(examServiceMock.startSession).toHaveBeenCalledWith(
-      {
+  describe('startExamSession', () => {
+    it('should start exam session', async () => {
+      grpcServiceMock.startSession.mockResolvedValue({
+        sessionId: 'sess-1',
+        userId: 'user-1',
         category: 'B',
-        userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
+        questions: [],
+      });
 
-    expect(result).toEqual(grpcResponse);
-  });
-
-  it('should propagate gRPC error for startSession', async () => {
-    examServiceMock.startSession.mockReturnValue(
-      of(new Error('grpc failed') as any),
-    );
-
-    await expect(
-      controller.startExamSession({ category: 'B' }, {
-        userId: 'user-1',
-      } as UserProfile),
-    ).resolves.toBeDefined();
-  });
-
-  it('should call gRPC getSession with correct payload', async () => {
-    const user = { userId: 'user-1' };
-
-    const grpcResponse = {
-      sessionId: 'sess_1',
-      currentQuestion: {},
-    };
-
-    examServiceMock.getSession.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.getExamSession(
-      'sess_1',
-      user as UserProfile,
-    );
-
-    expect(examServiceMock.getSession).toHaveBeenCalledWith(
-      {
-        sessionId: 'sess_1',
-        userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
-
-    expect(result).toEqual(grpcResponse);
-  });
-
-  it('should call gRPC submitAnswer with correct payload', async () => {
-    const user = { userId: 'user-1' };
-
-    const dto = {
-      questionId: 'question-1',
-      userAnswer: 'a',
-    };
-
-    const grpcResponse = {
-      correct: true,
-      examFinished: false,
-    };
-
-    examServiceMock.submitAnswer.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.answerQuestion(
-      'sess_1',
-      dto,
-      user as UserProfile,
-    );
-
-    expect(examServiceMock.submitAnswer).toHaveBeenCalledWith(
-      {
-        sessionId: 'sess_1',
-        questionId: 'question-1',
-        selectedOption: 'a',
-        userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
-
-    expect(result).toEqual(grpcResponse);
-  });
-
-  it('should propagate gRPC error for startSession', async () => {
-    examServiceMock.startSession.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
-
-    await expect(
-      controller.startExamSession({ category: 'B' }, {
-        userId: 'user-1',
-      } as UserProfile),
-    ).rejects.toThrow('grpc failed');
-  });
-
-  it('should propagate gRPC error for getSession', async () => {
-    examServiceMock.getSession.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
-
-    await expect(
-      controller.getExamSession('sess_1', { userId: 'user-1' } as UserProfile),
-    ).rejects.toThrow('grpc failed');
-  });
-
-  it('should propagate gRPC error for submitAnswer', async () => {
-    examServiceMock.submitAnswer.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
-
-    await expect(
-      controller.answerQuestion(
-        'sess_1',
+      const result = await controller.startExamSession(
         {
-          questionId: 'question-1',
+          category: 'B',
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        {
+          userId: 'user-1',
+        } as any,
+      );
+
+      expect(grpcServiceMock.startSession).toHaveBeenCalledWith({
+        userId: 'user-1',
+        category: 'B',
+      });
+
+      expect(result).toEqual({
+        sessionId: 'sess-1',
+        userId: 'user-1',
+        category: 'B',
+        questions: [],
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.startSession.mockRejectedValue(new Error('grpc failed'));
+
+      await expect(
+        controller.startExamSession(
+          {
+            category: 'B',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          {
+            userId: 'user-1',
+          } as any,
+        ),
+      ).rejects.toThrow('grpc failed');
+    });
+  });
+
+  describe('getExamSession', () => {
+    it('should return mapped exam session', async () => {
+      grpcServiceMock.getSession.mockResolvedValue({
+        sessionId: 'sess-1',
+        userId: 'user-1',
+        category: 'B',
+        questions: [],
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const result = await controller.getExamSession('sess-1', {
+        userId: 'user-1',
+      } as any);
+
+      expect(grpcServiceMock.getSession).toHaveBeenCalledWith({
+        userId: 'user-1',
+        sessionId: 'sess-1',
+      });
+
+      expect(result).toEqual({
+        sessionId: 'sess-1',
+        userId: 'user-1',
+        category: 'B',
+        questions: [],
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.getSession.mockRejectedValue(new Error('grpc failed'));
+
+      await expect(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        controller.getExamSession('sess-1', {
+          userId: 'user-1',
+        } as any),
+      ).rejects.toThrow('grpc failed');
+    });
+  });
+
+  describe('answerQuestion', () => {
+    it('should submit answer', async () => {
+      grpcServiceMock.submitAnswer.mockResolvedValue({
+        accepted: true,
+        answeredCount: 1,
+        totalQuestions: 20,
+        secondsRemaining: 500,
+      });
+
+      const result = await controller.answerQuestion(
+        'sess-1',
+        {
+          questionId: 'q-1',
           userAnswer: 'a',
         },
-        { userId: 'user-1' } as UserProfile,
-      ),
-    ).rejects.toThrow('grpc failed');
-  });
-
-  it('should call gRPC finishSession with correct payload', async () => {
-    const user = { userId: 'user-1' };
-
-    const grpcResponse = {
-      score: 10,
-      finished: true,
-    };
-
-    examServiceMock.finishSession.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.finishSession(
-      'sess_1',
-      user as UserProfile,
-    );
-
-    expect(examServiceMock.finishSession).toHaveBeenCalledWith(
-      {
-        sessionId: 'sess_1',
-        userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
-
-    expect(result).toEqual(grpcResponse);
-  });
-
-  it('should propagate gRPC error for finishSession', async () => {
-    examServiceMock.finishSession.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
-
-    await expect(
-      controller.finishSession('sess_1', { userId: 'user-1' } as UserProfile),
-    ).rejects.toThrow('grpc failed');
-  });
-
-  it('should call gRPC getResult with correct payload', async () => {
-    const user = { userId: 'user-1' };
-
-    const grpcResponse = {
-      sessionId: 'sess_1',
-      score: 8,
-    };
-
-    examServiceMock.getResult.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.getExamResult(
-      'sess_1',
-      user as UserProfile,
-    );
-
-    expect(examServiceMock.getResult).toHaveBeenCalledWith(
-      {
-        sessionId: 'sess_1',
-        userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
-
-    expect(result).toEqual(grpcResponse);
-  });
-
-  it('should propagate gRPC error for getResult', async () => {
-    examServiceMock.getResult.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
-
-    await expect(
-      controller.getExamResult('sess_1', { userId: 'user-1' } as UserProfile),
-    ).rejects.toThrow('grpc failed');
-  });
-
-  it('should call gRPC listResults with correct payload', async () => {
-    const user = { userId: 'user-1' };
-
-    const grpcResponse = {
-      results: [
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         {
-          sessionId: 'sess_1',
-          score: 8,
-        },
-        {
-          sessionId: 'sess_2',
-          score: 10,
-        },
-      ],
-    };
+          userId: 'user-1',
+        } as any,
+      );
 
-    examServiceMock.listResults.mockReturnValue(of(grpcResponse));
-
-    const result = await controller.getExamsResults(user as UserProfile);
-
-    expect(examServiceMock.listResults).toHaveBeenCalledWith(
-      {
+      expect(grpcServiceMock.submitAnswer).toHaveBeenCalledWith({
         userId: 'user-1',
-      },
-      grpcMetadataServiceMock.authMeta,
-    );
+        sessionId: 'sess-1',
+        questionId: 'q-1',
+        selectedOption: 'a',
+      });
 
-    expect(result).toEqual(grpcResponse);
+      expect(result).toEqual({
+        accepted: true,
+        answeredCount: 1,
+        totalQuestions: 20,
+        secondsRemaining: 500,
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.submitAnswer.mockRejectedValue(new Error('grpc failed'));
+
+      await expect(
+        controller.answerQuestion(
+          'sess-1',
+          {
+            questionId: 'q-1',
+            userAnswer: 'a',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          {
+            userId: 'user-1',
+          } as any,
+        ),
+      ).rejects.toThrow('grpc failed');
+    });
   });
 
-  it('should propagate gRPC error for listResults', async () => {
-    examServiceMock.listResults.mockReturnValue(
-      throwError(() => new Error('grpc failed')),
-    );
+  describe('finishSession', () => {
+    it('should finish exam session', async () => {
+      grpcServiceMock.finishSession.mockResolvedValue({
+        sessionId: 'sess-1',
+        userId: 'user-1',
+        passed: true,
+        scorePercent: 90,
+        answers: [],
+      });
 
-    await expect(
-      controller.getExamsResults({ userId: 'user-1' } as UserProfile),
-    ).rejects.toThrow('grpc failed');
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const result = await controller.finishSession('sess-1', {
+        userId: 'user-1',
+      } as any);
+
+      expect(grpcServiceMock.finishSession).toHaveBeenCalledWith({
+        userId: 'user-1',
+        sessionId: 'sess-1',
+      });
+
+      expect(result).toEqual({
+        sessionId: 'sess-1',
+        userId: 'user-1',
+        passed: true,
+        scorePercent: 90,
+        answers: [],
+      });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.finishSession.mockRejectedValue(new Error('grpc failed'));
+
+      await expect(
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        controller.finishSession('sess-1', {
+          userId: 'user-1',
+        } as any),
+      ).rejects.toThrow('grpc failed');
+    });
+  });
+
+  describe('getExamResult', () => {
+    it('should return exam result', async () => {
+      grpcServiceMock.getResult.mockResolvedValue({
+        sessionId: 'sess-1',
+        passed: true,
+        scorePercent: 80,
+        answers: [],
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const result = await controller.getExamResult('sess-1', {
+        userId: 'user-1',
+      } as any);
+
+      expect(grpcServiceMock.getResult).toHaveBeenCalledWith({
+        userId: 'user-1',
+        sessionId: 'sess-1',
+      });
+
+      expect(result).toEqual({
+        sessionId: 'sess-1',
+        passed: true,
+        scorePercent: 80,
+        answers: [],
+      });
+    });
+  });
+
+  describe('getExamsResults', () => {
+    it('should return exams results', async () => {
+      grpcServiceMock.listResults.mockResolvedValue({
+        exams: [],
+      });
+
+      // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+      const result = await controller.getExamsResults({
+        userId: 'user-1',
+      } as any);
+
+      expect(grpcServiceMock.listResults).toHaveBeenCalledWith({
+        userId: 'user-1',
+      });
+
+      expect(result).toEqual({
+        exams: [],
+      });
+    });
   });
 });

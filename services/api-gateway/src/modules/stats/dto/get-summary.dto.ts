@@ -4,29 +4,29 @@ import { IsInt } from 'class-validator';
 export class GetSummaryResponseDTO {
   @ApiProperty()
   @IsInt()
-  totalExams: number;
+  totalExams!: number;
 
   @ApiProperty()
   @IsInt()
-  passRate: number;
+  passRate!: number;
 
   @ApiProperty()
   @IsInt()
-  averageScore: number;
+  averageScore!: number;
 
   @ApiProperty()
   @IsInt()
-  bestScore: number;
+  bestScore!: number;
 
   @ApiProperty()
   @IsInt()
-  currentStreak: number;
+  currentStreak!: number;
 
   @ApiProperty()
   @IsInt()
-  longestStreak: number;
+  longestStreak!: number;
 
   @ApiProperty()
   @IsInt()
-  totalTimeMinutes: number;
+  totalTimeMinutes!: number;
 }

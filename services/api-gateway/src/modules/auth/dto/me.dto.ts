@@ -1,6 +1,6 @@
 import { ApiProperty } from '@nestjs/swagger';
 
-export class UserDto {
+export class UserDTO {
   @ApiProperty({
     description: 'Unique user identifier (UUID)',
     example: 'e57a4daf-8079-4946-9076-a407f5c4b023',
@@ -45,10 +45,10 @@ export class UserDto {
   lastLoginAt!: string;
 }
 
-export class MeDto {
+export class MeDTO {
   @ApiProperty({
     description: 'Authenticated user profile data',
-    type: UserDto,
+    type: UserDTO,
   })
-  user!: UserDto;
+  user!: UserDTO;
 }

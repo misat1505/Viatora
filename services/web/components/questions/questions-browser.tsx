@@ -1,7 +1,7 @@
 import { ArrowUpRight } from 'lucide-react';
 
 import { getQuestionByFilters } from '@/actions/questions/get-question-by-filters';
-import { GetQuestionsQueryDto } from '@/generated/viatoraAPI.schemas';
+import { GetQuestionsQueryDTO } from '@/generated/viatoraAPI.schemas';
 import { getDictionary, Locale } from '../../app/[lang]/dictionaries';
 import { LocalizedLink } from '../localized-link';
 import { UnauthorizedError } from '@/utils/error';
@@ -10,7 +10,7 @@ import { LoginRequired } from '../login-required';
 type Dict = Awaited<ReturnType<typeof getDictionary>>;
 
 type QuestionsBrowserProps = {
-  filters: GetQuestionsQueryDto;
+  filters: GetQuestionsQueryDTO;
   dictionary: Dict['questions']['list'];
 };
 

@@ -2,137 +2,79 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
-  OnModuleInit,
   Post,
   Query,
   Res,
   UseGuards,
 } from '@nestjs/common';
-import { type ClientGrpc } from '@nestjs/microservices';
-import { firstValueFrom } from 'rxjs';
 import type { Response } from 'express';
-import { AUTH_PACKAGE } from '../../grpc/clients.module';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthServiceClient, UserProfile } from 'src/generated/auth';
+import { UserProfile } from 'src/generated/auth';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthTokensDto } from './dto/auth-tokens.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutDto } from './dto/logout.dto';
-import { MeDto } from './dto/me.dto';
+import { AuthTokensDTO } from './dto/auth-tokens.dto';
+import { RefreshTokenDTO } from './dto/refresh-token.dto';
+import { LogoutDTO } from './dto/logout.dto';
+import { MeDTO } from './dto/me.dto';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { InitiateGoogleDTO } from './dto/initiate-google.dto';
+import {
+  InitiateGoogleDTO,
+  InitiateGoogleQueryDTO,
+} from './dto/initiate-google.dto';
+import { AuthService } from './auth.service';
+import { GoogleCallbackRawQueryDTO } from './dto/google-callback.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
-export class AuthController implements OnModuleInit {
-  private authService!: AuthServiceClient;
+export class AuthController {
+  constructor(private readonly authService: AuthService) {}
 
-  constructor(
-    @Inject(AUTH_PACKAGE) private readonly grpcClient: ClientGrpc,
-    private readonly grpcMetadataService: GrpcMetadataService,
-  ) {}
-
-  onModuleInit() {
-    this.authService =
-      this.grpcClient.getService<AuthServiceClient>('AuthService');
-  }
-
-  /** GET /auth/google — kicks off OAuth flow */
   @Get('google')
   @ApiOkResponse({ type: InitiateGoogleDTO })
-  async initiateGoogle(@Query('redirectUrl') redirectUrl: string) {
-    const { redirectUrl: googleUrl } = await firstValueFrom(
-      this.authService.initiateOAuth(
-        // @ts-expect-error we will not support CSRF for now, metadata not in generated types
-        { redirectUrl },
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-    const result = new InitiateGoogleDTO();
-    result.url = googleUrl;
-    return result;
+  initiateGoogle(
+    @Query() query: InitiateGoogleQueryDTO,
+  ): Promise<InitiateGoogleDTO> {
+    return this.authService.initiateGoogle(query);
   }
 
-  /** GET /auth/google/callback — Google redirects here with ?code=&state= */
   @Get('google/callback')
   async googleCallback(
-    @Query('code') code: string,
-    @Query('state') state: string,
+    @Query() query: GoogleCallbackRawQueryDTO,
     @Res() res: Response,
-  ) {
-    const result = await firstValueFrom(
-      this.authService.handleOAuthCallback(
-        { code, state },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+  ): Promise<void> {
+    const url = await this.authService.googleCallback({
+      code: query.code,
+      state: query.state,
+    });
 
-    const redirectUrl = new URL(result.redirectUrl);
-
-    redirectUrl.searchParams.set('token', result.accessToken);
-    redirectUrl.searchParams.set('refreshToken', result.refreshToken);
-
-    return res.redirect(redirectUrl.toString());
+    return res.redirect(url);
   }
 
-  /** POST /auth/refresh */
   @ApiOperation({ summary: 'Refresh access token' })
-  @ApiOkResponse({ type: AuthTokensDto })
+  @ApiOkResponse({ type: AuthTokensDTO })
   @Post('refresh')
-  async refresh(@Body() body: RefreshTokenDto) {
-    const result = await firstValueFrom(
-      this.authService.refreshToken(
-        {
-          refreshToken: body.refreshToken,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
-    // @ts-expect-error expiresIn is Long in protobuf and we need to pick the low
-    result.expiresIn = result.expiresIn.low;
-    return result;
+  refresh(@Body() body: RefreshTokenDTO): Promise<AuthTokensDTO> {
+    return this.authService.refresh(body);
   }
 
-  /** POST /auth/logout */
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout user' })
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDto) {
-    return firstValueFrom(
-      this.authService.logout(
-        {
-          userId: user.userId,
-          refreshToken: body.refreshToken,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+  logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDTO) {
+    return this.authService.logout(user.userId, body);
   }
 
-  /** GET /auth/me */
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Current user' })
-  @ApiOkResponse({ type: MeDto })
+  @ApiOkResponse({ type: MeDTO })
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getMe(@CurrentUser() user: UserProfile) {
-    return firstValueFrom(
-      this.authService.getMe(
-        { userId: user.userId },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+  getMe(@CurrentUser() user: UserProfile): Promise<MeDTO> {
+    return this.authService.getMe(user.userId);
   }
 }

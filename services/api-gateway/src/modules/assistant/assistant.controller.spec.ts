@@ -1,44 +1,34 @@
 import { Test, TestingModule } from '@nestjs/testing';
-import { of } from 'rxjs';
-import { AssistantController } from './assistant.controller';
-import { ASSISTANT_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { afterEach, beforeEach, describe, expect, it, vi } from 'vitest';
-import { SendMessageDTO } from './dto/send-message.dto';
-import { UserProfile } from 'src/generated/auth';
-import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { beforeEach, describe, expect, it, vi } from 'vitest';
 
-describe('AssistantController', () => {
+import { AssistantController } from './assistant.controller';
+import { AssistantService } from './assistant.service';
+import { ASSISTANT_GRPC_CLIENT } from './assistant.tokens';
+import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
+import { GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
+
+describe('AssistantController integration', () => {
   let controller: AssistantController;
 
-  const mockAssistantService = {
+  const grpcServiceMock = {
     sendMessage: vi.fn(),
     getConversationHistory: vi.fn(),
   };
 
-  const mockGrpcClient = {
-    getService: vi.fn().mockReturnValue(mockAssistantService),
-  };
-
-  const mockGrpcMetadataService = {
-    authMeta: {
-      authorization: 'Bearer token',
-    },
-  };
+  const grpcClientMock = {
+    service: grpcServiceMock,
+  } as unknown as GrpcClientWrapper<any>;
 
   beforeEach(async () => {
-    mockGrpcClient.getService.mockReturnValue(mockAssistantService);
+    vi.clearAllMocks();
 
-    const module: TestingModule = await Test.createTestingModule({
+    const moduleRef: TestingModule = await Test.createTestingModule({
       controllers: [AssistantController],
       providers: [
+        AssistantService,
         {
-          provide: ASSISTANT_PACKAGE,
-          useValue: mockGrpcClient,
-        },
-        {
-          provide: GrpcMetadataService,
-          useValue: mockGrpcMetadataService,
+          provide: ASSISTANT_GRPC_CLIENT,
+          useValue: grpcClientMock,
         },
       ],
     })
@@ -48,15 +38,7 @@ describe('AssistantController', () => {
       })
       .compile();
 
-    controller = module.get<AssistantController>(AssistantController);
-
-    controller.onModuleInit();
-
-    vi.clearAllMocks();
-  });
-
-  afterEach(() => {
-    vi.clearAllMocks();
+    controller = moduleRef.get(AssistantController);
   });
 
   it('should be defined', () => {
@@ -64,122 +46,132 @@ describe('AssistantController', () => {
   });
 
   describe('sendMessage', () => {
-    it('should send message with userId and dto', async () => {
-      const dto = {
-        message: 'Hello assistant',
-      };
-
-      const user = {
-        userId: 'user-123',
-      };
-
-      const grpcResponse = {
-        id: 'message-1',
-        answer: 'Hello!',
-      };
-
-      mockAssistantService.sendMessage.mockReturnValue(of(grpcResponse));
+    it('should send message through grpc and return mapped response', async () => {
+      grpcServiceMock.sendMessage.mockResolvedValue({
+        conversationId: 'conv-1',
+        reply: 'Hello!',
+      });
 
       const result = await controller.sendMessage(
-        dto as SendMessageDTO,
-        user as UserProfile,
-      );
-
-      expect(mockAssistantService.sendMessage).toHaveBeenCalledWith(
+        {
+          message: 'Hello assistant',
+          questionId: '',
+          locale: 'pl',
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
         {
           userId: 'user-123',
-          message: 'Hello assistant',
-        },
-        mockGrpcMetadataService.authMeta,
+        } as any,
       );
 
-      expect(result).toEqual(grpcResponse);
+      expect(grpcServiceMock.sendMessage).toHaveBeenCalledWith({
+        userId: 'user-123',
+        message: 'Hello assistant',
+        questionId: '',
+        locale: 'pl',
+      });
+
+      expect(result).toEqual({
+        conversationId: 'conv-1',
+        reply: 'Hello!',
+      });
     });
 
     it('should propagate grpc error', async () => {
-      const dto = {
-        message: 'Hello',
-      };
-
-      const user = {
-        userId: 'user-123',
-      };
-
-      const error = new Error('grpc error');
-
-      mockAssistantService.sendMessage.mockReturnValue(
-        of(Promise.reject(error)),
-      );
+      grpcServiceMock.sendMessage.mockRejectedValue(new Error('grpc error'));
 
       await expect(
-        controller.sendMessage(dto as SendMessageDTO, user as UserProfile),
-      ).rejects.toThrow(error);
+        controller.sendMessage(
+          {
+            message: 'Hello',
+            questionId: '',
+            locale: 'pl',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          {
+            userId: 'user-123',
+          } as any,
+        ),
+      ).rejects.toThrow('grpc error');
     });
   });
 
   describe('getConversationHistory', () => {
-    it('should get conversation history with questionId and userId', async () => {
-      const query = {
-        questionId: 'question-123',
-      };
-
-      const user = {
-        userId: 'user-123',
-      };
-
-      const grpcResponse = {
+    it('should get conversation history through grpc and return mapped response', async () => {
+      grpcServiceMock.getConversationHistory.mockResolvedValue({
         messages: [
           {
-            text: 'Hello',
+            id: 'msg-1',
+            role: 'assistant',
+            content: 'Hello',
+            createdAt: '2026-01-01',
           },
         ],
-      };
-
-      mockAssistantService.getConversationHistory.mockReturnValue(
-        of(grpcResponse),
-      );
+      });
 
       const result = await controller.getConversationHistory(
-        query,
-        user as UserProfile,
-      );
-
-      expect(mockAssistantService.getConversationHistory).toHaveBeenCalledWith(
         {
           questionId: 'question-123',
-          userId: 'user-123',
         },
-        mockGrpcMetadataService.authMeta,
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        {
+          userId: 'user-123',
+        } as any,
       );
 
-      expect(result).toEqual(grpcResponse);
+      expect(grpcServiceMock.getConversationHistory).toHaveBeenCalledWith({
+        questionId: 'question-123',
+        userId: 'user-123',
+      });
+
+      expect(result).toEqual({
+        messages: [
+          {
+            id: 'msg-1',
+            role: 'assistant',
+            content: 'Hello',
+            createdAt: '2026-01-01',
+          },
+        ],
+      });
     });
 
-    it('should handle empty conversation history', async () => {
-      const query = {
-        questionId: 'question-123',
-      };
-
-      const user = {
-        userId: 'user-123',
-      };
-
-      const grpcResponse = {
+    it('should return empty conversation history', async () => {
+      grpcServiceMock.getConversationHistory.mockResolvedValue({
         messages: [],
-      };
-
-      mockAssistantService.getConversationHistory.mockReturnValue(
-        of(grpcResponse),
-      );
+      });
 
       const result = await controller.getConversationHistory(
-        query,
-        user as UserProfile,
+        {
+          questionId: 'question-123',
+        },
+        // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+        {
+          userId: 'user-123',
+        } as any,
       );
 
       expect(result).toEqual({
         messages: [],
       });
+    });
+
+    it('should propagate grpc error', async () => {
+      grpcServiceMock.getConversationHistory.mockRejectedValue(
+        new Error('grpc error'),
+      );
+
+      await expect(
+        controller.getConversationHistory(
+          {
+            questionId: 'question-123',
+          },
+          // eslint-disable-next-line @typescript-eslint/no-unsafe-argument
+          {
+            userId: 'user-123',
+          } as any,
+        ),
+      ).rejects.toThrow('grpc error');
     });
   });
 });
