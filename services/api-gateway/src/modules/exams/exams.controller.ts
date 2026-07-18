@@ -3,7 +3,6 @@ import {
   Controller,
   Get,
   Inject,
-  OnModuleInit,
   Param,
   Post,
   UseGuards,
@@ -11,10 +10,6 @@ import {
 import { ExamSessionDTO, StartExamDTO } from './dto/start-exam.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { ExamServiceClient } from 'src/generated/exam';
-import { type ClientGrpc } from '@nestjs/microservices';
-import { EXAMS_PACKAGE } from 'src/grpc/clients.module';
-import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
-import { firstValueFrom } from 'rxjs';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { UserProfile } from 'src/generated/auth';
 import { ApiOkResponse } from '@nestjs/swagger';
@@ -24,21 +19,17 @@ import {
 } from './dto/answer-question.dto';
 import { SubmitExamResponseDTO } from './dto/submit-exam.dto';
 import { GetExamsResultsResponseDTO } from './dto/get-exams-results.dto';
+import { type GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
+import { ExamsMapper } from './dto/mapper/exams.mapper';
+import { EXAM_GRPC_CLIENT } from './exams.tokens';
 
 @Controller('/exams')
 @UseGuards(JwtAuthGuard)
-export class ExamsController implements OnModuleInit {
-  private examService!: ExamServiceClient;
-
+export class ExamsController {
   constructor(
-    @Inject(EXAMS_PACKAGE) private readonly grpcClient: ClientGrpc,
-    private readonly grpcMetadataService: GrpcMetadataService,
+    @Inject(EXAM_GRPC_CLIENT)
+    private readonly examClient: GrpcClientWrapper<ExamServiceClient>,
   ) {}
-
-  onModuleInit() {
-    this.examService =
-      this.grpcClient.getService<ExamServiceClient>('ExamService');
-  }
 
   @Post('/start')
   @ApiOkResponse({ type: ExamSessionDTO })
@@ -46,19 +37,12 @@ export class ExamsController implements OnModuleInit {
     @Body() dto: StartExamDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<ExamSessionDTO> {
-    const examSession = await firstValueFrom(
-      this.examService.startSession(
-        {
-          category: dto.category,
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const examSession = await this.examClient.service.startSession({
+      category: dto.category,
+      userId: user.userId,
+    });
 
-    // @ts-expect-error TODO: make this error go away
-    return examSession;
+    return ExamsMapper.toExamSessionDTO(examSession);
   }
 
   @Get('/sessions/:id')
@@ -67,19 +51,12 @@ export class ExamsController implements OnModuleInit {
     @Param('id') sessionId: string,
     @CurrentUser() user: UserProfile,
   ): Promise<ExamSessionDTO> {
-    const examSession = await firstValueFrom(
-      this.examService.getSession(
-        {
-          sessionId,
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const examSession = await this.examClient.service.getSession({
+      sessionId,
+      userId: user.userId,
+    });
 
-    // @ts-expect-error TODO: make this error go away
-    return examSession;
+    return ExamsMapper.toExamSessionDTO(examSession);
   }
 
   @Post('/sessions/:id/answer')
@@ -89,20 +66,14 @@ export class ExamsController implements OnModuleInit {
     @Body() dto: AnswerQuestionDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<AnswerQuestionResponseDTO> {
-    const result = await firstValueFrom(
-      this.examService.submitAnswer(
-        {
-          sessionId,
-          questionId: dto.questionId,
-          selectedOption: dto.userAnswer,
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.examClient.service.submitAnswer({
+      sessionId,
+      questionId: dto.questionId,
+      selectedOption: dto.userAnswer,
+      userId: user.userId,
+    });
 
-    return result;
+    return ExamsMapper.toAnswerQuestionResponseDTO(result);
   }
 
   @Post('/sessions/:id/submit')
@@ -111,18 +82,12 @@ export class ExamsController implements OnModuleInit {
     @Param('id') sessionId: string,
     @CurrentUser() user: UserProfile,
   ): Promise<SubmitExamResponseDTO> {
-    const result = await firstValueFrom(
-      this.examService.finishSession(
-        {
-          sessionId,
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.examClient.service.finishSession({
+      sessionId,
+      userId: user.userId,
+    });
 
-    return result;
+    return ExamsMapper.toSubmitExamResponseDTO(result);
   }
 
   @Get('/exams/results/:id')
@@ -131,18 +96,12 @@ export class ExamsController implements OnModuleInit {
     @Param('id') sessionId: string,
     @CurrentUser() user: UserProfile,
   ): Promise<SubmitExamResponseDTO> {
-    const result = await firstValueFrom(
-      this.examService.getResult(
-        {
-          sessionId,
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.examClient.service.getResult({
+      sessionId,
+      userId: user.userId,
+    });
 
-    return result;
+    return ExamsMapper.toSubmitExamResponseDTO(result);
   }
 
   @Get('/exams/results')
@@ -150,16 +109,10 @@ export class ExamsController implements OnModuleInit {
   async getExamsResults(
     @CurrentUser() user: UserProfile,
   ): Promise<GetExamsResultsResponseDTO> {
-    const result = await firstValueFrom(
-      this.examService.listResults(
-        {
-          userId: user.userId,
-        },
-        // @ts-expect-error metadata not in generated types
-        this.grpcMetadataService.authMeta,
-      ),
-    );
+    const result = await this.examClient.service.listResults({
+      userId: user.userId,
+    });
 
-    return result;
+    return ExamsMapper.toGetExamsResultsResponseDTO(result);
   }
 }
