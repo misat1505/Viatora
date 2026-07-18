@@ -2,7 +2,6 @@ import {
   Body,
   Controller,
   Get,
-  Inject,
   Post,
   Query,
   Res,
@@ -10,94 +9,72 @@ import {
 } from '@nestjs/common';
 import type { Response } from 'express';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
-import { AuthServiceClient, UserProfile } from 'src/generated/auth';
+import { UserProfile } from 'src/generated/auth';
 import {
   ApiBearerAuth,
   ApiOkResponse,
   ApiOperation,
   ApiTags,
 } from '@nestjs/swagger';
-import { AuthTokensDto } from './dto/auth-tokens.dto';
-import { RefreshTokenDto } from './dto/refresh-token.dto';
-import { LogoutDto } from './dto/logout.dto';
-import { MeDto } from './dto/me.dto';
+import { AuthTokensDTO } from './dto/auth-tokens.dto';
+import { RefreshTokenDTO } from './dto/refresh-token.dto';
+import { LogoutDTO } from './dto/logout.dto';
+import { MeDTO } from './dto/me.dto';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
-import { InitiateGoogleDTO } from './dto/initiate-google.dto';
-import { AUTH_GRPC_CLIENT } from './auth.tokens';
-import { type GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
-import { AuthMapper } from './dto/mapper/auth.mapper';
+import {
+  InitiateGoogleDTO,
+  InitiateGoogleQueryDTO,
+} from './dto/initiate-google.dto';
+import { AuthService } from './auth.service';
+import { GoogleCallbackRawQueryDTO } from './dto/google-callback.dto';
 
 @ApiTags('Auth')
 @Controller('auth')
 export class AuthController {
-  constructor(
-    @Inject(AUTH_GRPC_CLIENT)
-    private readonly authClient: GrpcClientWrapper<AuthServiceClient>,
-  ) {}
+  constructor(private readonly authService: AuthService) {}
 
   @Get('google')
   @ApiOkResponse({ type: InitiateGoogleDTO })
-  async initiateGoogle(@Query('redirectUrl') redirectUrl: string) {
-    const result = await this.authClient.service.initiateOAuth({
-      redirectUrl,
-      state: '',
-    });
-
-    return AuthMapper.toInitiateGoogleDTO(result);
+  initiateGoogle(
+    @Query() query: InitiateGoogleQueryDTO,
+  ): Promise<InitiateGoogleDTO> {
+    return this.authService.initiateGoogle(query);
   }
 
   @Get('google/callback')
   async googleCallback(
-    @Query('code') code: string,
-    @Query('state') state: string,
+    @Query() query: GoogleCallbackRawQueryDTO,
     @Res() res: Response,
-  ) {
-    const result = await this.authClient.service.handleOAuthCallback({
-      code,
-      state,
+  ): Promise<void> {
+    const url = await this.authService.googleCallback({
+      code: query.code,
+      state: query.state,
     });
-    const { redirectUrl, accessToken, refreshToken } =
-      AuthMapper.toOAuthCallbackResult(result);
 
-    const redirectTo = new URL(redirectUrl);
-    redirectTo.searchParams.set('token', accessToken);
-    redirectTo.searchParams.set('refreshToken', refreshToken);
-
-    return res.redirect(redirectTo.toString());
+    return res.redirect(url);
   }
 
   @ApiOperation({ summary: 'Refresh access token' })
-  @ApiOkResponse({ type: AuthTokensDto })
+  @ApiOkResponse({ type: AuthTokensDTO })
   @Post('refresh')
-  async refresh(@Body() body: RefreshTokenDto) {
-    const result = await this.authClient.service.refreshToken({
-      refreshToken: body.refreshToken,
-    });
-
-    return AuthMapper.toAuthTokensDto(result);
+  refresh(@Body() body: RefreshTokenDTO): Promise<AuthTokensDTO> {
+    return this.authService.refresh(body);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Logout user' })
   @Post('logout')
   @UseGuards(JwtAuthGuard)
-  async logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDto) {
-    return this.authClient.service.logout({
-      userId: user.userId,
-      refreshToken: body.refreshToken,
-    });
+  logout(@CurrentUser() user: UserProfile, @Body() body: LogoutDTO) {
+    return this.authService.logout(user.userId, body);
   }
 
   @ApiBearerAuth()
   @ApiOperation({ summary: 'Current user' })
-  @ApiOkResponse({ type: MeDto })
+  @ApiOkResponse({ type: MeDTO })
   @Get('me')
   @UseGuards(JwtAuthGuard)
-  async getMe(@CurrentUser() user: UserProfile) {
-    const result = await this.authClient.service.getMe({
-      userId: user.userId,
-    });
-
-    return AuthMapper.toMeDto(result);
+  getMe(@CurrentUser() user: UserProfile): Promise<MeDTO> {
+    return this.authService.getMe(user.userId);
   }
 }

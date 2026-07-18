@@ -1,9 +1,8 @@
-// dto/mapper/auth.mapper.ts
 import { AuthServiceClient } from 'src/generated/auth';
 import { GrpcResponse } from 'src/grpc/types/grpc-client';
-import { AuthTokensDto } from '../auth-tokens.dto';
+import { AuthTokensDTO } from '../auth-tokens.dto';
 import { InitiateGoogleDTO } from '../initiate-google.dto';
-import { MeDto, UserDto } from '../me.dto';
+import { MeDTO, UserDTO } from '../me.dto';
 
 type InitiateOAuthResponse = GrpcResponse<AuthServiceClient, 'initiateOAuth'>;
 type HandleOAuthCallbackResponse = GrpcResponse<
@@ -45,16 +44,16 @@ export class AuthMapper {
     };
   }
 
-  static toAuthTokensDto(result: RefreshTokenResponse): AuthTokensDto {
-    const dto = new AuthTokensDto();
+  static toAuthTokensDto(result: RefreshTokenResponse): AuthTokensDTO {
+    const dto = new AuthTokensDTO();
     dto.accessToken = result.accessToken;
     dto.refreshToken = result.refreshToken;
     dto.expiresIn = toNumber(result.expiresIn);
     return dto;
   }
 
-  static toUserDto(user: GrpcUser): UserDto {
-    const dto = new UserDto();
+  static toUserDto(user: GrpcUser): UserDTO {
+    const dto = new UserDTO();
     dto.userId = user?.userId ?? '';
     dto.email = user?.email ?? '';
     dto.displayName = user?.displayName ?? '';
@@ -65,8 +64,8 @@ export class AuthMapper {
     return dto;
   }
 
-  static toMeDto(result: GetMeResponse): MeDto {
-    const dto = new MeDto();
+  static toMeDto(result: GetMeResponse): MeDTO {
+    const dto = new MeDTO();
     dto.user = this.toUserDto(result.user);
     return dto;
   }

@@ -1,7 +1,7 @@
 import { ApiProperty } from '@nestjs/swagger';
 import { IsString, MinLength } from 'class-validator';
 
-export class RefreshTokenDto {
+export class RefreshTokenDTO {
   @ApiProperty({
     description: 'Refresh token used to obtain a new access token',
     example: 'eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9',
