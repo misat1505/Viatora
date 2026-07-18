@@ -1,5 +1,4 @@
-import { Get, Inject, Injectable } from '@nestjs/common';
-import { ApiOkResponse } from '@nestjs/swagger';
+import { Inject, Injectable } from '@nestjs/common';
 import { StatsServiceClient } from 'src/generated/stats';
 import { GetSummaryResponseDTO } from './dto/get-summary.dto';
 import { UserProfile } from 'src/generated/auth';
@@ -14,8 +13,6 @@ export class StatsService {
     private readonly statsClient: GrpcClientWrapper<StatsServiceClient>,
   ) {}
 
-  @Get('/sumamry')
-  @ApiOkResponse({ type: GetSummaryResponseDTO })
   async getStatsSummary(
     userId: UserProfile['userId'],
   ): Promise<GetSummaryResponseDTO> {
