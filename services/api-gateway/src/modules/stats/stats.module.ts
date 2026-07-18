@@ -5,12 +5,14 @@ import { GrpcMetadataService } from 'src/grpc/grpc-metadata.service';
 import { STATS_GRPC_CLIENT } from './stats.tokens';
 import { createGrpcClientProvider } from 'src/grpc/utils/create-grpc-client-provider';
 import { StatsServiceClient } from 'src/generated/stats';
+import { StatsService } from './stats.service';
 
 @Module({
   imports: [GrpcClientsModule],
   controllers: [StatsController],
   providers: [
     GrpcMetadataService,
+    StatsService,
     {
       provide: STATS_GRPC_CLIENT,
       useClass: createGrpcClientProvider<StatsServiceClient>(

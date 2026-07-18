@@ -3,14 +3,12 @@ import {
   Controller,
   Get,
   Headers,
-  Inject,
   Post,
   type RawBodyRequest,
   Req,
   UseGuards,
   UseInterceptors,
 } from '@nestjs/common';
-import { PaymentServiceClient } from 'src/generated/payment';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { GetAllAvailablePlansDTO } from './dto/plan.dto';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
@@ -23,63 +21,44 @@ import {
 } from './dto/create-checkout.dto';
 import { CacheInterceptor, CacheKey } from '@nestjs/cache-manager';
 import { buildCacheKey } from 'src/utils/build-cache-key';
-import { PAYMENTS_GRPC_CLIENT } from './payments.tokens';
-import { type GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
-import { PaymentsMapper } from './dto/mappers/payment.mapper';
+import { PaymentsService } from './payments.service';
 
 @Controller('/payments')
 export class PaymentsController {
-  constructor(
-    @Inject(PAYMENTS_GRPC_CLIENT)
-    private readonly paymentsClient: GrpcClientWrapper<PaymentServiceClient>,
-  ) {}
+  constructor(private readonly paymentsService: PaymentsService) {}
 
   @Post('/checkout')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: CreateCheckoutResponseDTO })
-  async createCheckout(
+  createCheckout(
     @Body() dto: CreateCheckoutDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<CreateCheckoutResponseDTO> {
-    const result = await this.paymentsClient.service.createCheckout({
-      userId: user.userId,
-      userEmail: user.email,
-      ...dto,
-    });
-
-    return PaymentsMapper.toCreateCheckoutResponseDTO(result);
+    return this.paymentsService.createCheckout(user, dto);
   }
 
   @Post('/stripe/webhook')
-  async stripeWebhook(
+  stripeWebhook(
     @Req() req: RawBodyRequest<Request>,
     @Headers('stripe-signature') signature: string,
   ) {
-    return this.paymentsClient.service.handleStripeWebhook({
-      payload: req.rawBody!,
-      stripeSignature: signature,
-    });
+    return this.paymentsService.stripeWebhook(req.rawBody!, signature);
   }
 
   @Get('/plans')
   @UseInterceptors(CacheInterceptor)
   @CacheKey(buildCacheKey('payments', 'plans'))
   @ApiOkResponse({ type: GetAllAvailablePlansDTO })
-  async getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
-    const result = await this.paymentsClient.service.getAllAvailablePlans({});
-    return PaymentsMapper.toGetAllAvailablePlansDTO(result);
+  getAllAvailablePlans(): Promise<GetAllAvailablePlansDTO> {
+    return this.paymentsService.getAllAvailablePlans();
   }
 
   @Get('/subscriptions/mine')
   @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetUserSubscriptionsDTO })
-  async getUserSubscriptions(
+  getUserSubscriptions(
     @CurrentUser() user: UserProfile,
   ): Promise<GetUserSubscriptionsDTO> {
-    const result = await this.paymentsClient.service.getUserSubscriptions({
-      userId: user.userId,
-    });
-
-    return PaymentsMapper.toGetUserSubscriptionsDTO(result);
+    return this.paymentsService.getUserSubscriptions(user.userId);
   }
 }

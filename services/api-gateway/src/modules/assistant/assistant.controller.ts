@@ -1,60 +1,35 @@
-import {
-  Body,
-  Controller,
-  Get,
-  Inject,
-  Post,
-  Query,
-  UseGuards,
-} from '@nestjs/common';
+import { Body, Controller, Get, Post, Query, UseGuards } from '@nestjs/common';
 import { ApiOkResponse } from '@nestjs/swagger';
 import { JwtAuthGuard } from 'src/common/guards/jwt-auth.guard';
 import { CurrentUser } from 'src/common/decorators/get-current-user';
 import { UserProfile } from 'src/generated/auth';
-import { AssistantServiceClient } from 'src/generated/assistant';
 import { SendMessageDTO, SendMessageResponseDTO } from './dto/send-message.dto';
 import {
   GetConversationHistoryQueryDTO,
   GetConversationHistoryResponseDTO,
 } from './dto/get-conversation-history.dto';
-import { ASSISTANT_GRPC_CLIENT } from './assistant.tokens';
-import { type GrpcClientWrapper } from 'src/grpc/utils/create-grpc-client-provider';
-import { AssistantMapper } from './dto/mapper/assistant.mapper';
+import { AssistantService } from './assistant.service';
 
 @Controller('/assistant')
+@UseGuards(JwtAuthGuard)
 export class AssistantController {
-  constructor(
-    @Inject(ASSISTANT_GRPC_CLIENT)
-    private readonly assistantClient: GrpcClientWrapper<AssistantServiceClient>,
-  ) {}
+  constructor(private readonly assistantService: AssistantService) {}
 
   @Post('/message')
-  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: SendMessageResponseDTO })
-  async sendMessage(
+  sendMessage(
     @Body() dto: SendMessageDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<SendMessageResponseDTO> {
-    const result = await this.assistantClient.service.sendMessage({
-      userId: user.userId,
-      ...dto,
-    });
-
-    return AssistantMapper.toSendMessageResponseDTO(result);
+    return this.assistantService.sendMessage(user.userId, dto);
   }
 
   @Get('/conversation')
-  @UseGuards(JwtAuthGuard)
   @ApiOkResponse({ type: GetConversationHistoryResponseDTO })
-  async getConversationHistory(
+  getConversationHistory(
     @Query() query: GetConversationHistoryQueryDTO,
     @CurrentUser() user: UserProfile,
   ): Promise<GetConversationHistoryResponseDTO> {
-    const result = await this.assistantClient.service.getConversationHistory({
-      questionId: query.questionId,
-      userId: user.userId,
-    });
-
-    return AssistantMapper.toGetConversationHistoryResponseDTO(result);
+    return this.assistantService.getConversationHistory(user.userId, query);
   }
 }
