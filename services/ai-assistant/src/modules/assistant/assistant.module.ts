@@ -19,8 +19,6 @@ import {
 import { GrpcClientsModule } from 'src/grpc/clients.module';
 import { OpenAIModule } from '../openai/openai.module';
 import { KafkaModule } from 'src/kafka/kafka.module';
-import { KAFKA_SERVICE_TOKEN } from 'src/kafka/kafka.token';
-import { KafkaProducerService } from 'src/kafka/kafka-producer.service';
 
 @Module({
   imports: [
