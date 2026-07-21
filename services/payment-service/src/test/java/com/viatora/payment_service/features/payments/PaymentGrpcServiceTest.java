@@ -1,8 +1,10 @@
 package com.viatora.payment_service.features.payments;
 
-import static org.junit.jupiter.api.Assertions.*;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.Mockito.*;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.verify;
+import static org.mockito.Mockito.when;
 
 import com.viatora.payment_service.features.payments.persistance.entities.Category;
 import com.viatora.payment_service.features.payments.persistance.entities.Subscription;
@@ -11,9 +13,9 @@ import com.viatora.payment_service.features.payments.persistance.repositories.Or
 import com.viatora.payment_service.features.payments.persistance.repositories.SubscriptionRepository;
 import com.viatora.payment_service.features.payments.utils.StripeConfig;
 import com.viatora.payment_service.features.payments.utils.SubscriptionMapper;
+import com.viatora.payment_service.kafka.KafkaProducer;
 import io.grpc.stub.StreamObserver;
 import java.util.List;
-import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
@@ -43,6 +45,9 @@ class PaymentGrpcServiceTest {
 
     private PaymentGrpcService service;
 
+    @Mock
+    private KafkaProducer kafkaProducer;
+
     @BeforeEach
     void setup() {
         MockitoAnnotations.openMocks(this);
@@ -52,7 +57,8 @@ class PaymentGrpcServiceTest {
             subscriptionRepository,
             orderRepository,
             subscriptionMapper,
-            stripeConfig
+            stripeConfig,
+            kafkaProducer
         );
     }
 

@@ -20,6 +20,15 @@ spring:
     locations: classpath:db/migration
     encoding: UTF-8
 
+  kafka:
+    bootstrap-servers: localhost:29092
+
+    producer:
+      key-serializer: org.apache.kafka.common.serialization.StringSerializer
+      value-serializer: org.springframework.kafka.support.serializer.JsonSerializer
+      properties:
+        spring.json.add.type.headers: false
+
 grpc:
   server:
     port: 50053

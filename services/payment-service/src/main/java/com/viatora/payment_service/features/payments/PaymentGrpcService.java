@@ -4,6 +4,7 @@ import com.stripe.model.Event;
 import com.stripe.model.checkout.Session;
 import com.stripe.net.Webhook;
 import com.stripe.param.checkout.SessionCreateParams;
+import com.viatora.payment_service.features.payments.events.SubscriptionPurchasedEvent;
 import com.viatora.payment_service.features.payments.persistance.entities.Category;
 import com.viatora.payment_service.features.payments.persistance.entities.Order;
 import com.viatora.payment_service.features.payments.persistance.entities.OrderStatus;
@@ -13,6 +14,7 @@ import com.viatora.payment_service.features.payments.persistance.repositories.Or
 import com.viatora.payment_service.features.payments.persistance.repositories.SubscriptionRepository;
 import com.viatora.payment_service.features.payments.utils.StripeConfig;
 import com.viatora.payment_service.features.payments.utils.SubscriptionMapper;
+import com.viatora.payment_service.kafka.KafkaProducer;
 import io.grpc.stub.StreamObserver;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
@@ -39,6 +41,7 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
     private final OrderRepository orderRepository;
     private final SubscriptionMapper subscriptionMapper;
     private final StripeConfig stripeConfig;
+    private final KafkaProducer kafkaProducer;
 
     @Override
     public void createCheckout(
@@ -69,11 +72,8 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
             SessionCreateParams params = SessionCreateParams.builder()
                 .setMode(SessionCreateParams.Mode.PAYMENT)
                 .setCustomerEmail(request.getUserEmail())
-
                 .setSuccessUrl("http://localhost:3000/payment/success")
-
                 .setCancelUrl("http://localhost:3000/payment/cancel")
-
                 .addLineItem(
                     SessionCreateParams.LineItem.builder()
                         .setQuantity(1L)
@@ -96,9 +96,7 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
                         )
                         .build()
                 )
-
                 .putMetadata("order_id", order.getId().toString())
-
                 .build();
 
             Session session = Session.create(params);
@@ -149,6 +147,8 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
 
                 LocalDate today = LocalDate.now();
 
+                boolean firstPurchase = subscription == null;
+
                 if (subscription == null) {
                     subscription = new Subscription();
 
@@ -169,6 +169,21 @@ public class PaymentGrpcService extends PaymentServiceGrpc.PaymentServiceImplBas
                 }
 
                 this.subscriptionRepository.save(subscription);
+
+                SubscriptionPurchasedEvent kafkaEvent = new SubscriptionPurchasedEvent(
+                    subscription.getUserId(),
+                    order.getId(),
+                    subscription.getId(),
+                    subscription.getCategory().getName(),
+                    order.getDurationMonths(),
+                    order.getPrice(),
+                    order.getCategory().getCurrency(),
+                    firstPurchase,
+                    subscription.getStartsAt(),
+                    subscription.getExpiresAt()
+                );
+
+                kafkaProducer.send("subscription.purchased", kafkaEvent);
             }
 
             responseObserver.onNext(
