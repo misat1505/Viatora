@@ -11,6 +11,7 @@ import { OPENAI_SERVICE } from '../openai/openai.service';
 
 import { MessageRole } from './persistance/entities/message.entity';
 import { ExamQuestion } from 'src/generated/content';
+import { KafkaProducerService } from 'src/kafka/kafka-producer.service';
 
 describe('AssistantService', () => {
   let service: AssistantService;
@@ -33,6 +34,10 @@ describe('AssistantService', () => {
     chatCompletion: vi.fn(),
   };
 
+  const kafkaProducerMock = {
+    produce: vi.fn(),
+  };
+
   beforeEach(async () => {
     const moduleRef = await Test.createTestingModule({
       providers: [
@@ -52,6 +57,10 @@ describe('AssistantService', () => {
         {
           provide: OPENAI_SERVICE,
           useValue: openAIServiceMock,
+        },
+        {
+          provide: KafkaProducerService,
+          useValue: kafkaProducerMock,
         },
       ],
     }).compile();
@@ -113,6 +122,8 @@ describe('AssistantService', () => {
         role: MessageRole.ASSISTANT,
         content: 'AI response',
       });
+
+      expect(kafkaProducerMock.produce).toHaveBeenCalled();
 
       expect(result).toEqual({
         conversationId: 'conversation-1',

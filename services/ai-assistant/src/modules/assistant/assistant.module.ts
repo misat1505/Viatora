@@ -18,12 +18,14 @@ import {
 } from './persistance/question.repository';
 import { GrpcClientsModule } from 'src/grpc/clients.module';
 import { OpenAIModule } from '../openai/openai.module';
+import { KafkaModule } from 'src/kafka/kafka.module';
 
 @Module({
   imports: [
     TypeOrmModule.forFeature([Conversation, Message]),
     GrpcClientsModule,
     OpenAIModule,
+    KafkaModule,
   ],
   providers: [
     AssistantService,

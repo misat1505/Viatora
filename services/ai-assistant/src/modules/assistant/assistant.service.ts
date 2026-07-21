@@ -17,6 +17,7 @@ import { type IOpenAIService } from '../openai/openai.interface';
 import { type IConversationRepository } from './persistance/conversation.repository.interface';
 import { type IMessageRepository } from './persistance/message.repository.interface';
 import { type IQuestionRepository } from './persistance/question.repository.interface';
+import { KafkaProducerService } from 'src/kafka/kafka-producer.service';
 
 @Injectable()
 export class AssistantService {
@@ -32,6 +33,8 @@ export class AssistantService {
 
     @Inject(OPENAI_SERVICE)
     private readonly openAIService: IOpenAIService,
+
+    private readonly kafkaProducerService: KafkaProducerService,
   ) {}
 
   async sendMessage(params: SendMessageRequest): Promise<SendMessageResponse> {
@@ -91,6 +94,12 @@ export class AssistantService {
       conversationId: conversation.id,
       role: MessageRole.ASSISTANT,
       content: reply,
+    });
+
+    await this.kafkaProducerService.produce('assistant.responded', {
+      conversationId: conversation.id,
+      userPrompt: message,
+      assiatntReply: reply,
     });
 
     return {

@@ -132,6 +132,8 @@ describe('ExamService', () => {
 
     expect(result).toEqual({ sessionId: 'sess_1' });
 
+    expect(kafkaProducerMock.produce).toHaveBeenCalled();
+
     expect(
       questionsRepositoryMock.getQuestionsByCategory,
     ).toHaveBeenCalledTimes(2);
@@ -262,6 +264,8 @@ describe('ExamService', () => {
     });
 
     expect(examRepositoryMock.updateById).toHaveBeenCalled();
+
+    expect(kafkaProducerMock.produce).toHaveBeenCalled();
 
     expect(result.accepted).toBe(true);
     expect(result.answeredCount).toBe(1);
