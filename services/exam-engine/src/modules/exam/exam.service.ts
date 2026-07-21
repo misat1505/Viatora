@@ -43,7 +43,7 @@ export class ExamService {
     @Inject(DEFAULT_EXAMS_CONFIGS_TOKEN)
     private readonly examsConfigurations: ExamsConfigurations,
     private readonly examResultsService: ExamResultsService,
-    private readonly kafkaProucerService: KafkaProducerService,
+    private readonly kafkaProducerService: KafkaProducerService,
   ) {}
 
   async startExamSession(dto: StartSessionRequest): Promise<ExamSession> {
@@ -94,6 +94,8 @@ export class ExamService {
 
     const examSession =
       await this.examRepository.createExamSession(examSessionDTO);
+
+    await this.kafkaProducerService.produce('exam.started', examSession);
 
     return examSession;
   }
@@ -147,6 +149,21 @@ export class ExamService {
 
     await this.examRepository.updateById(exam.sessionId, exam);
 
+    const isCorrect =
+      exam.questions[currentQuestionAbsoluteId].question?.answers
+        ?.correctAnswer === dto.selectedOption;
+
+    await this.kafkaProducerService.produce('exam.answer.submitted', {
+      sessionId: exam.sessionId,
+      userId: exam.userId,
+      questionId: dto.questionId,
+      answer: dto.selectedOption,
+      answeredAt: currentQuestion.answeredAt,
+      isCorrect,
+      questionNumber: currentQuestionAbsoluteId + 1,
+      totalQuestions: exam.totalQuestions,
+    });
+
     return {
       accepted: true,
       answeredCount: currentQuestionAbsoluteId + 1,
@@ -167,7 +184,7 @@ export class ExamService {
 
     const examResult = await this.examResultsService.markExam(exam);
 
-    await this.kafkaProucerService.produce('exam.finished', examResult);
+    await this.kafkaProducerService.produce('exam.finished', examResult);
 
     return examResult;
   }
